@@ -46,3 +46,8 @@ export interface BasketItem {
   image: string;
   slug: string;
 }
+
+export interface CheckoutSession {
+  id: string;
+  url: string;
+}

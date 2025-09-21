@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Headless Store",
-  description: "Modern e-commerce store built with Next.js, Strapi, and Stripe",
+  description: "Next.js headless store with Strapi and Stripe",
 };
 
 export default function RootLayout({

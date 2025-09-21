@@ -1,15 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { useQuery } from "@apollo/client";
 import ProductCard from "@/components/ProductCard";
 import Navigation from "@/components/Navigation";
-import { GET_FEATURED_PRODUCTS } from "@/lib/queries";
+import { GET_PRODUCTS } from "@/lib/queries";
 import { Product } from "@/lib/types";
-import styles from "./page.module.css";
 
-export default function Home() {
-  const { loading, error, data } = useQuery(GET_FEATURED_PRODUCTS);
+export default function ProductsPage() {
+  const { loading, error, data } = useQuery(GET_PRODUCTS, {
+    variables: {
+      pagination: { limit: 12 },
+    },
+  });
 
   if (loading)
     return (
@@ -38,14 +40,7 @@ export default function Home() {
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to Headless Store
-          </h1>
-          <p className="text-xl text-gray-600">
-            Discover our featured products
-          </p>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">All Products</h1>
 
         {products.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -55,7 +50,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="text-center">
-            <p className="text-gray-600">No featured products available.</p>
+            <p className="text-gray-600">No products available.</p>
           </div>
         )}
       </main>
