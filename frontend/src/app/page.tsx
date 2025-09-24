@@ -1,64 +1,11 @@
-"use client";
-
 import Image from "next/image";
-import { useQuery } from "@apollo/client";
-import ProductCard from "@/components/ProductCard";
-import Navigation from "@/components/Navigation";
-import { GET_FEATURED_PRODUCTS } from "@/lib/queries";
-import { Product } from "@/lib/types";
-import styles from "./page.module.css";
+import Navbar from "@/components/navigation/Navbar";
 
 export default function Home() {
-  const { loading, error, data } = useQuery(GET_FEATURED_PRODUCTS);
-
-  if (loading)
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center">Loading...</div>
-        </div>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center text-red-600">Error: {error.message}</div>
-        </div>
-      </div>
-    );
-
-  const products: Product[] = data?.products?.data || [];
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to Headless Store
-          </h1>
-          <p className="text-xl text-gray-600">
-            Discover our featured products
-          </p>
-        </div>
-
-        {products.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center">
-            <p className="text-gray-600">No featured products available.</p>
-          </div>
-        )}
-      </main>
+    <div className="homepage">
+      <Navbar />
+      <footer></footer>
     </div>
   );
 }
