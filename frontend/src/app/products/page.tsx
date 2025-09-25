@@ -26,7 +26,7 @@ export default function page() {
         const response = await fetch(
           `${
             process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-          }/api/products?populate=images,category`,
+          }/api/products`,
           {
             headers: {
               Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
@@ -42,7 +42,7 @@ export default function page() {
 
         const data: StrapiResponse = await response.json();
         setProducts(data.data);
-        console.log(products);
+        console.log(data.data);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to fetch products"
