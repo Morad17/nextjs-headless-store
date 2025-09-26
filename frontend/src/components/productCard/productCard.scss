@@ -1,0 +1,18 @@
+.product-card {
+  max-width: 400px;
+  background: grey;
+  border-radius: 10px;
+  .product-image {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 200px; // Set a fixed height
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 auto; // Center the image
+
+    img {
+      object-fit: cover;
+    }
+  }
+}

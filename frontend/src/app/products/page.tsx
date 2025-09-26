@@ -77,7 +77,7 @@ export default function Products() {
   return (
     <div className="products-page">
       <h1>Products</h1>
-      <div className="products-grid">
+      <div className="products-list">
         {products.length > 0 ? (
           products.map((product) => (
             <ProductCard key={product.id} product={product} />

@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Product } from "@/lib/types";
 import "./productCard.scss";
 
+import placeholder from "../../../public/assets/images/placeholder-image.png";
+
 interface ProductCardProps {
   product: Product;
 }
@@ -17,19 +19,26 @@ export default function ProductCard({ product }: ProductCardProps) {
     stock: maxAllowance,
     slug,
     specifications,
+    pSubCategory,
+    images,
   } = product;
 
-  // Get image URL - either from media or fallback
-  // const imageUrl = product.images?.data?.[0]??.url
-  //   ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${product.images.data[0].url}`
-  //   : specifications?.imageUrl ||
-  //     "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&h=500&fit=crop";
+  const getImageUrl = () => {
+    if (images && Array.isArray(images) && images.length > 0) {
+      const firstImage = images[0];
 
-  // Get subcategory name
-  const subCategory =
-    product.pSubCategory?.data?.name ||
-    product.pCategory?.data?.name ||
-    "Uncategorized";
+      if (firstImage && firstImage.url) {
+        if (firstImage.url.startsWith("http")) {
+          return firstImage.url;
+        }
+        return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
+      }
+    }
+
+    return placeholder;
+  };
+  const imageUrl = getImageUrl();
+  const subCategory = pSubCategory?.name || "Uncategorized";
 
   const handleIncrement = () => {
     if (quantity < maxAllowance) {
@@ -53,7 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="product-card">
       <div className="product-image">
-        {/* <Image src={imageUrl} alt={title} fill /> */}
+        <Image src={imageUrl} alt={title} fill />
       </div>
       <div className="product-text">
         <h3 className="product-title">{title}</h3>

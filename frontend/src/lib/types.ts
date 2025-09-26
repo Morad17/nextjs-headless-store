@@ -8,57 +8,50 @@ export interface Product {
   price: number;
   stock: number;
   featured?: boolean;
-  specifications?: Record<string, any>; // JSON field for dynamic specifications
+  specifications?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  images?: {
-    data: Array<{
-      id: string;
-      attributes: {
-        name: string;
-        alternativeText?: string;
-        caption?: string;
-        width: number;
-        height: number;
-        formats?: any;
-        hash: string;
-        ext: string;
-        mime: string;
-        size: number;
-        url: string;
-        previewUrl?: string;
-        provider: string;
-        provider_metadata?: any;
-        createdAt: string;
-        updatedAt: string;
-      };
-    }>;
-  };
+  images?: Array<{
+    id: number;
+    documentId: string;
+    name: string;
+    alternativeText?: string;
+    caption?: string;
+    width: number;
+    height: number;
+    formats: any;
+    hash: string;
+    ext: string;
+    mime: string;
+    size: number;
+    url: string;
+    previewUrl?: string;
+    provider: string;
+    provider_metadata?: any;
+    createdAt: string;
+    updatedAt: string;
+  }>;
   pCategory?: {
-    data: {
-      id: string;
-      name: string;
-      slug: string;
-      description?: any; // Blocks field
-      containsSubCategories?: boolean;
-      required: boolean;
-      maxAllowance: number;
-      createdAt: string;
-      updatedAt: string;
-      publishedAt: string;
-    };
+    id: string;
+    name: string;
+    slug: string;
+    description?: any;
+    containsSubCategories?: boolean;
+    required: boolean;
+    maxAllowance: number;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
   };
   pSubCategory?: {
-    data: {
-      id: string;
-      name: string;
-      slug: string;
-      description?: string;
-      createdAt: string;
-      updatedAt: string;
-      publishedAt: string;
-    };
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
   };
 }
 
@@ -67,7 +60,7 @@ export interface Category {
   attributes: {
     name: string;
     slug: string;
-    description?: any; // Blocks field - can be rich content
+    description?: any;
     containsSubCategories?: boolean;
     required: boolean;
     maxAllowance: number;
