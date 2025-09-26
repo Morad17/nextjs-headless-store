@@ -11,8 +11,8 @@ const categories = [
     subcategories: [
       { name: "Full Tower", slug: "full-tower" },
       { name: "Mid Tower", slug: "mid-tower" },
-      { name: "Mini ITX", slug: "mini-itx" },
-      { name: "Micro ATX", slug: "micro-atx" },
+      { name: "Mini ITX", slug: "mini-itx-case" },
+      { name: "Micro ATX", slug: "micro-atx-case" },
     ],
   },
   {
@@ -31,7 +31,7 @@ const categories = [
     description: "Graphics Cards and GPUs",
     containsSubCategories: true,
     subcategories: [
-      { name: "Nvidia", slug: "nvidia" },
+      { name: "Nvidia", slug: "nvidia-gpu" },
       { name: "Intel", slug: "intel-gpu" },
       { name: "AMD", slug: "amd-gpu" },
     ],
@@ -42,8 +42,8 @@ const categories = [
     description: "Motherboards",
     containsSubCategories: true,
     subcategories: [
-      { name: "Intel Socket", slug: "intel-socket" },
-      { name: "AMD Socket", slug: "amd-socket" },
+      { name: "Intel Socket", slug: "intel-socket-motherboard" },
+      { name: "AMD Socket", slug: "amd-socket-motherboard" },
       { name: "ATX", slug: "atx-motherboard" },
       { name: "Micro ATX", slug: "micro-atx-motherboard" },
       { name: "Mini ITX", slug: "mini-itx-motherboard" },
@@ -57,8 +57,6 @@ const categories = [
     subcategories: [
       { name: "DDR5", slug: "ddr5" },
       { name: "DDR4", slug: "ddr4" },
-      { name: "16GB Kits", slug: "16gb-kits" },
-      { name: "32GB Kits", slug: "32gb-kits" },
     ],
   },
   {
@@ -69,8 +67,6 @@ const categories = [
     subcategories: [
       { name: "NVMe M.2", slug: "nvme-m2" },
       { name: "SATA SSD", slug: "sata-ssd" },
-      { name: "1TB", slug: "1tb-ssd" },
-      { name: "2TB", slug: "2tb-ssd" },
     ],
   },
   {
@@ -97,7 +93,6 @@ const categories = [
     subcategories: [
       { name: "Air Coolers", slug: "air-coolers" },
       { name: "AIO Liquid Coolers", slug: "aio-liquid" },
-      { name: "Custom Loop", slug: "custom-loop" },
     ],
   },
   {
@@ -117,8 +112,8 @@ const categories = [
     description: "OS Software",
     containsSubCategories: true,
     subcategories: [
-      { name: "Windows", slug: "windows" },
-      { name: "Linux", slug: "linux" },
+      { name: "Windows", slug: "windows-os" },
+      { name: "Linux", slug: "linux-os" },
     ],
   },
   {
