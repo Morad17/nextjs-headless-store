@@ -10,6 +10,8 @@
     "dev": "strapi develop",
     "develop": "strapi develop",
     "seed:categories": "node scripts/seed-via-api.js",
+    "seed:products": "node scripts/seed-products.js",
+    "seed:all": "npm run seed:categories && npm run seed:products",
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",

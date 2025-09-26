@@ -14,6 +14,8 @@ const categories = [
       { name: "Mini ITX", slug: "mini-itx-case" },
       { name: "Micro ATX", slug: "micro-atx-case" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "CPUs",
@@ -24,6 +26,8 @@ const categories = [
       { name: "Intel", slug: "intel-cpu" },
       { name: "AMD", slug: "amd-cpu" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "Graphics Cards",
@@ -35,6 +39,8 @@ const categories = [
       { name: "Intel", slug: "intel-gpu" },
       { name: "AMD", slug: "amd-gpu" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "Motherboards",
@@ -48,6 +54,8 @@ const categories = [
       { name: "Micro ATX", slug: "micro-atx-motherboard" },
       { name: "Mini ITX", slug: "mini-itx-motherboard" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "Memory",
@@ -58,6 +66,8 @@ const categories = [
       { name: "DDR5", slug: "ddr5" },
       { name: "DDR4", slug: "ddr4" },
     ],
+    maxAllowance: 2,
+    required: true,
   },
   {
     name: "SSD Storage",
@@ -68,12 +78,16 @@ const categories = [
       { name: "NVMe M.2", slug: "nvme-m2" },
       { name: "SATA SSD", slug: "sata-ssd" },
     ],
+    maxAllowance: 4,
+    required: true,
   },
   {
     name: "Hard Drive Storage",
     slug: "hard-drive-storage",
     description: "Hard Disk Drives",
     containsSubCategories: false,
+    maxAllowance: 10,
+    required: false,
   },
   {
     name: "Power Supplies",
@@ -84,6 +98,8 @@ const categories = [
       { name: "Modular", slug: "modular-psu" },
       { name: "Non-Modular", slug: "non-modular-psu" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "CPU Cooling",
@@ -94,6 +110,8 @@ const categories = [
       { name: "Air Coolers", slug: "air-coolers" },
       { name: "AIO Liquid Coolers", slug: "aio-liquid" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "Case Cooling",
@@ -105,6 +123,8 @@ const categories = [
       { name: "140mm Fans", slug: "140mm-fans" },
       { name: "RGB Fans", slug: "rgb-fans" },
     ],
+    maxAllowance: 10,
+    required: false,
   },
   {
     name: "Operating Systems",
@@ -115,6 +135,8 @@ const categories = [
       { name: "Windows", slug: "windows-os" },
       { name: "Linux", slug: "linux-os" },
     ],
+    maxAllowance: 1,
+    required: true,
   },
   {
     name: "Software",
@@ -125,6 +147,8 @@ const categories = [
       { name: "Antivirus", slug: "antivirus" },
       { name: "Productivity", slug: "productivity" },
     ],
+    maxAllowance: 10,
+    required: false,
   },
   {
     name: "Peripherals",
@@ -138,6 +162,8 @@ const categories = [
       { name: "Headsets", slug: "headsets" },
       { name: "Speakers", slug: "speakers" },
     ],
+    maxAllowance: 100,
+    required: false,
   },
 ];
 

@@ -15,11 +15,6 @@
       "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "description": {
       "type": "blocks"
     },
@@ -33,6 +28,20 @@
       "relation": "oneToMany",
       "target": "api::sub-category.sub-category",
       "mappedBy": "category"
+    },
+    "required": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "maxAllowance": {
+      "type": "integer",
+      "required": true,
+      "default": 1
+    },
+    "slug": {
+      "type": "uid",
+      "required": true
     }
   }
 }
