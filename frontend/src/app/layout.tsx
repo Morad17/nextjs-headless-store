@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./global.scss";
+import Navbar from "@/components/navigation/Navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Navbar />
       <body suppressHydrationWarning>{children}</body>
+      <footer></footer>
     </html>
   );
 }
