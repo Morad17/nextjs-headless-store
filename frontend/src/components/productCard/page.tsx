@@ -7,16 +7,19 @@ import placeholder from "../../../public/assets/images/placeholder-image.png";
 
 interface ProductCardProps {
   product: Product;
+  maxAllowance: number; // Add this prop
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(0);
+export default function ProductCard({
+  product,
+  maxAllowance,
+}: ProductCardProps) {
+  const [quantity, setQuantity] = useState(1);
 
   // Extract data from product object
   const {
     name: title,
     price,
-    stock: maxAllowance,
     slug,
     specifications,
     pSubCategory,
@@ -37,6 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     return placeholder;
   };
+
   const imageUrl = getImageUrl();
   const subCategory = pSubCategory?.name || "Uncategorized";
 
@@ -66,17 +70,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       <div className="product-text">
         <h3 className="product-title">{title}</h3>
-        <p className="sub-category">{subCategory}</p>
-        <p className="product-cost">£{price.toFixed(2)}</p>
-        {maxAllowance > 0 && (
-          <p className="stock-info">{maxAllowance} in stock</p>
-        )}
+        <div className="product-cost-info-row">
+          <p className="product-cost">+ £{price.toFixed(2)}</p>
+          <div className="more-info-btn">
+            <a href={`/products/${slug}`}>Info</a>
+          </div>
+        </div>
       </div>
       <div className="product-actions">
-        <a href={`/products/${slug}`} className="more-info-btn">
-          More Info
-        </a>
-
         <div className="product-quantity">
           <button
             type="button"
@@ -96,6 +97,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             max={maxAllowance}
             className="quantity-input"
             aria-label="Product quantity"
+            readOnly
           />
 
           <button
@@ -115,7 +117,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           disabled={quantity === 0 || maxAllowance === 0}
           onClick={() => {
             if (quantity > 0) {
-              // Handle add to cart logic here
               console.log(`Added ${quantity} of ${title} to cart`);
               console.log("Product:", product);
             }
@@ -123,8 +124,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         >
           {quantity > 0 ? `Add ${quantity} to Cart` : "Select"}
         </button>
-
-        {maxAllowance === 0 && <p className="out-of-stock">Out of Stock</p>}
       </div>
     </div>
   );

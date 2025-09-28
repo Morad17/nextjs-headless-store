@@ -33,7 +33,7 @@ export interface Product {
     updatedAt: string;
   }>;
   pCategory?: {
-    id: string;
+    id: number;
     name: string;
     slug: string;
     description?: any;
@@ -57,19 +57,18 @@ export interface Product {
 
 export interface Category {
   id: string;
-  attributes: {
-    name: string;
-    slug: string;
-    description?: any;
-    containsSubCategories?: boolean;
-    required: boolean;
-    maxAllowance: number;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    sub_categories?: {
-      data: SubCategory[];
-    };
+  name: string;
+  slug: string;
+  description?: any;
+  containsSubCategories?: boolean;
+  required: boolean;
+  maxAllowance: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  order: number;
+  sub_categories?: {
+    data: SubCategory[];
   };
 }
 

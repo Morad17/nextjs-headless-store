@@ -1,11 +1,16 @@
 .build-pc-page {
+  height: calc(97vh - 20px);
   .build-pc-content {
     display: flex;
     justify-content: space-between;
+    height: 85%;
   }
   .left-section,
   .right-section {
     width: 49vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
   .model-pc {
     min-height: 500px;
@@ -15,6 +20,68 @@
       width: 500px !important;
       height: 500px !important;
       cursor: pointer;
+    }
+  }
+  .all-categories {
+    display: flex;
+    align-items: center;
+  }
+  .category-btn {
+    display: flex;
+    border: 1px solid silver;
+    align-items: center;
+    margin: 0 5px;
+    height: 40px;
+    padding: 5px 21px;
+    border-radius: 20px;
+    background: #c0c0c0;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .required-r {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 50px;
+    margin-left: 5px;
+  }
+  //Bottom Row Total & Progress Bar
+  .build-progress {
+    height: 15%;
+    background-color: grey;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .build-progress-bar {
+      display: flex;
+
+      .category-progress-btn {
+        background-color: silver;
+        padding: 20px 20px;
+        font-size: 1em;
+        border-radius: 0;
+        border-right: 1px solid white;
+        // First button
+        &:first-child {
+          border-radius: 20px 0 0 20px;
+        }
+
+        // Last button
+        &:last-child {
+          border-radius: 0 20px 20px 0;
+          border: none;
+        }
+      }
+    }
+    .complete-order-btn {
+      border: 1px solid black;
+      padding: 20px;
+      text-decoration: none;
+      color: white;
+      background-color: rgb(33, 110, 34);
+      font-size: 1.2rem;
     }
   }
 }

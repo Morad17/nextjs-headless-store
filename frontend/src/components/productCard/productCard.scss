@@ -1,18 +1,77 @@
 .product-card {
-  max-width: 400px;
+  width: 24%;
   background: grey;
   border-radius: 10px;
+  margin: 5px 0;
   .product-image {
     position: relative;
     width: 100%;
-    max-width: 400px;
-    height: 200px; // Set a fixed height
+    max-width: 200px;
+    height: 150px;
     border-radius: 4px;
     overflow: hidden;
-    margin: 0 auto; // Center the image
+    margin: 0 auto;
 
     img {
       object-fit: cover;
+    }
+  }
+  .product-text {
+    padding: 0 10px;
+  }
+  .product-actions {
+    padding: 0 10px;
+    display: flex;
+    margin: 5px 0;
+    justify-content: space-between;
+    padding: 0 5px;
+  }
+  .product-cost-info-row {
+    display: flex;
+    margin: 5px 0;
+    justify-content: space-between;
+    padding: 0 5px;
+    align-items: center;
+  }
+  .product-cost {
+    margin: 0;
+  }
+  .more-info-btn {
+    a {
+      text-decoration: none;
+      color: black;
+    }
+    font-size: 0.9rem;
+    text-decoration: none;
+    background-color: white;
+    border-radius: 20px;
+    padding: 5px;
+    color: black;
+    border: 1px solid rgb(172, 172, 172);
+    display: flex;
+    align-items: center;
+  }
+
+  //Inc Dec buttons
+  .decrement-btn,
+  .increment-btn {
+    cursor: pointer;
+    &:disabled {
+      cursor: default;
+    }
+  }
+  .quantity-input {
+    outline: none;
+    &:focus {
+      outline: none;
+    }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &[type="number"] {
+      -moz-appearance: textfield;
     }
   }
 }

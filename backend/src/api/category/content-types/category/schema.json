@@ -42,6 +42,10 @@
     "slug": {
       "type": "uid",
       "required": true
+    },
+    "order": {
+      "type": "integer",
+      "unique": true
     }
   }
 }
