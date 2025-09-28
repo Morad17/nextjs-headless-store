@@ -8,13 +8,45 @@ Title: Pc Gamer (Animation)
 
 import React, { useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
+import { Group, Mesh } from "three";
 
-export function Model(props) {
-  const group = useRef();
-  const { nodes, materials, animations } = useGLTF("/pc_gamer_animation.glb");
+interface PcModelProps {
+  scale?: number | [number, number, number];
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  [key: string]: any;
+}
+
+export function PcModel({
+  scale = 1.1,
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  ...props
+}: PcModelProps) {
+  const group = useRef<Group>(null);
+  const { nodes, materials, animations } = useGLTF(
+    "/assets/models/pc_gamer_animation.glb"
+  );
   const { actions } = useAnimations(animations, group);
+
+  // Animation controls
+  React.useEffect(() => {
+    Object.values(actions).forEach((action) => {
+      if (action) {
+        action.play();
+      }
+    });
+  }, [actions]);
+
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group
+      ref={group}
+      {...props}
+      dispose={null}
+      scale={scale}
+      position={position}
+      rotation={rotation}
+    >
       <group name="Sketchfab_Scene">
         <group
           name="Sketchfab_model"
@@ -502,28 +534,28 @@ export function Model(props) {
                     name="pCube4_lambert36_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube4_lambert36_0.geometry}
+                    geometry={(nodes.pCube4_lambert36_0 as Mesh)?.geometry}
                     material={materials.lambert36}
                   />
                   <mesh
                     name="pCube4_lambert44_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube4_lambert44_0.geometry}
+                    geometry={(nodes.pCube4_lambert44_0 as Mesh)?.geometry}
                     material={materials.lambert44}
                   />
                   <mesh
                     name="pCube4_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube4_lambert1_0.geometry}
+                    geometry={(nodes.pCube4_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                   <mesh
                     name="pCube4_lambert45_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube4_lambert45_0.geometry}
+                    geometry={(nodes.pCube4_lambert45_0 as Mesh)?.geometry}
                     material={materials.lambert45}
                   />
                 </group>
@@ -543,7 +575,7 @@ export function Model(props) {
                     name="pCube6_lambert16_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube6_lambert16_0.geometry}
+                    geometry={(nodes.pCube6_lambert16_0 as Mesh)?.geometry}
                     material={materials.lambert16}
                   />
                 </group>
@@ -580,7 +612,9 @@ export function Model(props) {
                     name="pCube12_aiStandardSurface11_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube12_aiStandardSurface11_0.geometry}
+                    geometry={
+                      (nodes.pCube12_aiStandardSurface11_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface11}
                   />
                 </group>
@@ -600,7 +634,9 @@ export function Model(props) {
                     name="pCube16_pc_modelagem_lambert11_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube16_pc_modelagem_lambert11_0.geometry}
+                    geometry={
+                      (nodes.pCube16_pc_modelagem_lambert11_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert11}
                   />
                 </group>
@@ -613,7 +649,9 @@ export function Model(props) {
                     name="pCube17_aiStandardSurface4_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube17_aiStandardSurface4_0.geometry}
+                    geometry={
+                      (nodes.pCube17_aiStandardSurface4_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface4}
                   />
                 </group>
@@ -626,7 +664,10 @@ export function Model(props) {
                     name="pCylinder6_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder6_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCylinder6_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -639,7 +680,10 @@ export function Model(props) {
                     name="pCylinder7_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder7_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCylinder7_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -652,7 +696,10 @@ export function Model(props) {
                     name="pCylinder8_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder8_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCylinder8_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -665,7 +712,7 @@ export function Model(props) {
                     name="pCylinder9_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder9_lambert35_0.geometry}
+                    geometry={(nodes.pCylinder9_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -679,7 +726,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder10_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder10_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -701,7 +749,9 @@ export function Model(props) {
                     name="pCube18_pc_modelagem_lambert13_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube18_pc_modelagem_lambert13_0.geometry}
+                    geometry={
+                      (nodes.pCube18_pc_modelagem_lambert13_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert13}
                   />
                 </group>
@@ -714,7 +764,9 @@ export function Model(props) {
                     name="pCube19_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube19_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube19_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -727,7 +779,9 @@ export function Model(props) {
                     name="pCube20_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube20_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube20_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -747,7 +801,9 @@ export function Model(props) {
                     name="pCube22_aiStandardSurface11_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube22_aiStandardSurface11_0.geometry}
+                    geometry={
+                      (nodes.pCube22_aiStandardSurface11_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface11}
                   />
                 </group>
@@ -796,7 +852,8 @@ export function Model(props) {
                       castShadow
                       receiveShadow
                       geometry={
-                        nodes.polySurface2_aiStandardSurface7_0.geometry
+                        (nodes.polySurface2_aiStandardSurface7_0 as Mesh)
+                          ?.geometry
                       }
                       material={materials.aiStandardSurface7}
                     />
@@ -804,7 +861,9 @@ export function Model(props) {
                       name="polySurface2_lambert25_0"
                       castShadow
                       receiveShadow
-                      geometry={nodes.polySurface2_lambert25_0.geometry}
+                      geometry={
+                        (nodes.polySurface2_lambert25_0 as Mesh)?.geometry
+                      }
                       material={materials.lambert25}
                     />
                   </group>
@@ -819,7 +878,7 @@ export function Model(props) {
                     name="pCube24_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube24_lambert35_0.geometry}
+                    geometry={(nodes.pCube24_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -832,14 +891,16 @@ export function Model(props) {
                     name="pCube25_pc_modelagem_lambert14_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube25_pc_modelagem_lambert14_0.geometry}
+                    geometry={
+                      (nodes.pCube25_pc_modelagem_lambert14_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert14}
                   />
                   <mesh
                     name="pCube25_lambert15_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube25_lambert15_0.geometry}
+                    geometry={(nodes.pCube25_lambert15_0 as Mesh)?.geometry}
                     material={materials.lambert15}
                   />
                 </group>
@@ -852,7 +913,7 @@ export function Model(props) {
                     name="pCube26_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube26_lambert35_0.geometry}
+                    geometry={(nodes.pCube26_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -865,7 +926,7 @@ export function Model(props) {
                     name="pCylinder28_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder28_lambert35_0.geometry}
+                    geometry={(nodes.pCylinder28_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -879,7 +940,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder29_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder29_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -894,7 +956,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder30_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder30_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -909,7 +972,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder31_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder31_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -924,7 +988,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder32_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder32_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -938,7 +1003,7 @@ export function Model(props) {
                     name="pCube27_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube27_lambert35_0.geometry}
+                    geometry={(nodes.pCube27_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -951,7 +1016,9 @@ export function Model(props) {
                     name="pCube28_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube28_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube28_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -964,7 +1031,9 @@ export function Model(props) {
                     name="pCube29_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube29_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCube29_pc_modelagem_lambert7_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -977,7 +1046,9 @@ export function Model(props) {
                     name="pCube30_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube30_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCube30_pc_modelagem_lambert7_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -990,7 +1061,9 @@ export function Model(props) {
                     name="pCube31_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube31_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCube31_pc_modelagem_lambert7_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -1003,35 +1076,11 @@ export function Model(props) {
                     name="pCube32_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube32_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCube32_pc_modelagem_lambert7_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
-                </group>
-                <group
-                  name="pCube36"
-                  position={[-0.801, 7.403, 3.717]}
-                  scale={[0.217, 0.249, 0.242]}
-                >
-                  <group name="transform79" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder34"
-                  position={[0.168, 6.6, 5.01]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                  scale={[1.084, 0.865, 1.084]}
-                >
-                  <group name="transform13_1" />
-                </group>
-                <group name="pCube37">
-                  <group name="transform76" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder35"
-                  position={[0.168, 6.6, 4.106]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                  scale={[1.084, 1.842, 1.084]}
-                >
-                  <group name="transform15_1" />
                 </group>
                 <group
                   name="pCube38"
@@ -1042,7 +1091,7 @@ export function Model(props) {
                     name="pCube38_lambert37_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube38_lambert37_0.geometry}
+                    geometry={(nodes.pCube38_lambert37_0 as Mesh)?.geometry}
                     material={materials.lambert37}
                   />
                 </group>
@@ -1056,81 +1105,9 @@ export function Model(props) {
                     name="pCube39_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube39_lambert1_0.geometry}
+                    geometry={(nodes.pCube39_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
-                </group>
-                <group
-                  name="pCube40"
-                  position={[-0.832, 6.032, 3.742]}
-                  scale={[0.152, 0.174, 0.169]}
-                >
-                  <group name="transform81" />
-                </group>
-                <group
-                  name="pCube41"
-                  position={[-0.832, 5.796, 3.742]}
-                  scale={[0.152, 0.174, 0.169]}
-                >
-                  <group name="transform80" />
-                </group>
-                <group
-                  name="pCube42"
-                  position={[-0.868, 6.734, 3.741]}
-                  scale={[0.163, 0.187, 0.182]}
-                >
-                  <group name="transform84" />
-                </group>
-                <group
-                  name="pCube43"
-                  position={[-0.868, 6.949, 3.74]}
-                  scale={[0.163, 0.187, 0.182]}
-                >
-                  <group name="transform86" />
-                </group>
-                <group
-                  name="pCube44"
-                  position={[-0.868, 7.172, 3.737]}
-                  scale={[0.163, 0.187, 0.182]}
-                >
-                  <group name="transform85" />
-                </group>
-                <group
-                  name="pCube45"
-                  position={[-0.832, 6.511, 3.742]}
-                  scale={[0.152, 0.174, 0.169]}
-                >
-                  <group name="transform83" />
-                </group>
-                <group
-                  name="pCube46"
-                  position={[-0.832, 6.275, 3.742]}
-                  scale={[0.152, 0.174, 0.169]}
-                >
-                  <group name="transform82" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder36"
-                  position={[0.458, 6.172, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform74_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder37"
-                  position={[0.168, 6.6, 4.902]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                  scale={[0.284, 0.056, 0.284]}
-                >
-                  <group name="transform30_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube47"
-                  position={[0.901, 6.603, 4.891]}
-                  scale={[1, 1, 0.089]}
-                >
-                  <group name="transform31_1" />
                 </group>
                 <group
                   name="pCube48"
@@ -1141,7 +1118,7 @@ export function Model(props) {
                     name="pCube48_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube48_lambert1_0.geometry}
+                    geometry={(nodes.pCube48_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -1154,129 +1131,11 @@ export function Model(props) {
                     name="pCube49_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube49_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube49_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder38"
-                  position={[0.458, 6.3, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform72_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder39"
-                  position={[0.458, 6.421, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform73_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder40"
-                  position={[0.458, 6.545, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform71_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder41"
-                  position={[0.458, 6.671, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform70_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder42"
-                  position={[0.458, 6.792, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform69_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder43"
-                  position={[0.458, 7.04, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform67_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder44"
-                  position={[0.458, 6.914, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform68_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder45"
-                  position={[0.458, 12.149, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform24_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder46"
-                  position={[0.458, 12.024, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform23_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder47"
-                  position={[0.458, 11.901, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform22_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder48"
-                  position={[0.458, 11.78, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform21_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder49"
-                  position={[0.458, 11.654, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform20_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder50"
-                  position={[0.458, 11.53, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform19_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder51"
-                  position={[0.458, 11.409, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform18_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder52"
-                  position={[0.458, 11.281, -0.112]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.064, 1.268, 0.121]}
-                >
-                  <group name="transform17_1" />
                 </group>
                 <group
                   name="pCylinder53"
@@ -1288,7 +1147,9 @@ export function Model(props) {
                     name="pCylinder53_aiStandardSurface9_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder53_aiStandardSurface9_0.geometry}
+                    geometry={
+                      (nodes.pCylinder53_aiStandardSurface9_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface9}
                   />
                 </group>
@@ -1301,7 +1162,9 @@ export function Model(props) {
                     name="pCube50_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube50_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube50_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -1314,76 +1177,11 @@ export function Model(props) {
                     name="pCube51_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube51_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube51_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder54"
-                  position={[1.686, 6.172, 1.519]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.121, 2.112, 0.202]}
-                >
-                  <group name="transform26_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder55"
-                  position={[1.686, 6.438, 1.519]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.121, 2.112, 0.202]}
-                >
-                  <group name="transform25_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube52"
-                  position={[-0.639, 6.603, 4.891]}
-                  rotation={[0, 0, Math.PI]}
-                  scale={[1, 1, 0.089]}
-                >
-                  <group name="transform29_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube53"
-                  position={[-0.639, 6.603, 14.618]}
-                  rotation={[0, 0, Math.PI]}
-                  scale={[1, 1, 0.089]}
-                >
-                  <group name="transform28_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube54"
-                  position={[0.901, 6.603, 14.618]}
-                  scale={[1, 1, 0.089]}
-                >
-                  <group name="transform27_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube55"
-                  position={[-4.037, 1.48, -9.727]}
-                  rotation={[0, 0, -0.663]}
-                >
-                  <group name="transform33_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube56"
-                  position={[-6.252, 4.911, -9.727]}
-                  rotation={[0, 0, -1.292]}
-                >
-                  <group name="transform35_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube57"
-                  position={[-5.991, 9.079, -9.727]}
-                  rotation={[0, 0, -1.935]}
-                >
-                  <group name="transform34_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCube58"
-                  position={[-3.157, 12.33, -9.727]}
-                  rotation={[0, 0, -2.6]}
-                >
-                  <group name="transform32_1" />
                 </group>
                 <group
                   name="pCube59"
@@ -1395,7 +1193,9 @@ export function Model(props) {
                     name="pCube59_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube59_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube59_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1409,7 +1209,9 @@ export function Model(props) {
                     name="pCube60_pc_modelagem_lambert7_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube60_pc_modelagem_lambert7_0.geometry}
+                    geometry={
+                      (nodes.pCube60_pc_modelagem_lambert7_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_lambert7}
                   />
                 </group>
@@ -1423,7 +1225,7 @@ export function Model(props) {
                     name="pCube62_blinn24_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube62_blinn24_0.geometry}
+                    geometry={(nodes.pCube62_blinn24_0 as Mesh)?.geometry}
                     material={materials.blinn24}
                   />
                 </group>
@@ -1437,7 +1239,9 @@ export function Model(props) {
                     name="pCube63_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube63_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube63_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1451,7 +1255,10 @@ export function Model(props) {
                     name="pCylinder57_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder57_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder57_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1464,7 +1271,9 @@ export function Model(props) {
                     name="pCube64_pc_modelagem_blinn16_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube64_pc_modelagem_blinn16_0.geometry}
+                    geometry={
+                      (nodes.pCube64_pc_modelagem_blinn16_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn16}
                   />
                 </group>
@@ -1477,7 +1286,7 @@ export function Model(props) {
                     name="pCube65_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube65_lambert1_0.geometry}
+                    geometry={(nodes.pCube65_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -1491,7 +1300,10 @@ export function Model(props) {
                     name="pCylinder58_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder58_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder58_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1505,7 +1317,9 @@ export function Model(props) {
                     name="pCube66_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube66_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube66_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1518,7 +1332,9 @@ export function Model(props) {
                     name="pCube67_pc_modelagem_blinn16_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube67_pc_modelagem_blinn16_0.geometry}
+                    geometry={
+                      (nodes.pCube67_pc_modelagem_blinn16_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn16}
                   />
                 </group>
@@ -1531,7 +1347,7 @@ export function Model(props) {
                     name="pCube68_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube68_lambert1_0.geometry}
+                    geometry={(nodes.pCube68_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -1545,7 +1361,10 @@ export function Model(props) {
                     name="pCylinder59_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder59_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder59_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1559,7 +1378,9 @@ export function Model(props) {
                     name="pCube69_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube69_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube69_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1572,7 +1393,9 @@ export function Model(props) {
                     name="pCube70_pc_modelagem_blinn16_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube70_pc_modelagem_blinn16_0.geometry}
+                    geometry={
+                      (nodes.pCube70_pc_modelagem_blinn16_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn16}
                   />
                 </group>
@@ -1585,24 +1408,9 @@ export function Model(props) {
                     name="pCube71_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube71_lambert1_0.geometry}
+                    geometry={(nodes.pCube71_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
-                </group>
-                <group
-                  name="pc_modelagem_pCube72"
-                  position={[4.685, -1.37, -2.827]}
-                  scale={[1.331, 1.331, 0.719]}
-                >
-                  <group name="transform37_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder60"
-                  position={[4.896, 7.417, 0.653]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                  scale={[0.161, 0.079, 0.153]}
-                >
-                  <group name="transform36_1" />
                 </group>
                 <group
                   name="pCube74"
@@ -1614,69 +1422,11 @@ export function Model(props) {
                     name="pCube74_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube74_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube74_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
-                </group>
-                <group
-                  name="pc_modelagem_pCube75"
-                  position={[-5.218, 13.661, -1.15]}
-                  rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                  scale={0.725}
-                >
-                  <group name="polySurface15_1">
-                    <group name="transform46_1" />
-                  </group>
-                  <group name="polySurface16_1">
-                    <group name="transform53_1" />
-                  </group>
-                  <group name="polySurface17_1">
-                    <group name="transform52_1" />
-                  </group>
-                  <group name="polySurface18_1">
-                    <group name="transform43_1" />
-                  </group>
-                  <group name="polySurface19_1">
-                    <group name="transform51_1" />
-                  </group>
-                  <group name="polySurface20_1">
-                    <group name="transform50_1" />
-                  </group>
-                  <group name="polySurface21_1">
-                    <group name="transform49_1" />
-                  </group>
-                  <group name="polySurface22_1">
-                    <group name="transform44_1" />
-                  </group>
-                  <group name="polySurface23_1">
-                    <group name="transform47_1" />
-                  </group>
-                  <group name="polySurface24_1">
-                    <group name="transform54_1" />
-                  </group>
-                  <group name="polySurface25_1">
-                    <group name="transform45_1" />
-                  </group>
-                  <group name="polySurface26_1" position={[-0.021, 0, 0]}>
-                    <group name="transform48_1" />
-                  </group>
-                  <group name="transform42_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder61"
-                  position={[2.89, 3.994, 0.833]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.808, 0.166, 0.808]}
-                >
-                  <group name="transform40_1" />
-                </group>
-                <group
-                  name="pc_modelagem_pCylinder62"
-                  position={[2.89, 3.994, 0.833]}
-                  rotation={[0, 0, Math.PI / 2]}
-                  scale={[0.743, 0.607, 0.743]}
-                >
-                  <group name="transform39_1" />
                 </group>
                 <group
                   name="pCylinder63"
@@ -1687,7 +1437,10 @@ export function Model(props) {
                     name="pCylinder63_pc_modelagem_blinn12_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder63_pc_modelagem_blinn12_0.geometry}
+                    geometry={
+                      (nodes.pCylinder63_pc_modelagem_blinn12_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn12}
                   />
                 </group>
@@ -1701,7 +1454,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder64_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder64_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -1715,53 +1469,12 @@ export function Model(props) {
                     name="pCylinder65_pc_modelagem_blinn12_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder65_pc_modelagem_blinn12_0.geometry}
+                    geometry={
+                      (nodes.pCylinder65_pc_modelagem_blinn12_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn12}
                   />
-                </group>
-                <group
-                  name="pc_modelagem_pCube76"
-                  position={[-5.218, 13.661, -3.731]}
-                  rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                  scale={0.725}
-                >
-                  <group name="polySurface3_1">
-                    <group name="transform59_1" />
-                  </group>
-                  <group name="polySurface4_1">
-                    <group name="transform61_1" />
-                  </group>
-                  <group name="polySurface5_1">
-                    <group name="transform60_1" />
-                  </group>
-                  <group name="polySurface6_1">
-                    <group name="transform58_1" />
-                  </group>
-                  <group name="polySurface7_1">
-                    <group name="transform66_1" />
-                  </group>
-                  <group name="polySurface8_1">
-                    <group name="transform65_1" />
-                  </group>
-                  <group name="polySurface9_1">
-                    <group name="transform62_1" />
-                  </group>
-                  <group name="polySurface10_1">
-                    <group name="transform64_1" />
-                  </group>
-                  <group name="polySurface11_1">
-                    <group name="transform57_1" />
-                  </group>
-                  <group name="polySurface12_1">
-                    <group name="transform56_1" />
-                  </group>
-                  <group name="polySurface13_1">
-                    <group name="transform63_1" />
-                  </group>
-                  <group name="polySurface14_1" position={[-0.021, 0, 0]}>
-                    <group name="transform55_1" />
-                  </group>
-                  <group name="transform41_1" />
                 </group>
                 <group
                   name="pCylinder66"
@@ -1773,7 +1486,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.pCylinder66_pc_modelagem_lambert7_0.geometry
+                      (nodes.pCylinder66_pc_modelagem_lambert7_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_lambert7}
                   />
@@ -1787,7 +1501,10 @@ export function Model(props) {
                     name="pCylinder67_pc_modelagem_blinn12_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder67_pc_modelagem_blinn12_0.geometry}
+                    geometry={
+                      (nodes.pCylinder67_pc_modelagem_blinn12_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn12}
                   />
                 </group>
@@ -1801,7 +1518,10 @@ export function Model(props) {
                     name="pCylinder68_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder68_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder68_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1815,7 +1535,10 @@ export function Model(props) {
                     name="pCylinder69_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder69_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder69_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1829,7 +1552,10 @@ export function Model(props) {
                     name="pCylinder70_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder70_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder70_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1843,7 +1569,10 @@ export function Model(props) {
                     name="pCylinder71_pc_modelagem_blinn18_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder71_pc_modelagem_blinn18_0.geometry}
+                    geometry={
+                      (nodes.pCylinder71_pc_modelagem_blinn18_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn18}
                   />
                 </group>
@@ -1857,7 +1586,8 @@ export function Model(props) {
                     castShadow
                     receiveShadow
                     geometry={
-                      nodes.polySurface24_pc_modelagem_blinn5_0.geometry
+                      (nodes.polySurface24_pc_modelagem_blinn5_0 as Mesh)
+                        ?.geometry
                     }
                     material={materials.pc_modelagem_blinn5}
                   />
@@ -1871,7 +1601,10 @@ export function Model(props) {
                     name="polySurface7_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.polySurface7_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.polySurface7_pc_modelagem_blinn5_0 as Mesh)
+                        ?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1884,7 +1617,9 @@ export function Model(props) {
                     name="pCube78_pc_modelagem_blinn1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube78_pc_modelagem_blinn1_0.geometry}
+                    geometry={
+                      (nodes.pCube78_pc_modelagem_blinn1_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn1}
                   />
                 </group>
@@ -1897,7 +1632,7 @@ export function Model(props) {
                     name="pCube79_lambert35_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube79_lambert35_0.geometry}
+                    geometry={(nodes.pCube79_lambert35_0 as Mesh)?.geometry}
                     material={materials.lambert35}
                   />
                 </group>
@@ -1910,7 +1645,9 @@ export function Model(props) {
                     name="pCube80_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube80_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube80_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -1923,7 +1660,9 @@ export function Model(props) {
                     name="pCylinder72_aiStandardSurface5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder72_aiStandardSurface5_0.geometry}
+                    geometry={
+                      (nodes.pCylinder72_aiStandardSurface5_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface5}
                   />
                 </group>
@@ -1936,7 +1675,9 @@ export function Model(props) {
                     name="pCube82_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube82_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube82_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -1949,14 +1690,14 @@ export function Model(props) {
                     name="pCube83_lambert21_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube83_lambert21_0.geometry}
+                    geometry={(nodes.pCube83_lambert21_0 as Mesh)?.geometry}
                     material={materials.lambert21}
                   />
                   <mesh
                     name="pCube83_lambert27_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube83_lambert27_0.geometry}
+                    geometry={(nodes.pCube83_lambert27_0 as Mesh)?.geometry}
                     material={materials.lambert27}
                   />
                 </group>
@@ -1969,7 +1710,9 @@ export function Model(props) {
                     name="pCube86_pc_modelagem_blinn17_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube86_pc_modelagem_blinn17_0.geometry}
+                    geometry={
+                      (nodes.pCube86_pc_modelagem_blinn17_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn17}
                   />
                 </group>
@@ -1983,7 +1726,9 @@ export function Model(props) {
                     name="pCube87_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube87_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube87_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -1997,7 +1742,9 @@ export function Model(props) {
                     name="pCube88_pc_modelagem_blinn5_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube88_pc_modelagem_blinn5_0.geometry}
+                    geometry={
+                      (nodes.pCube88_pc_modelagem_blinn5_0 as Mesh)?.geometry
+                    }
                     material={materials.pc_modelagem_blinn5}
                   />
                 </group>
@@ -2010,7 +1757,7 @@ export function Model(props) {
                     name="pCube89_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube89_lambert1_0.geometry}
+                    geometry={(nodes.pCube89_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2023,7 +1770,9 @@ export function Model(props) {
                     name="pCube90_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube90_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube90_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -2036,7 +1785,9 @@ export function Model(props) {
                     name="pCube92_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube92_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube92_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -2049,7 +1800,9 @@ export function Model(props) {
                     name="pCube94_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube94_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube94_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -2063,7 +1816,7 @@ export function Model(props) {
                     name="pCube96_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube96_lambert1_0.geometry}
+                    geometry={(nodes.pCube96_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2077,7 +1830,7 @@ export function Model(props) {
                     name="pCube97_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube97_lambert1_0.geometry}
+                    geometry={(nodes.pCube97_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2091,7 +1844,7 @@ export function Model(props) {
                     name="pCube98_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube98_lambert1_0.geometry}
+                    geometry={(nodes.pCube98_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2123,7 +1876,9 @@ export function Model(props) {
                     name="pCube103_aiStandardSurface6_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube103_aiStandardSurface6_0.geometry}
+                    geometry={
+                      (nodes.pCube103_aiStandardSurface6_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface6}
                   />
                 </group>
@@ -2285,14 +2040,14 @@ export function Model(props) {
                     name="pCube104_lambert21_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube104_lambert21_0.geometry}
+                    geometry={(nodes.pCube104_lambert21_0 as Mesh)?.geometry}
                     material={materials.lambert21}
                   />
                   <mesh
                     name="pCube104_lambert27_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube104_lambert27_0.geometry}
+                    geometry={(nodes.pCube104_lambert27_0 as Mesh)?.geometry}
                     material={materials.lambert27}
                   />
                 </group>
@@ -2305,14 +2060,14 @@ export function Model(props) {
                     name="pCube105_lambert21_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube105_lambert21_0.geometry}
+                    geometry={(nodes.pCube105_lambert21_0 as Mesh)?.geometry}
                     material={materials.lambert21}
                   />
                   <mesh
                     name="pCube105_lambert27_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube105_lambert27_0.geometry}
+                    geometry={(nodes.pCube105_lambert27_0 as Mesh)?.geometry}
                     material={materials.lambert27}
                   />
                 </group>
@@ -2325,14 +2080,14 @@ export function Model(props) {
                     name="pCube106_lambert21_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube106_lambert21_0.geometry}
+                    geometry={(nodes.pCube106_lambert21_0 as Mesh)?.geometry}
                     material={materials.lambert21}
                   />
                   <mesh
                     name="pCube106_lambert27_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube106_lambert27_0.geometry}
+                    geometry={(nodes.pCube106_lambert27_0 as Mesh)?.geometry}
                     material={materials.lambert27}
                   />
                 </group>
@@ -2360,7 +2115,9 @@ export function Model(props) {
                     name="pCube107_aiStandardSurface2_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube107_aiStandardSurface2_0.geometry}
+                    geometry={
+                      (nodes.pCube107_aiStandardSurface2_0 as Mesh)?.geometry
+                    }
                     material={materials.aiStandardSurface2}
                   />
                 </group>
@@ -2373,7 +2130,7 @@ export function Model(props) {
                     name="pCylinder73_lambert33_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder73_lambert33_0.geometry}
+                    geometry={(nodes.pCylinder73_lambert33_0 as Mesh)?.geometry}
                     material={materials.lambert33}
                   />
                 </group>
@@ -2386,7 +2143,7 @@ export function Model(props) {
                     name="pCylinder74_lambert33_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder74_lambert33_0.geometry}
+                    geometry={(nodes.pCylinder74_lambert33_0 as Mesh)?.geometry}
                     material={materials.lambert33}
                   />
                 </group>
@@ -2399,7 +2156,7 @@ export function Model(props) {
                     name="pCylinder75_lambert33_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder75_lambert33_0.geometry}
+                    geometry={(nodes.pCylinder75_lambert33_0 as Mesh)?.geometry}
                     material={materials.lambert33}
                   />
                 </group>
@@ -2412,7 +2169,7 @@ export function Model(props) {
                     name="pCylinder76_lambert33_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder76_lambert33_0.geometry}
+                    geometry={(nodes.pCylinder76_lambert33_0 as Mesh)?.geometry}
                     material={materials.lambert33}
                   />
                 </group>
@@ -2421,7 +2178,7 @@ export function Model(props) {
                     name="pCube110_lambert31_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube110_lambert31_0.geometry}
+                    geometry={(nodes.pCube110_lambert31_0 as Mesh)?.geometry}
                     material={materials.lambert31}
                   />
                 </group>
@@ -2434,14 +2191,14 @@ export function Model(props) {
                     name="pCube112_lambert29_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube112_lambert29_0.geometry}
+                    geometry={(nodes.pCube112_lambert29_0 as Mesh)?.geometry}
                     material={materials.lambert29}
                   />
                   <mesh
                     name="pCube112_lambert28_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube112_lambert28_0.geometry}
+                    geometry={(nodes.pCube112_lambert28_0 as Mesh)?.geometry}
                     material={materials.lambert28}
                   />
                 </group>
@@ -2454,14 +2211,14 @@ export function Model(props) {
                     name="pCube116_blinn25_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube116_blinn25_0.geometry}
+                    geometry={(nodes.pCube116_blinn25_0 as Mesh)?.geometry}
                     material={materials.blinn25}
                   />
                   <mesh
                     name="pCube116_lambert30_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube116_lambert30_0.geometry}
+                    geometry={(nodes.pCube116_lambert30_0 as Mesh)?.geometry}
                     material={materials.lambert30}
                   />
                 </group>
@@ -2474,14 +2231,14 @@ export function Model(props) {
                     name="pCube118_blinn25_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube118_blinn25_0.geometry}
+                    geometry={(nodes.pCube118_blinn25_0 as Mesh)?.geometry}
                     material={materials.blinn25}
                   />
                   <mesh
                     name="pCube118_lambert30_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube118_lambert30_0.geometry}
+                    geometry={(nodes.pCube118_lambert30_0 as Mesh)?.geometry}
                     material={materials.lambert30}
                   />
                 </group>
@@ -2494,14 +2251,14 @@ export function Model(props) {
                     name="pCube119_lambert29_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube119_lambert29_0.geometry}
+                    geometry={(nodes.pCube119_lambert29_0 as Mesh)?.geometry}
                     material={materials.lambert29}
                   />
                   <mesh
                     name="pCube119_lambert28_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube119_lambert28_0.geometry}
+                    geometry={(nodes.pCube119_lambert28_0 as Mesh)?.geometry}
                     material={materials.lambert28}
                   />
                 </group>
@@ -2515,7 +2272,7 @@ export function Model(props) {
                     name="pCube120_lambert31_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube120_lambert31_0.geometry}
+                    geometry={(nodes.pCube120_lambert31_0 as Mesh)?.geometry}
                     material={materials.lambert31}
                   />
                 </group>
@@ -2529,7 +2286,7 @@ export function Model(props) {
                     name="pCylinder77_lambert32_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder77_lambert32_0.geometry}
+                    geometry={(nodes.pCylinder77_lambert32_0 as Mesh)?.geometry}
                     material={materials.lambert32}
                   />
                 </group>
@@ -2543,7 +2300,7 @@ export function Model(props) {
                     name="pCylinder78_lambert32_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder78_lambert32_0.geometry}
+                    geometry={(nodes.pCylinder78_lambert32_0 as Mesh)?.geometry}
                     material={materials.lambert32}
                   />
                 </group>
@@ -2557,7 +2314,7 @@ export function Model(props) {
                     name="pCylinder79_lambert32_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder79_lambert32_0.geometry}
+                    geometry={(nodes.pCylinder79_lambert32_0 as Mesh)?.geometry}
                     material={materials.lambert32}
                   />
                 </group>
@@ -2571,7 +2328,7 @@ export function Model(props) {
                     name="pCylinder80_lambert32_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder80_lambert32_0.geometry}
+                    geometry={(nodes.pCylinder80_lambert32_0 as Mesh)?.geometry}
                     material={materials.lambert32}
                   />
                 </group>
@@ -2594,7 +2351,7 @@ export function Model(props) {
                     name="pCylinder83_lambert43_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder83_lambert43_0.geometry}
+                    geometry={(nodes.pCylinder83_lambert43_0 as Mesh)?.geometry}
                     material={materials.lambert43}
                   />
                 </group>
@@ -2607,7 +2364,7 @@ export function Model(props) {
                     name="pCube121_blinn26_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube121_blinn26_0.geometry}
+                    geometry={(nodes.pCube121_blinn26_0 as Mesh)?.geometry}
                     material={materials.blinn26}
                   />
                 </group>
@@ -2620,7 +2377,7 @@ export function Model(props) {
                     name="pCylinder84_lambert43_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder84_lambert43_0.geometry}
+                    geometry={(nodes.pCylinder84_lambert43_0 as Mesh)?.geometry}
                     material={materials.lambert43}
                   />
                 </group>
@@ -2633,7 +2390,7 @@ export function Model(props) {
                     name="pCube122_blinn26_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCube122_blinn26_0.geometry}
+                    geometry={(nodes.pCube122_blinn26_0 as Mesh)?.geometry}
                     material={materials.blinn26}
                   />
                 </group>
@@ -2647,7 +2404,7 @@ export function Model(props) {
                     name="pCylinder85_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder85_lambert1_0.geometry}
+                    geometry={(nodes.pCylinder85_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2661,7 +2418,7 @@ export function Model(props) {
                     name="pCylinder86_lambert1_0"
                     castShadow
                     receiveShadow
-                    geometry={nodes.pCylinder86_lambert1_0.geometry}
+                    geometry={(nodes.pCylinder86_lambert1_0 as Mesh)?.geometry}
                     material={materials.lambert1}
                   />
                 </group>
@@ -2674,7 +2431,8 @@ export function Model(props) {
   );
 }
 
-useGLTF.preload("/pc_gamer_animation.glb");
+useGLTF.preload("/assets/models/pc_gamer_animation.glb");
+export default PcModel;
 
 // rembrandt
 

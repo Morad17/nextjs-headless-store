@@ -1,5 +1,20 @@
 .build-pc-page {
   .build-pc-content {
     display: flex;
+    justify-content: space-between;
+  }
+  .left-section,
+  .right-section {
+    width: 49vw;
+  }
+  .model-pc {
+    min-height: 500px;
+    display: flex;
+    justify-content: center;
+    div {
+      width: 500px !important;
+      height: 500px !important;
+      cursor: pointer;
+    }
   }
 }
