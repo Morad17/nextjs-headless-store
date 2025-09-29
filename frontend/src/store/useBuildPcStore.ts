@@ -9,10 +9,7 @@ export interface Category {
   description?: string;
   required: boolean;
   order?: number;
-  maxAllowance: number;
-  products?: {
-    data: Product[];
-  };
+  maxAllowance?: number;
 }
 
 export interface SelectedComponent {
@@ -41,14 +38,14 @@ interface BuildPcState {
 
   // Actions
   fetchCategories: () => Promise<void>;
-  selectCategory: (categoryId: number) => Promise<void>;
+  fetchProductsByCategory: (categoryId: number) => Promise<void>; // Add this line
+  selectCategory: (categoryId: number) => void;
   selectProductForCategory: (
     product: Product,
     categoryId: number,
     categoryName: string
   ) => void;
   removeComponentFromCategory: (categoryId: number) => void;
-  toggleShowRequiredOnly: () => void;
 
   // Computed getters
   getRequiredCategories: () => Category[];
@@ -87,7 +84,7 @@ export const useBuildPcStore = create<BuildPcState>()(
             const response = await fetch(
               `${
                 process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-              }/api/categories?sort*=order:asc`,
+              }/api/categories?sort=order:asc`,
               {
                 headers: {
                   Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
@@ -102,6 +99,11 @@ export const useBuildPcStore = create<BuildPcState>()(
             }
 
             const data = await response.json();
+
+            // Debug: Log the actual structure
+            console.log("Categories data:", data);
+            console.log("First category:", data.data?.[0]);
+
             set({
               categories: data.data,
               categoriesLoading: false,
@@ -117,23 +119,29 @@ export const useBuildPcStore = create<BuildPcState>()(
           }
         },
 
-        selectCategory: async (categoryId: number) => {
+        // Add this new function
+        fetchProductsByCategory: async (categoryId: number) => {
           const { categories } = get();
           const category = categories.find((cat) => cat.id === categoryId);
 
-          if (!category) return;
+          if (!category) {
+            set({ productsError: "Category not found" });
+            return;
+          }
 
           set({
-            selectedCategoryId: categoryId,
             productsLoading: true,
             productsError: null,
           });
 
           try {
+            // Filter products by category name matching pCategory.name
             const response = await fetch(
               `${
                 process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-              }/api/products?populate=*&filters[category][id][$eq]=${categoryId}`,
+              }/api/products?populate=*&filters[pCategory][name][$eq]=${encodeURIComponent(
+                category.name
+              )}`,
               {
                 headers: {
                   Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
@@ -161,6 +169,12 @@ export const useBuildPcStore = create<BuildPcState>()(
               productsLoading: false,
             });
           }
+        },
+
+        selectCategory: (categoryId: number) => {
+          set({ selectedCategoryId: categoryId });
+          // Optionally auto-fetch products when category is selected
+          get().fetchProductsByCategory(categoryId);
         },
 
         selectProductForCategory: (
@@ -194,19 +208,12 @@ export const useBuildPcStore = create<BuildPcState>()(
           });
         },
 
-        toggleShowRequiredOnly: () => {
-          set({ showRequiredOnly: !get().showRequiredOnly });
-        },
-
         // Computed getters
         getRequiredCategories: () => {
           return get().categories.filter((cat) => cat.required);
         },
 
         getOptionalCategories: () => {
-          return get().categories.filter((cat) => !cat.required);
-        },
-        getSortedCategories: () => {
           return get().categories.filter((cat) => !cat.required);
         },
 
@@ -229,7 +236,9 @@ export const useBuildPcStore = create<BuildPcState>()(
 
         getTotalPrice: () => {
           return get().selectedComponents.reduce(
-            (total, component) => total + (component.product?.price || 0),
+            (total, component) =>
+              total +
+              (component.product?.price || component.product.price || 0),
             0
           );
         },

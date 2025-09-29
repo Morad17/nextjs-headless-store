@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     justify-content: space-around;
     overflow-y: scroll;
-    height: 700px;
+    max-height: 700px;
     &::-webkit-scrollbar {
       width: 12px;
     }

@@ -24,6 +24,7 @@ export default function BuildPc() {
     getTotalPrice,
     isBuildComplete,
   } = useBuildPcStore();
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -53,8 +54,16 @@ export default function BuildPc() {
             <div className="all-categories">
               <h3>Select Category:</h3>
               {categories.map((cat, key) => {
+                const isSelected = selectedCategoryId === cat.id;
                 return (
-                  <div className={`category-btn `} key={key}>
+                  <div
+                    className={`category-btn ${
+                      cat.required ? "required" : "optional"
+                    } ${isSelected ? "active" : ""}`}
+                    key={key}
+                    onClick={() => selectCategory(cat.id)}
+                    style={{ cursor: "pointer" }}
+                  >
                     {cat.name}
                     {cat.required && <p className="required-r">R</p>}
                   </div>
@@ -68,12 +77,22 @@ export default function BuildPc() {
       <div className="build-progress">
         <div className="total-cost">
           <h3 className="cost-title">Your Total Build Cost:</h3>
-          <p>£100</p>
+          <p>£{getTotalPrice().toFixed(2)}</p>
         </div>
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
+            const isSelected = selectedCategoryId === cat.id;
+            const hasComponent = getSelectedComponentForCategory(cat.id);
+
             return (
-              <div className="category-progress-btn" key={key}>
+              <div
+                className={`category-progress-btn ${
+                  isSelected ? "active" : ""
+                } ${hasComponent ? "completed" : ""}`}
+                key={key}
+                onClick={() => selectCategory(cat.id)}
+                style={{ cursor: "pointer" }}
+              >
                 {cat.name}
               </div>
             );
