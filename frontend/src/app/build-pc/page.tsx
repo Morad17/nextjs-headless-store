@@ -15,8 +15,10 @@ export default function BuildPc() {
     categoriesError,
     selectedCategoryId,
     selectedComponents,
+    showMainComponents,
     fetchCategories,
     selectCategory,
+    toggleComponentType,
     getSelectedComponentForCategory,
     getUnselectedRequiredCategories,
     getRequiredCategories,
@@ -30,6 +32,11 @@ export default function BuildPc() {
   }, [fetchCategories]);
 
   const requiredCategories = getRequiredCategories();
+
+  // Get categories to display based on toggle
+  const displayedCategories = showMainComponents
+    ? getRequiredCategories()
+    : getOptionalCategories();
 
   return (
     <div className="build-pc-page">
@@ -52,23 +59,67 @@ export default function BuildPc() {
         <section className="right-section">
           <div className="category-order">
             <div className="all-categories">
-              <h3>Select Category:</h3>
-              {categories.map((cat, key) => {
-                const isSelected = selectedCategoryId === cat.id;
-                return (
-                  <div
-                    className={`category-btn ${
-                      cat.required ? "required" : "optional"
-                    } ${isSelected ? "active" : ""}`}
-                    key={key}
-                    onClick={() => selectCategory(cat.id)}
-                    style={{ cursor: "pointer" }}
+              <div className="category-type-selector">
+                <div className="main-components">
+                  <a
+                    className={`cts-btn ${showMainComponents ? "active" : ""}`}
+                    onClick={() => toggleComponentType(true)}
                   >
-                    {cat.name}
-                    {cat.required && <p className="required-r">R</p>}
-                  </div>
-                );
-              })}
+                    Main Components ({getRequiredCategories().length})
+                  </a>
+                </div>
+                <div className="add-on-components">
+                  <a
+                    className={`cts-btn ${!showMainComponents ? "active" : ""}`}
+                    onClick={() => toggleComponentType(false)}
+                  >
+                    Add ons ({getOptionalCategories().length})
+                  </a>
+                </div>
+              </div>
+
+              {categoriesLoading && <p>Loading categories...</p>}
+              {categoriesError && (
+                <p className="error">Error: {categoriesError}</p>
+              )}
+
+              {!categoriesLoading &&
+                !categoriesError &&
+                displayedCategories.map((cat, key) => {
+                  const isSelected = selectedCategoryId === cat.id;
+                  return (
+                    <div
+                      className={`category-btn `}
+                      key={key}
+                      onClick={() => selectCategory(cat.id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img
+                        src={`/assets/icons/${cat.slug}.png`}
+                        className="category-icon"
+                        alt={cat.name}
+                        onError={(e) => {
+                          // Fallback to default icon if specific icon doesn't exist
+                          e.currentTarget.src = "/assets/icons/default.png";
+                        }}
+                      />
+                      {cat.name}
+                      {/* {cat.required && <p className="required-r">R</p>} */}
+                    </div>
+                  );
+                })}
+
+              {!categoriesLoading &&
+                !categoriesError &&
+                displayedCategories.length === 0 && (
+                  <p className="no-categories">
+                    No{" "}
+                    {showMainComponents
+                      ? "main components"
+                      : "add-on components"}{" "}
+                    available.
+                  </p>
+                )}
             </div>
           </div>
           <Products />

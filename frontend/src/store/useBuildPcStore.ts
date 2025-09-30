@@ -36,6 +36,8 @@ interface BuildPcState {
   // UI state
   showRequiredOnly: boolean;
 
+  showMainComponents: boolean; // true = main components, false = add-ons
+
   // Actions
   fetchCategories: () => Promise<void>;
   fetchProductsByCategory: (categoryId: number) => Promise<void>; // Add this line
@@ -46,6 +48,7 @@ interface BuildPcState {
     categoryName: string
   ) => void;
   removeComponentFromCategory: (categoryId: number) => void;
+  toggleComponentType: (showMain: boolean) => void; // Add this action
 
   // Computed getters
   getRequiredCategories: () => Category[];
@@ -75,6 +78,8 @@ export const useBuildPcStore = create<BuildPcState>()(
         selectedComponents: [],
 
         showRequiredOnly: false,
+
+        showMainComponents: true, // Start with main components
 
         // Actions
         fetchCategories: async () => {
@@ -208,6 +213,11 @@ export const useBuildPcStore = create<BuildPcState>()(
           });
         },
 
+        // Add this new action
+        toggleComponentType: (showMain: boolean) => {
+          set({ showMainComponents: showMain });
+        },
+
         // Computed getters
         getRequiredCategories: () => {
           return get().categories.filter((cat) => cat.required);
@@ -252,6 +262,7 @@ export const useBuildPcStore = create<BuildPcState>()(
         name: "build-pc-store",
         partialize: (state) => ({
           selectedComponents: state.selectedComponents,
+          showMainComponents: state.showMainComponents, // Persist this state
         }),
       }
     ),
