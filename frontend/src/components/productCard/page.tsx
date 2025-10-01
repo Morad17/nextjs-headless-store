@@ -18,7 +18,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
 
-  const { addToOrder, currentOrder } = useOrderStore();
+  const { addToOrder, currentOrder, replaceOrderItem } = useOrderStore();
   const { showMainComponents, categories, selectedCategoryId } =
     useBuildPcStore();
 
@@ -65,96 +65,124 @@ export default function ProductCard({
   );
   const isInOrder = !!existingOrderItem;
 
-  const handleIncrement = () => {
+  // Check if there's already a product from this category in the order
+  const existingCategoryItem = currentOrder.find(
+    (item) =>
+      item.category === categoryName && item.isMainComponent === isMainComponent
+  );
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
     if (quantity < maxAllowance) {
       setQuantity((prev) => prev + 1);
     }
   };
 
-  const handleDecrement = () => {
-    if (quantity > 0) {
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    if (quantity > 1) {
+      // Changed from 0 to 1 for minimum quantity
       setQuantity((prev) => prev - 1);
     }
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    if (value >= 0 && value <= maxAllowance) {
+    e.stopPropagation(); // Prevent card click
+    const value = parseInt(e.target.value) || 1;
+    if (value >= 1 && value <= maxAllowance) {
       setQuantity(value);
     }
   };
 
-  const handleAddToOrder = () => {
-    if (quantity > 0) {
-      addToOrder(product, quantity, categoryName, isMainComponent);
-      console.log(`Added ${quantity} of ${title} to order`);
+  const handleMoreInfoClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking "More Info"
+  };
+
+  const handleCardClick = () => {
+    const orderQuantity = maxAllowance > 1 ? quantity : 1;
+
+    if (maxAllowance === 1 && existingCategoryItem && !isInOrder) {
+      // Replace existing item in this category if maxAllowance is 1
+      replaceOrderItem(
+        existingCategoryItem.product.id,
+        product,
+        orderQuantity,
+        categoryName,
+        isMainComponent
+      );
+      console.log(
+        `Replaced ${
+          existingCategoryItem.product?.name ||
+          existingCategoryItem.product.name
+        } with ${title} in ${categoryName}`
+      );
+    } else {
+      // Normal add/update behavior
+      addToOrder(product, orderQuantity, categoryName, isMainComponent);
+      console.log(`Added ${orderQuantity} of ${title} to order`, currentOrder);
     }
   };
 
   return (
-    <div className="product-card">
+    <div
+      className={`product-card ${isInOrder ? "in-order" : ""} ${
+        existingCategoryItem && !isInOrder && maxAllowance === 1
+          ? "will-replace"
+          : ""
+      }`}
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+    >
       <div className="product-image">
         <Image src={imageUrl} alt={title} fill />
       </div>
       <div className="product-text">
         <h3 className="product-title">{title}</h3>
-        {/* <p className="sub-category">{subCategory}</p> */}
         <div className="product-cost-info-row">
           <p className="product-cost">+ £{price.toFixed(2)}</p>
-          <div className="more-info-btn">
+          <div className="more-info-btn" onClick={handleMoreInfoClick}>
             <a href={`/products/${slug}`}>Info</a>
           </div>
         </div>
       </div>
-      <div className="product-actions">
-        <div className="product-quantity">
-          <button
-            type="button"
-            className="decrement-btn"
-            onClick={handleDecrement}
-            disabled={quantity <= 0}
-            aria-label="Decrease quantity"
-          >
-            -
-          </button>
 
-          <input
-            type="number"
-            value={quantity}
-            onChange={handleQuantityChange}
-            min="0"
-            max={maxAllowance}
-            className="quantity-input"
-            aria-label="Product quantity"
-            readOnly
-          />
+      {/* Only show quantity controls if maxAllowance > 1 */}
+      {maxAllowance > 1 && (
+        <div className="product-actions">
+          <div className="product-quantity">
+            <button
+              type="button"
+              className="decrement-btn"
+              onClick={handleDecrement}
+              disabled={quantity <= 1}
+              aria-label="Decrease quantity"
+            >
+              -
+            </button>
 
-          <button
-            type="button"
-            className="increment-btn"
-            onClick={handleIncrement}
-            disabled={quantity >= maxAllowance || maxAllowance === 0}
-            aria-label="Increase quantity"
-          >
-            +
-          </button>
+            <input
+              type="number"
+              value={quantity}
+              onChange={handleQuantityChange}
+              min="1"
+              max={maxAllowance}
+              className="quantity-input"
+              aria-label="Product quantity"
+              readOnly
+            />
+
+            <button
+              type="button"
+              className="increment-btn"
+              onClick={handleIncrement}
+              disabled={quantity >= maxAllowance}
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
         </div>
-
-        <button
-          type="button"
-          className={`select-btn ${isInOrder ? "in-order" : ""} ${
-            quantity > 0 ? "active" : ""
-          }`}
-          disabled={quantity === 0 || maxAllowance === 0}
-          onClick={handleAddToOrder}
-        >
-          {isInOrder
-            ? `Update Order (${existingOrderItem?.quantity})`
-            : quantity > 0
-            ? `Add ${quantity} to Order`
-            : "Select"}
-        </button>
-      </div>
+      )}
     </div>
   );
 }

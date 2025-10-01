@@ -7,6 +7,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import Products from "@/components/products-list/page";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
+import { useOrderStore } from "@/store/useOrderStore";
 
 export default function BuildPc() {
   const {
@@ -27,6 +28,10 @@ export default function BuildPc() {
     isBuildComplete,
   } = useBuildPcStore();
 
+  // Add order store functions
+  const { clearOrder, currentOrder, getOrderTotal, getMainComponents } =
+    useOrderStore();
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -37,6 +42,29 @@ export default function BuildPc() {
   const displayedCategories = showMainComponents
     ? getRequiredCategories()
     : getOptionalCategories();
+
+  // Handle reset order with confirmation
+  const handleResetOrder = () => {
+    if (currentOrder.length === 0) {
+      alert("Order is already empty!");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to reset your order? This will remove all ${currentOrder.length} items from your order.`
+    );
+
+    if (confirmed) {
+      clearOrder();
+      alert("Order has been reset successfully!");
+    }
+  };
+
+  // Function to check if a category has a main component selected in the order
+  const isCategoryInOrder = (categoryName: string) => {
+    const mainComponents = getMainComponents();
+    return mainComponents.some((item) => item.category === categoryName);
+  };
 
   return (
     <div className="build-pc-page">
@@ -133,23 +161,43 @@ export default function BuildPc() {
       <div className="build-progress">
         <div className="total-cost">
           <h3 className="cost-title">Your Total Build Cost:</h3>
-          <p>£{getTotalPrice().toFixed(2)}</p>
+          <p>£{getOrderTotal().toFixed(2)}</p>
+        </div>
+        <div className="reset-order-button">
+          <button
+            className={`reset-btn ${
+              currentOrder.length === 0 ? "disabled" : ""
+            }`}
+            onClick={handleResetOrder}
+            disabled={currentOrder.length === 0}
+            title={
+              currentOrder.length === 0
+                ? "No items to reset"
+                : "Reset all items in order"
+            }
+          >
+            🗑️ Reset Order
+          </button>
         </div>
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
             const isSelected = selectedCategoryId === cat.id;
             const hasComponent = getSelectedComponentForCategory(cat.id);
+            const categoryName = cat?.name;
+            const isInOrder = isCategoryInOrder(categoryName);
 
             return (
               <div
                 className={`category-progress-btn ${
                   isSelected ? "active" : ""
-                } ${hasComponent ? "completed" : ""}`}
+                } ${hasComponent ? "completed" : ""} ${
+                  isInOrder ? "in-order" : ""
+                }`}
                 key={key}
-                onClick={() => selectCategory(cat.id)}
-                style={{ cursor: "pointer" }}
+                // Remove onClick functionality
+                style={{ cursor: "default" }}
               >
-                {cat.name}
+                {categoryName}
               </div>
             );
           })}

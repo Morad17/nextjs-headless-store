@@ -29,6 +29,13 @@ interface OrderState {
   removeFromOrder: (productId: number) => void;
   updateOrderItemQuantity: (productId: number, quantity: number) => void;
   clearOrder: () => void;
+  replaceOrderItem: (
+    oldProductId: number,
+    newProduct: Product,
+    quantity: number,
+    category: string,
+    isMainComponent: boolean
+  ) => void;
 
   // Customer actions
   setCustomerInfo: (name: string, email: string) => void;
@@ -279,6 +286,34 @@ export const useOrderStore = create<OrderState>()(
             customerInfo.name.trim() !== "" && customerInfo.email.trim() !== "";
 
           return hasMainComponents && hasCustomerInfo;
+        },
+
+        replaceOrderItem: (
+          oldProductId: number,
+          newProduct: Product,
+          quantity: number,
+          category: string,
+          isMainComponent: boolean
+        ) => {
+          const { currentOrder } = get();
+          const unitPrice = newProduct?.price || newProduct.price || 0;
+          const totalPrice = unitPrice * quantity;
+
+          // Remove the old product and add the new one
+          const updatedOrder = currentOrder.filter(
+            (item) => item.product.id !== oldProductId
+          );
+
+          const newItem: OrderItem = {
+            product: newProduct,
+            quantity,
+            unitPrice,
+            totalPrice,
+            category,
+            isMainComponent,
+          };
+
+          set({ currentOrder: [...updatedOrder, newItem] });
         },
       }),
       {
