@@ -1,7 +1,7 @@
 // src/lib/types.ts
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   description: string;
@@ -87,15 +87,41 @@ export interface SubCategory {
   };
 }
 
-// Updated BasketItem to match new structure
-export interface BasketItem {
-  id: string;
-  name: string;
-  price: number;
+export interface OrderItem {
+  id?: number;
+  product: Product;
   quantity: number;
-  image?: string; // Optional since images might not always be available
-  slug: string;
-  specifications?: Record<string, any>;
+  unitPrice: number;
+  totalPrice: number;
+  category: string;
+  isMainComponent: boolean;
+}
+
+export interface Order {
+  id?: number;
+  attributes?: {
+    orderNumber: string;
+    customerEmail?: string;
+    customerName?: string;
+    totalPrice: number;
+    status: "pending" | "confirmed" | "processing" | "completed" | "cancelled";
+    orderItems: OrderItem[];
+    createdAt?: string;
+    updatedAt?: string;
+  };
+  // Direct properties for local state
+  orderNumber?: string;
+  customerEmail?: string;
+  customerName?: string;
+  totalPrice?: number;
+  status?: "pending" | "confirmed" | "processing" | "completed" | "cancelled";
+  orderItems?: OrderItem[];
+}
+
+export interface BasketItem {
+  id: number;
+  quantity: number;
+  product: Product;
 }
 
 export interface CheckoutSession {

@@ -2,7 +2,7 @@
   .products-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    gap: 2rem;
     overflow-y: scroll;
     max-height: 700px;
     &::-webkit-scrollbar {

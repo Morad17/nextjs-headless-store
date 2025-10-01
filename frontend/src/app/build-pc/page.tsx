@@ -58,8 +58,13 @@ export default function BuildPc() {
         </section>
         <section className="right-section">
           <div className="category-order">
-            <div className="all-categories">
-              <div className="category-type-selector">
+            <div className="categories-section">
+              <div
+                //Toggle for main components / Add On //
+                className={`category-type-selector ${
+                  !showMainComponents ? "add-ons-active" : ""
+                }`}
+              >
                 <div className="main-components">
                   <a
                     className={`cts-btn ${showMainComponents ? "active" : ""}`}
@@ -77,49 +82,49 @@ export default function BuildPc() {
                   </a>
                 </div>
               </div>
-
-              {categoriesLoading && <p>Loading categories...</p>}
-              {categoriesError && (
-                <p className="error">Error: {categoriesError}</p>
-              )}
-
-              {!categoriesLoading &&
-                !categoriesError &&
-                displayedCategories.map((cat, key) => {
-                  const isSelected = selectedCategoryId === cat.id;
-                  return (
-                    <div
-                      className={`category-btn `}
-                      key={key}
-                      onClick={() => selectCategory(cat.id)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <img
-                        src={`/assets/icons/${cat.slug}.png`}
-                        className="category-icon"
-                        alt={cat.name}
-                        onError={(e) => {
-                          // Fallback to default icon if specific icon doesn't exist
-                          e.currentTarget.src = "/assets/icons/default.png";
-                        }}
-                      />
-                      {cat.name}
-                      {/* {cat.required && <p className="required-r">R</p>} */}
-                    </div>
-                  );
-                })}
-
-              {!categoriesLoading &&
-                !categoriesError &&
-                displayedCategories.length === 0 && (
-                  <p className="no-categories">
-                    No{" "}
-                    {showMainComponents
-                      ? "main components"
-                      : "add-on components"}{" "}
-                    available.
-                  </p>
+              <div className="all-categories">
+                {categoriesLoading && <p>Loading categories...</p>}
+                {categoriesError && (
+                  <p className="error">Error: {categoriesError}</p>
                 )}
+
+                {!categoriesLoading &&
+                  !categoriesError &&
+                  displayedCategories.map((cat, key) => {
+                    const isSelected = selectedCategoryId === cat.id;
+                    return (
+                      <div
+                        className={`category-btn `}
+                        key={key}
+                        onClick={() => selectCategory(cat.id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <img
+                          src={`/assets/icons/${cat.slug}.png`}
+                          className="category-icon"
+                          alt={cat.name}
+                          onError={(e) => {
+                            // Fallback to default icon if specific icon doesn't exist
+                            e.currentTarget.src = "/assets/icons/default.png";
+                          }}
+                        />
+                        {cat.name}
+                      </div>
+                    );
+                  })}
+
+                {!categoriesLoading &&
+                  !categoriesError &&
+                  displayedCategories.length === 0 && (
+                    <p className="no-categories">
+                      No{" "}
+                      {showMainComponents
+                        ? "main components"
+                        : "add-on components"}{" "}
+                      available.
+                    </p>
+                  )}
+              </div>
             </div>
           </div>
           <Products />

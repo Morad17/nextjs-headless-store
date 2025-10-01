@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/types";
+import { useOrderStore } from "@/store/useOrderStore";
+import { useBuildPcStore } from "@/store/useBuildPcStore";
 import "./productCard.scss";
 
 import placeholder from "../../../public/assets/images/placeholder-image.png";
 
 interface ProductCardProps {
   product: Product;
-  maxAllowance: number; // Add this prop
+  maxAllowance?: number;
 }
 
 export default function ProductCard({
   product,
-  maxAllowance,
+  maxAllowance = 1,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
+
+  const { addToOrder, currentOrder } = useOrderStore();
+  const { showMainComponents, categories, selectedCategoryId } =
+    useBuildPcStore();
 
   // Extract data from product object
   const {
@@ -42,7 +48,22 @@ export default function ProductCard({
   };
 
   const imageUrl = getImageUrl();
-  const subCategory = pSubCategory?.name || "Uncategorized";
+  const subCategory =
+    pSubCategory?.name || pSubCategory?.name || "Uncategorized";
+
+  // Get category info
+  const selectedCategory = categories.find(
+    (cat) => cat.id === selectedCategoryId
+  );
+  const categoryName =
+    selectedCategory?.name || selectedCategory?.name || "Unknown";
+  const isMainComponent = showMainComponents;
+
+  // Check if product is already in order
+  const existingOrderItem = currentOrder.find(
+    (item) => item.product.id === product.id
+  );
+  const isInOrder = !!existingOrderItem;
 
   const handleIncrement = () => {
     if (quantity < maxAllowance) {
@@ -63,6 +84,13 @@ export default function ProductCard({
     }
   };
 
+  const handleAddToOrder = () => {
+    if (quantity > 0) {
+      addToOrder(product, quantity, categoryName, isMainComponent);
+      console.log(`Added ${quantity} of ${title} to order`);
+    }
+  };
+
   return (
     <div className="product-card">
       <div className="product-image">
@@ -70,6 +98,7 @@ export default function ProductCard({
       </div>
       <div className="product-text">
         <h3 className="product-title">{title}</h3>
+        {/* <p className="sub-category">{subCategory}</p> */}
         <div className="product-cost-info-row">
           <p className="product-cost">+ £{price.toFixed(2)}</p>
           <div className="more-info-btn">
@@ -113,16 +142,17 @@ export default function ProductCard({
 
         <button
           type="button"
-          className={`select-btn ${quantity > 0 ? "active" : ""}`}
+          className={`select-btn ${isInOrder ? "in-order" : ""} ${
+            quantity > 0 ? "active" : ""
+          }`}
           disabled={quantity === 0 || maxAllowance === 0}
-          onClick={() => {
-            if (quantity > 0) {
-              console.log(`Added ${quantity} of ${title} to cart`);
-              console.log("Product:", product);
-            }
-          }}
+          onClick={handleAddToOrder}
         >
-          {quantity > 0 ? `Add ${quantity} to Cart` : "Select"}
+          {isInOrder
+            ? `Update Order (${existingOrderItem?.quantity})`
+            : quantity > 0
+            ? `Add ${quantity} to Order`
+            : "Select"}
         </button>
       </div>
     </div>
