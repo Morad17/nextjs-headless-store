@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Product } from "@/lib/types";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
+import { toast } from "react-toastify"; // Add this import
 import "./productCard.scss";
 
 import placeholder from "../../../public/assets/images/placeholder-image.png";
@@ -18,7 +19,8 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
 
-  const { addToOrder, currentOrder, replaceOrderItem } = useOrderStore();
+  const { addToOrder, currentOrder, replaceOrderItem, removeFromOrder } =
+    useOrderStore();
   const { showMainComponents, categories, selectedCategoryId } =
     useBuildPcStore();
 
@@ -55,8 +57,7 @@ export default function ProductCard({
   const selectedCategory = categories.find(
     (cat) => cat.id === selectedCategoryId
   );
-  const categoryName =
-    selectedCategory?.name || selectedCategory?.name || "Unknown";
+  const categoryName = selectedCategory?.name || "Unknown";
   const isMainComponent = showMainComponents;
 
   // Check if product is already in order
@@ -81,7 +82,6 @@ export default function ProductCard({
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
     if (quantity > 1) {
-      // Changed from 0 to 1 for minimum quantity
       setQuantity((prev) => prev - 1);
     }
   };
@@ -99,6 +99,14 @@ export default function ProductCard({
   };
 
   const handleCardClick = () => {
+    // If product is already in order, remove it (unselect)
+    if (isInOrder) {
+      removeFromOrder(product.id);
+      toast.info(`${title} removed from order`);
+      console.log(`Removed ${title} from order`);
+      return;
+    }
+
     const orderQuantity = maxAllowance > 1 ? quantity : 1;
 
     if (maxAllowance === 1 && existingCategoryItem && !isInOrder) {
@@ -110,16 +118,17 @@ export default function ProductCard({
         categoryName,
         isMainComponent
       );
+      toast.success(
+        `Replaced ${existingCategoryItem.product.name} with ${title}`
+      );
       console.log(
-        `Replaced ${
-          existingCategoryItem.product?.name ||
-          existingCategoryItem.product.name
-        } with ${title} in ${categoryName}`
+        `Replaced ${existingCategoryItem.product.name} with ${title} in ${categoryName}`
       );
     } else {
-      // Normal add/update behavior
+      // Normal add behavior
       addToOrder(product, orderQuantity, categoryName, isMainComponent);
-      console.log(`Added ${orderQuantity} of ${title} to order`, currentOrder);
+      toast.success(`${title} added to order`);
+      console.log(`Added ${orderQuantity} of ${title} to order`);
     }
   };
 
@@ -146,8 +155,8 @@ export default function ProductCard({
         </div>
       </div>
 
-      {/* Only show quantity controls if maxAllowance > 1 */}
-      {maxAllowance > 1 && (
+      {/* Only show quantity controls if maxAllowance > 1 and not in order */}
+      {maxAllowance > 1 && !isInOrder && (
         <div className="product-actions">
           <div className="product-quantity">
             <button

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./global.scss";
 import Navbar from "@/components/navigation/Navbar";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,6 +18,18 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <Navbar />
         {children}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );

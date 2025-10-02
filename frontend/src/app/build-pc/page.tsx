@@ -8,6 +8,8 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import Products from "@/components/products-list/page";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
 import { useOrderStore } from "@/store/useOrderStore";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify"; // Add this import
 
 export default function BuildPc() {
   const {
@@ -32,6 +34,9 @@ export default function BuildPc() {
   const { clearOrder, currentOrder, getOrderTotal, getMainComponents } =
     useOrderStore();
 
+  // Add router for navigation
+  const router = useRouter();
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -46,7 +51,7 @@ export default function BuildPc() {
   // Handle reset order with confirmation
   const handleResetOrder = () => {
     if (currentOrder.length === 0) {
-      alert("Order is already empty!");
+      toast.info("Order is already empty!");
       return;
     }
 
@@ -56,7 +61,7 @@ export default function BuildPc() {
 
     if (confirmed) {
       clearOrder();
-      alert("Order has been reset successfully!");
+      toast.success("Order has been reset successfully!");
     }
   };
 
@@ -65,6 +70,40 @@ export default function BuildPc() {
     const mainComponents = getMainComponents();
     return mainComponents.some((item) => item.category === categoryName);
   };
+
+  // Function to check if all main components are selected
+  const areAllMainComponentsSelected = () => {
+    const mainComponents = getMainComponents();
+    const requiredCategoryNames = requiredCategories.map((cat) => cat.name);
+
+    // Check if every required category has at least one main component in the order
+    return requiredCategoryNames.every((categoryName) =>
+      mainComponents.some((item) => item.category === categoryName)
+    );
+  };
+
+  // Handle complete order click - always clickable, shows toast if incomplete
+  const handleCompleteOrder = () => {
+    if (areAllMainComponentsSelected()) {
+      toast.success("All components selected! Proceeding to order summary...");
+      setTimeout(() => {
+        router.push("/order-summary");
+      }, 1000); // Small delay to show the success toast
+    } else {
+      const missingCategories = requiredCategories
+        .filter((cat) => !isCategoryInOrder(cat.name))
+        .map((cat) => cat.name);
+
+      toast.warning(
+        `Please select components for: ${missingCategories.join(", ")}`,
+        {
+          autoClose: 5000, // Longer duration for warning message
+        }
+      );
+    }
+  };
+
+  const isOrderComplete = areAllMainComponentsSelected();
 
   return (
     <div className="build-pc-page">
@@ -110,7 +149,10 @@ export default function BuildPc() {
                   </a>
                 </div>
               </div>
-              <div className="all-categories">
+
+              <div
+                className="all-categories" //All Categories //
+              >
                 {categoriesLoading && <p>Loading categories...</p>}
                 {categoriesError && (
                   <p className="error">Error: {categoriesError}</p>
@@ -122,7 +164,9 @@ export default function BuildPc() {
                     const isSelected = selectedCategoryId === cat.id;
                     return (
                       <div
-                        className={`category-btn `}
+                        className={`category-btn ${
+                          isSelected ? "selected" : ""
+                        } `}
                         key={key}
                         onClick={() => selectCategory(cat.id)}
                         style={{ cursor: "pointer" }}
@@ -181,7 +225,6 @@ export default function BuildPc() {
         </div>
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
-            const isSelected = selectedCategoryId === cat.id;
             const hasComponent = getSelectedComponentForCategory(cat.id);
             const categoryName = cat?.name;
             const isInOrder = isCategoryInOrder(categoryName);
@@ -189,10 +232,8 @@ export default function BuildPc() {
             return (
               <div
                 className={`category-progress-btn ${
-                  isSelected ? "active" : ""
-                } ${hasComponent ? "completed" : ""} ${
-                  isInOrder ? "in-order" : ""
-                }`}
+                  hasComponent ? "completed" : ""
+                } ${isInOrder ? "in-order" : ""}`}
                 key={key}
                 // Remove onClick functionality
                 style={{ cursor: "default" }}
@@ -203,9 +244,22 @@ export default function BuildPc() {
           })}
         </div>
         <div className="compete-order">
-          <a href="" className="complete-order-btn">
-            Complete
-          </a>
+          <button
+            className={`complete-order-btn ${
+              isOrderComplete ? "complete" : "incomplete"
+            }`}
+            onClick={handleCompleteOrder}
+            // Remove disabled attribute - always clickable
+            title={
+              isOrderComplete
+                ? "Complete your order"
+                : `Missing ${
+                    requiredCategories.length - getMainComponents().length
+                  } main components`
+            }
+          >
+            Complete Order
+          </button>
         </div>
       </div>
     </div>

@@ -44,7 +44,7 @@
         left: 4px;
         width: calc(50% - 4px);
         height: calc(100% - 8px);
-        background: linear-gradient(135deg, #ed1c24, #9d0409);
+        background: linear-gradient(135deg, $amdRed, #9d0409);
         border-radius: 21px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
@@ -54,7 +54,7 @@
       // Move the background when add-ons is active
       &.add-ons-active::before {
         transform: translateX(100%);
-        background: linear-gradient(135deg, #28a745, #1e7e34);
+        background: linear-gradient(135deg, $nvidiaGreen, #1e7e34);
         box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
       }
 
@@ -120,8 +120,8 @@
     }
 
     &.selected {
-      background: #007bff;
-      border-color: #0056b3;
+      background: $nvidiaGreen;
+      border-color: $nvidiaGreen;
     }
   }
 
@@ -138,21 +138,13 @@
     padding: 0 5px;
   }
 
-  .required-r {
-    background-color: red;
-    color: white;
-    padding: 5px;
-    border-radius: 50px;
-    margin-left: 5px;
-  }
-
   .reset-order-button {
     display: flex;
     flex-direction: column;
     align-items: center;
 
     .reset-btn {
-      background: #dc3545;
+      background: $amdRed;
       color: white;
       border: none;
       padding: 12px 20px;
@@ -210,11 +202,6 @@
         transition: all 0.3s ease;
         position: relative;
 
-        &.active {
-          background-color: #007bff;
-          color: white;
-        }
-
         &.completed {
           background-color: #28a745;
           color: white;
@@ -222,7 +209,7 @@
 
         // New state: when category is in order (red background)
         &.in-order {
-          background-color: #dc3545;
+          background-color: $amdRed;
           color: white;
 
           // Add a subtle glow effect
@@ -231,12 +218,12 @@
 
         // Priority order for states (if multiple states apply)
         &.in-order.active {
-          background-color: #dc3545; // Keep red even if active
+          background-color: $amdRed;
           box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
         }
 
         &.in-order.completed {
-          background-color: #dc3545; // Keep red even if completed
+          background-color: $amdRed; // Keep red even if completed
         }
 
         // First button
@@ -252,19 +239,88 @@
       }
     }
 
-    .complete-order-btn {
-      border: 1px solid black;
-      padding: 20px;
-      text-decoration: none;
-      color: white;
-      background-color: rgb(33, 110, 34);
-      font-size: 1.2rem;
-      border-radius: 4px;
-      transition: all 0.3s ease;
+    .compete-order {
+      .complete-order-btn {
+        padding: 20px 24px;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        min-width: 160px;
 
-      &:hover {
-        background-color: rgb(28, 95, 30);
+        // Silver state (incomplete)
+        &.incomplete {
+          background: linear-gradient(135deg, #8e9aaf, #6c757d);
+          color: white;
+
+          &:hover {
+            background: linear-gradient(135deg, #7a8595, #5a6268);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+
+        // Green state (complete)
+        &.complete {
+          background: linear-gradient(135deg, #28a745, #20c997);
+          color: white;
+
+          &:hover {
+            background: linear-gradient(135deg, #218838, #1aa179);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+
+        // Smooth transition animation
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
       }
     }
   }
+}
+
+// Custom toast styling to match your theme
+:global(.Toastify__toast-container) {
+  font-family: inherit;
+}
+
+:global(.Toastify__toast--success) {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+:global(.Toastify__toast--warning) {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+:global(.Toastify__toast--info) {
+  background: linear-gradient(135deg, #17a2b8, #007bff);
+}
+
+:global(.Toastify__progress-bar--success) {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+:global(.Toastify__progress-bar--warning) {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+:global(.Toastify__progress-bar--info) {
+  background: rgba(255, 255, 255, 0.7);
 }

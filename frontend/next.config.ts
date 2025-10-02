@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  sassOptions: {
+    additionalData: `@import "src/scss/variables.scss";`,
+  },
 };
 
 export default nextConfig;
