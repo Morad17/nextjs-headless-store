@@ -143,7 +143,13 @@ export default function ProductCard({
       style={{ cursor: "pointer" }}
     >
       <div className="product-image">
-        <Image src={imageUrl} alt={title} fill />
+        <Image
+          src={imageUrl}
+          alt={title}
+          width={200}
+          height={150}
+          style={{ objectFit: "cover", width: "100%", height: "100%" }}
+        />
       </div>
       <div className="product-text">
         <h3 className="product-title">{title}</h3>
