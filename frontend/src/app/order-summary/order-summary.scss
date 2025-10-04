@@ -125,7 +125,7 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 8px;
-
+    overflow-y: scroll;
     .order-summary-title {
       margin: 0 0 20px 0;
       color: #333;
@@ -156,7 +156,30 @@
       }
     }
   }
+  .hr-divider {
+    border: 0.5px solid silver;
+    width: 100%;
+  }
+  //Order summary list
+  .order-component-group {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid silver;
+    align-items: center;
+    h3 {
+      margin: 10px 0;
+      color: #4d4d4d;
+    }
+    span {
+      gap: 10px;
+      display: flex;
+    }
 
+    .order-component-name {
+      font-size: 0.9rem;
+      color: rgb(148, 148, 148);
+    }
+  }
   .order-summary-cost {
     height: 15%;
     background-color: grey;

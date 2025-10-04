@@ -114,7 +114,41 @@ export default function OrderSummary() {
 
         <div className="right-section">
           <h2 className="order-summary-title">Order Summary</h2>
-          {}
+          <div className="order-component-group">
+            {" "}
+            <h3 className="order-category">Case</h3>
+            <span>
+              <h3 className="order-component-name">
+                {caseComponent.product.name}
+              </h3>
+              <h3 className="order-price">£{caseComponent.totalPrice}</h3>
+            </span>
+          </div>
+          {mainComponents?.map((co, key) => {
+            return (
+              <>
+                <div className="order-component-group">
+                  <h3 className="order-category">{co.category}</h3>
+                  <span>
+                    <h3 className="order-component-name">{co.product.name}</h3>
+                    <h3 className="order-price">£{co.totalPrice}</h3>
+                  </span>
+                </div>
+              </>
+            );
+          })}
+          {addOnComponents?.map((co, key) => {
+            return (
+              <div className="order-component-group">
+                {" "}
+                <h3 className="order-category">{co.category}</h3>
+                <span>
+                  <h3 className="order-component-name">{co.product.name}</h3>
+                  <h3 className="order-price">£{co.totalPrice}</h3>
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
