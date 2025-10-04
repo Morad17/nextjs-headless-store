@@ -30,11 +30,9 @@ export default function BuildPc() {
     isBuildComplete,
   } = useBuildPcStore();
 
-  // Add order store functions
   const { clearOrder, currentOrder, getOrderTotal, getMainComponents } =
     useOrderStore();
 
-  // Add router for navigation
   const router = useRouter();
 
   useEffect(() => {
@@ -48,7 +46,7 @@ export default function BuildPc() {
     ? getRequiredCategories()
     : getOptionalCategories();
 
-  // Handle reset order with confirmation
+  // Reset Order
   const handleResetOrder = () => {
     if (currentOrder.length === 0) {
       toast.info("Order is already empty!");
@@ -65,13 +63,13 @@ export default function BuildPc() {
     }
   };
 
-  // Function to check if a category has a main component selected in the order
+  // check if a category has a main component selected in the order
   const isCategoryInOrder = (categoryName: string) => {
     const mainComponents = getMainComponents();
     return mainComponents.some((item) => item.category === categoryName);
   };
 
-  // Function to check if all main components are selected
+  // check if all main components are selected
   const areAllMainComponentsSelected = () => {
     const mainComponents = getMainComponents();
     const requiredCategoryNames = requiredCategories.map((cat) => cat.name);
@@ -88,7 +86,7 @@ export default function BuildPc() {
       toast.success("All components selected! Proceeding to order summary...");
       setTimeout(() => {
         router.push("/order-summary");
-      }, 1000); // Small delay to show the success toast
+      }, 1000);
     } else {
       const missingCategories = requiredCategories
         .filter((cat) => !isCategoryInOrder(cat.name))
@@ -97,7 +95,7 @@ export default function BuildPc() {
       toast.warning(
         `Please select components for: ${missingCategories.join(", ")}`,
         {
-          autoClose: 5000, // Longer duration for warning message
+          autoClose: 5000,
         }
       );
     }

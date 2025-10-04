@@ -1,0 +1,15 @@
+.order-summary-page {
+  .order-component-image {
+    position: relative;
+    width: 100%;
+    max-width: 200px;
+    height: 150px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 auto;
+
+    img {
+      object-fit: cover;
+    }
+  }
+}
