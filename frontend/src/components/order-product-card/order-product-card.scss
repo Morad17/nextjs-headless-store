@@ -1,0 +1,27 @@
+.order-component-card {
+  width: 20%;
+  background: grey;
+  border-radius: 10px;
+  border: 3px solid transparent;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.order-card-image {
+  position: relative;
+  width: 75%;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 auto;
+
+  img {
+    object-fit: cover;
+  }
+}
+.order-card-title {
+  h3 {
+    margin: 5px;
+    font-size: 0.9rem;
+  }
+}

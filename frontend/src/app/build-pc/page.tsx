@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import "./build-pc.scss";
-import PcModel from "./PcModel";
+import PcModel from "../../components/pc-model/PcModel";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import Products from "@/components/products-list/page";

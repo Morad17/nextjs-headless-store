@@ -99,23 +99,14 @@ export interface OrderItem {
 
 export interface Order {
   id?: number;
-  attributes?: {
-    orderNumber: string;
-    customerEmail?: string;
-    customerName?: string;
-    totalPrice: number;
-    status: "pending" | "confirmed" | "processing" | "completed" | "cancelled";
-    orderItems: OrderItem[];
-    createdAt?: string;
-    updatedAt?: string;
-  };
-  // Direct properties for local state
-  orderNumber?: string;
+  orderNumber: string;
   customerEmail?: string;
   customerName?: string;
-  totalPrice?: number;
-  status?: "pending" | "confirmed" | "processing" | "completed" | "cancelled";
-  orderItems?: OrderItem[];
+  totalPrice: number;
+  status: "pending" | "confirmed" | "processing" | "completed" | "cancelled";
+  orderItems: OrderItem[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface BasketItem {
