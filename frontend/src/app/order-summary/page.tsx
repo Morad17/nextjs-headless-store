@@ -5,24 +5,46 @@ import React, { useEffect, useState } from "react";
 import PcModel from "../../components/pc-model/PcModel";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import "./order-summary.scss";
 import OrderProductCard from "@/components/order-product-card/page";
 
-export default function OrderSummary() {
+export default function OrderSummaryPage() {
+  return (
+    <ProtectedRoute>
+      <OrderSummary />
+    </ProtectedRoute>
+  );
+}
+
+function OrderSummary() {
   const { fetchOrders, currentOrder, orderLoading, orderError, getOrderTotal } =
     useOrderStore();
 
   // State for toggle
   const [showMainComponents, setShowMainComponents] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     fetchOrders();
   }, [fetchOrders]);
 
   useEffect(() => {
     console.log(currentOrder);
   }, [currentOrder]);
+
+  // Don't render until we're on the client
+  if (!isClient) {
+    return (
+      <div className="order-summary-page">
+        <div className="loading-placeholder">
+          <p>Loading order summary...</p>
+        </div>
+      </div>
+    );
+  }
 
   const orderTotal = getOrderTotal();
 
@@ -31,9 +53,9 @@ export default function OrderSummary() {
     (cat) => cat.category === "Cases"
   )[0];
 
-  const nonCaseComponents = currentOrder?.filter(
-    (cat) => cat.category !== "Cases"
-  );
+  const nonCaseComponents =
+    currentOrder?.filter((cat) => cat.category !== "Cases") || [];
+
   const mainComponents = nonCaseComponents.filter(
     (com) => com.isMainComponent === true
   );
@@ -114,33 +136,35 @@ export default function OrderSummary() {
 
         <div className="right-section">
           <h2 className="order-summary-title">Order Summary</h2>
-          <div className="order-component-group">
-            {" "}
-            <h3 className="order-category">Case</h3>
-            <span>
-              <h3 className="order-component-name">
-                {caseComponent.product.name}
-              </h3>
-              <h3 className="order-price">£{caseComponent.totalPrice}</h3>
-            </span>
-          </div>
+
+          {/* Only render case component if it exists */}
+          {caseComponent && (
+            <div className="order-component-group">
+              <h3 className="order-category">Case</h3>
+              <span>
+                <h3 className="order-component-name">
+                  {caseComponent.product.name}
+                </h3>
+                <h3 className="order-price">£{caseComponent.totalPrice}</h3>
+              </span>
+            </div>
+          )}
+
           {mainComponents?.map((co, key) => {
             return (
-              <>
-                <div className="order-component-group">
-                  <h3 className="order-category">{co.category}</h3>
-                  <span>
-                    <h3 className="order-component-name">{co.product.name}</h3>
-                    <h3 className="order-price">£{co.totalPrice}</h3>
-                  </span>
-                </div>
-              </>
+              <div className="order-component-group" key={`main-${key}`}>
+                <h3 className="order-category">{co.category}</h3>
+                <span>
+                  <h3 className="order-component-name">{co.product.name}</h3>
+                  <h3 className="order-price">£{co.totalPrice}</h3>
+                </span>
+              </div>
             );
           })}
+
           {addOnComponents?.map((co, key) => {
             return (
-              <div className="order-component-group">
-                {" "}
+              <div className="order-component-group" key={`addon-${key}`}>
                 <h3 className="order-category">{co.category}</h3>
                 <span>
                   <h3 className="order-component-name">{co.product.name}</h3>
@@ -154,7 +178,7 @@ export default function OrderSummary() {
 
       <div className="order-summary-cost">
         <div className="price-total">
-          <h2>Order Total: £{orderTotal.toFixed(2)}</h2>
+          <h2>Order Total: £{orderTotal?.toFixed(2) || "0.00"}</h2>
         </div>
         <div className="checkout-button">
           <button className="pay-now-btn">Pay Now</button>

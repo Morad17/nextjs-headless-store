@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Order, OrderItem, Product } from "@/lib/types";
+import { useAuthStore } from "./useAuthStore";
 
 interface OrderState {
   // Current order being built
@@ -158,36 +159,30 @@ export const useOrderStore = create<OrderState>()(
             const totalPrice = get().getOrderTotal();
 
             const orderData = {
-              data: {
-                orderNumber,
-                customerEmail: customerInfo.email,
-                customerName: customerInfo.name,
-                totalPrice,
-                status: "pending",
-                orderItems: currentOrder.map((item) => ({
-                  product: item.product.id,
-                  quantity: item.quantity,
-                  unitPrice: item.unitPrice,
-                  totalPrice: item.totalPrice,
-                  category: item.category,
-                  isMainComponent: item.isMainComponent,
-                })),
-              },
+              orderNumber,
+              customerEmail: customerInfo.email,
+              customerName: customerInfo.name,
+              totalPrice,
+              status: "pending",
+              orderItems: currentOrder.map((item) => ({
+                product: item.product.id,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                totalPrice: item.totalPrice,
+                category: item.category,
+                isMainComponent: item.isMainComponent,
+              })),
             };
 
             const response = await fetch(
-              `${
-                process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-              }/api/orders`,
+              `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/orders`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-                    ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`
-                    : "",
+                  Authorization: `Bearer ${useAuthStore.getState().jwt}`,
                 },
-                body: JSON.stringify(orderData),
+                body: JSON.stringify({ data: orderData }),
               }
             );
 
