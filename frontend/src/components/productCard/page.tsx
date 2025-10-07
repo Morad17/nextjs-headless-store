@@ -3,7 +3,8 @@ import Image from "next/image";
 import { Product } from "@/lib/types";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
-import { toast } from "react-toastify"; // Add this import
+import { toast } from "react-toastify";
+import ProductInfoModal from "@/components/product-info-modal/page";
 import "./productCard.scss";
 
 import placeholder from "../../../public/assets/images/placeholder-image.png";
@@ -18,6 +19,7 @@ export default function ProductCard({
   maxAllowance = 1,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add this state
 
   const { addToOrder, currentOrder, replaceOrderItem, removeFromOrder } =
     useOrderStore();
@@ -95,7 +97,12 @@ export default function ProductCard({
   };
 
   const handleMoreInfoClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when clicking "More Info"
+    e.stopPropagation();
+    setIsModalOpen(true); // Open modal instead of navigation
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleCardClick = () => {
@@ -133,71 +140,81 @@ export default function ProductCard({
   };
 
   return (
-    <div
-      className={`product-card ${isInOrder ? "in-order" : ""} ${
-        existingCategoryItem && !isInOrder && maxAllowance === 1
-          ? "will-replace"
-          : ""
-      }`}
-      onClick={handleCardClick}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="product-image">
-        <Image
-          src={imageUrl}
-          alt={title}
-          width={200}
-          height={150}
-          style={{ objectFit: "cover", width: "100%", height: "100%" }}
-        />
-      </div>
-      <div className="product-text">
-        <h3 className="product-title">{title}</h3>
-        <div className="product-cost-info-row">
-          <p className="product-cost">+ £{price.toFixed(2)}</p>
-          <div className="more-info-btn" onClick={handleMoreInfoClick}>
-            <a href={`/products/${slug}`}>Info</a>
+    <>
+      <div
+        className={`product-card ${isInOrder ? "in-order" : ""} ${
+          existingCategoryItem && !isInOrder && maxAllowance === 1
+            ? "will-replace"
+            : ""
+        }`}
+        onClick={handleCardClick}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="product-image">
+          <Image
+            src={imageUrl}
+            alt={title}
+            width={200}
+            height={150}
+            style={{ objectFit: "cover", width: "100%", height: "100%" }}
+          />
+        </div>
+        <div className="product-text">
+          <h3 className="product-title">{title}</h3>
+          <div className="product-cost-info-row">
+            <p className="product-cost">+ £{price.toFixed(2)}</p>
+            <div className="more-info-btn" onClick={handleMoreInfoClick}>
+              <button type="button">Info</button>{" "}
+              {/* Changed from <a> to <button> */}
+            </div>
           </div>
         </div>
+
+        {/* Only show quantity controls if maxAllowance > 1 and not in order */}
+        {maxAllowance > 1 && !isInOrder && (
+          <div className="product-actions">
+            <div className="product-quantity">
+              <button
+                type="button"
+                className="decrement-btn"
+                onClick={handleDecrement}
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
+              >
+                -
+              </button>
+
+              <input
+                type="number"
+                value={quantity}
+                onChange={handleQuantityChange}
+                min="1"
+                max={maxAllowance}
+                className="quantity-input"
+                aria-label="Product quantity"
+                readOnly
+              />
+
+              <button
+                type="button"
+                className="increment-btn"
+                onClick={handleIncrement}
+                disabled={quantity >= maxAllowance}
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Only show quantity controls if maxAllowance > 1 and not in order */}
-      {maxAllowance > 1 && !isInOrder && (
-        <div className="product-actions">
-          <div className="product-quantity">
-            <button
-              type="button"
-              className="decrement-btn"
-              onClick={handleDecrement}
-              disabled={quantity <= 1}
-              aria-label="Decrease quantity"
-            >
-              -
-            </button>
-
-            <input
-              type="number"
-              value={quantity}
-              onChange={handleQuantityChange}
-              min="1"
-              max={maxAllowance}
-              className="quantity-input"
-              aria-label="Product quantity"
-              readOnly
-            />
-
-            <button
-              type="button"
-              className="increment-btn"
-              onClick={handleIncrement}
-              disabled={quantity >= maxAllowance}
-              aria-label="Increase quantity"
-            >
-              +
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Add the modal */}
+      <ProductInfoModal
+        product={product}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 }

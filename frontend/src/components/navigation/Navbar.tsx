@@ -15,10 +15,11 @@ export default function Navigation() {
 
       <div className="nav-links">
         <Link href="/">Home</Link>
-        <Link href="/build-pc">Build PC</Link>
-
         {(isAuthenticated || isGuest) && (
-          <Link href="/order-summary">My Build</Link>
+          <>
+            <Link href="/build-pc">Build PC</Link>
+            <Link href="/order-summary">My Build</Link>
+          </>
         )}
       </div>
 

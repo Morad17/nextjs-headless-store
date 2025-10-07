@@ -10,6 +10,7 @@ import { useBuildPcStore } from "@/store/useBuildPcStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify"; // Add this import
+import ProductInfoModal from "@/components/product-info-modal/page";
 
 export default function BuildPc() {
   const {
