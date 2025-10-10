@@ -3,16 +3,34 @@
 import React, { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+import LoginForm from "./LoginForm";
 import "../auth/auth-options.scss";
 import "./homepage.scss";
 import Image from "next/image";
-import Link from "next/link";
+
+interface AuthMode {
+  title: string;
+  subtitle: string;
+  fields: Array<{
+    name: string;
+    type: string;
+    label: string;
+    placeholder: string;
+    required: boolean;
+    minLength?: number;
+  }>;
+  submitText: string;
+  loadingText: string;
+  switchModeText?: string;
+  switchModeAction?: string;
+  showGuestInfo?: boolean;
+}
 
 interface AuthOptionsProps {
   onAuthComplete?: () => void;
 }
 
-export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
+export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
   const [mode, setMode] = useState<"choice" | "login" | "signup" | "guest">(
     "choice"
   );
@@ -28,6 +46,82 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
   const { login, register, setGuestUser } = useAuthStore();
   const router = useRouter();
 
+  // Auth mode configurations
+  const authModes: Record<string, AuthMode> = {
+    login: {
+      title: "Welcome Back",
+      subtitle: "Login to your account",
+      fields: [
+        {
+          name: "email",
+          type: "email",
+          label: "Email",
+          placeholder: "Enter your email",
+          required: true,
+        },
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
+          placeholder: "Enter your password",
+          required: true,
+        },
+      ],
+      submitText: "Login",
+      loadingText: "Logging in...",
+      switchModeText: "Don't have an account? Sign up here",
+      switchModeAction: "signup",
+    },
+    signup: {
+      title: "Create Account",
+      subtitle: "Sign up to save your builds",
+      fields: [
+        {
+          name: "username",
+          type: "text",
+          label: "Username",
+          placeholder: "Choose a username",
+          required: true,
+        },
+        {
+          name: "email",
+          type: "email",
+          label: "Email",
+          placeholder: "Enter your email",
+          required: true,
+        },
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
+          placeholder: "Create a password",
+          required: true,
+          minLength: 6,
+        },
+      ],
+      submitText: "Sign Up",
+      loadingText: "Creating account...",
+      switchModeText: "Already have an account? Login here",
+      switchModeAction: "login",
+    },
+    guest: {
+      title: "Continue as Guest",
+      subtitle: "Just tell us your name to get started",
+      fields: [
+        {
+          name: "guestName",
+          type: "text",
+          label: "Your Name",
+          placeholder: "Enter your name",
+          required: true,
+        },
+      ],
+      submitText: "Start Building",
+      loadingText: "Starting...",
+      showGuestInfo: true,
+    },
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -36,53 +130,50 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     setError("");
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const success = await login(formData.email, formData.password);
+    let success = false;
 
-    if (success) {
-      router.push("/build-pc");
-      onAuthComplete?.();
-    } else {
-      setError("Invalid credentials. Please try again.");
+    try {
+      switch (mode) {
+        case "login":
+          success = await login(formData.email, formData.password);
+          if (!success) {
+            setError("Invalid credentials. Please try again.");
+          }
+          break;
+        case "signup":
+          success = await register(
+            formData.username,
+            formData.email,
+            formData.password
+          );
+          if (!success) {
+            setError("Registration failed. Email might already be in use.");
+          }
+          break;
+        case "guest":
+          if (formData.guestName.trim()) {
+            setGuestUser(formData.guestName.trim());
+            success = true;
+          } else {
+            setError("Please enter your name to continue as guest.");
+          }
+          break;
+      }
+
+      if (success) {
+        router.push("/build-pc");
+        onAuthComplete?.();
+      }
+    } catch (error) {
+      setError("An unexpected error occurred. Please try again.");
     }
 
     setLoading(false);
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const success = await register(
-      formData.username,
-      formData.email,
-      formData.password
-    );
-
-    if (success) {
-      router.push("/build-pc");
-      onAuthComplete?.();
-    } else {
-      setError("Registration failed. Email might already be in use.");
-    }
-
-    setLoading(false);
-  };
-
-  const handleGuest = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.guestName.trim()) {
-      setGuestUser(formData.guestName.trim());
-      router.push("/build-pc");
-      onAuthComplete?.();
-    } else {
-      setError("Please enter your name to continue as guest.");
-    }
   };
 
   const resetForm = () => {
@@ -100,71 +191,70 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     resetForm();
   };
 
-  if (mode === "choice") {
-    return (
-      <div className="homepage">
-        <div className="banner">
-          <div className="banner-text">
-            <h2 className="banner-title">Game With Style</h2>
-            <p className="banner-caption">
-              Create your own Pc and elevate your Gaming Experience now
+  const handleSwitchMode = (newMode: string) => {
+    setMode(newMode as "login" | "signup" | "guest");
+    resetForm();
+  };
+
+  return (
+    <div className="homepage">
+      {/* Homepage content - always visible */}
+      <div className="banner">
+        <div className="banner-text">
+          <h2 className="banner-title">Game With Style</h2>
+          <p className="banner-caption">
+            Create your own Pc and elevate your Gaming Experience now
+          </p>
+        </div>
+        <Image
+          className="banner-image"
+          src="/assets/images/gaming-pc.png"
+          alt="Pc"
+          width={300}
+          height={200}
+        />
+      </div>
+
+      <div className="homepage-info">
+        <div className="card card-1">
+          <Image src="/assets/gif/cpu.gif" alt="Pc" width={300} height={200} />
+          <div className="card-info">
+            <h3 className="card-title">Aesthetic Builds</h3>
+            <p className="card-text">
+              Choose the style thats right for you, from our large list of
+              aesthetic cases.
             </p>
           </div>
+        </div>
+        <div className="card card-2">
           <Image
-            className="banner-image"
-            src="/assets/images/gaming-pc.png"
+            src="/assets/gif/graphic-card.gif"
             alt="Pc"
             width={300}
             height={200}
           />
-        </div>
-        <div className="homepage-info">
-          <div className=" card card-1">
-            <Image
-              src="/assets/gif/cpu.gif"
-              alt="Pc"
-              width={300}
-              height={200}
-            />
-            <div className="card-info">
-              <h3 className="card-title">Aesthetic Builds</h3>
-              <p className="card-text">
-                Choose the style thats right for you, from our large list of
-                aesthetic cases.
-              </p>
-            </div>
-          </div>
-          <div className=" card card-2">
-            <Image
-              src="/assets/gif/graphic-card.gif"
-              alt="Pc"
-              width={300}
-              height={200}
-            />
-            <div className="card-info">
-              <h3 className="card-title">Optimum Components</h3>
-              <p className="card-text">
-                Hand pick from our selection of components, with full specs of
-                each component on display.
-              </p>
-            </div>
-          </div>
-          <div className="card card-3">
-            <Image
-              src="/assets/gif/buy.gif"
-              alt="Pc"
-              width={300}
-              height={200}
-            />
-            <div className="card-info">
-              <h3 className="card-title">Buy With Confidence</h3>
-              <p className="card-text">
-                Prices are displayed at each step of the build process, so total
-                costs are fully transparent.
-              </p>
-            </div>
+          <div className="card-info">
+            <h3 className="card-title">Optimum Components</h3>
+            <p className="card-text">
+              Hand pick from our selection of components, with full specs of
+              each component on display.
+            </p>
           </div>
         </div>
+        <div className="card card-3">
+          <Image src="/assets/gif/buy.gif" alt="Pc" width={300} height={200} />
+          <div className="card-info">
+            <h3 className="card-title">Buy With Confidence</h3>
+            <p className="card-text">
+              Prices are displayed at each step of the build process, so total
+              costs are fully transparent.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Conditional auth section */}
+      {mode === "choice" ? (
         <div className="auth-options">
           <div className="auth-card">
             <h2 className="auth-title">Get Started</h2>
@@ -206,192 +296,18 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (mode === "login") {
-    return (
-      <div className="auth-options">
-        <div className="auth-card">
-          <button className="back-btn" onClick={goBack}>
-            ← Back
-          </button>
-          <h2 className="auth-title">Welcome Back</h2>
-          <p className="auth-subtitle">Login to your account</p>
-
-          <form onSubmit={handleLogin} className="auth-form">
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </button>
-
-            <p className="switch-mode">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("signup")}
-                className="link-btn"
-              >
-                Sign up here
-              </button>
-            </p>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (mode === "signup") {
-    return (
-      <div className="auth-options">
-        <div className="auth-card">
-          <button className="back-btn" onClick={goBack}>
-            ← Back
-          </button>
-          <h2 className="auth-title">Create Account</h2>
-          <p className="auth-subtitle">Sign up to save your builds</p>
-
-          <form onSubmit={handleSignup} className="auth-form">
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="Choose a username"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Create a password"
-                required
-                minLength={6}
-              />
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Creating account..." : "Sign Up"}
-            </button>
-
-            <p className="switch-mode">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("login")}
-                className="link-btn"
-              >
-                Login here
-              </button>
-            </p>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (mode === "guest") {
-    return (
-      <div className="auth-options">
-        <div className="auth-card">
-          <button className="back-btn" onClick={goBack}>
-            ← Back
-          </button>
-          <h2 className="auth-title">Continue as Guest</h2>
-          <p className="auth-subtitle">Just tell us your name to get started</p>
-
-          <form onSubmit={handleGuest} className="auth-form">
-            <div className="form-group">
-              <label htmlFor="guestName">Your Name</label>
-              <input
-                type="text"
-                id="guestName"
-                name="guestName"
-                value={formData.guestName}
-                onChange={handleInputChange}
-                placeholder="Enter your name"
-                required
-              />
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button type="submit" className="submit-btn">
-              Start Building
-            </button>
-
-            <div className="guest-info">
-              <p>
-                ⚠️ Note: As a guest, your builds won't be saved permanently.
-              </p>
-              <p>
-                Want to save your builds?{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("signup")}
-                  className="link-btn"
-                >
-                  Create an account
-                </button>
-              </p>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
+      ) : (
+        <LoginForm
+          mode={authModes[mode]}
+          formData={formData}
+          onInputChange={handleInputChange}
+          onSubmit={handleSubmit}
+          onBack={goBack}
+          onSwitchMode={handleSwitchMode}
+          loading={loading}
+          error={error}
+        />
+      )}
+    </div>
+  );
 }
