@@ -1,69 +1,8 @@
 .homepage {
-  .banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  .top-row {
     display: flex;
-    width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    background: #8cc484;
-    background: linear-gradient(
-      90deg,
-      rgba(140, 196, 132, 1) 45%,
-      rgba(255, 51, 51, 1) 100%
-    );
-  }
-  .banner-image {
-    width: 300px;
-    height: auto;
-    max-width: 100%;
-  }
-  .banner-title {
-    color: white;
-    font-size: 3rem;
-  }
-  .banner-caption {
-    font-size: 1.3rem;
-    color: white;
-    margin: 10px 0;
-  }
-  .banner-btn {
-    padding: 10px 15px;
-    font-size: 1.3rem;
-    color: white;
-    background-color: rgb(84, 17, 17);
-    border-radius: 15px;
-    border: 2px solid silver;
-    cursor: pointer;
-    text-decoration: none;
-    &:hover {
-      background-color: rgb(19, 92, 19);
-    }
-  }
-
-  .homepage-info {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-    .card {
-      border-radius: 15px;
-      text-align: center;
-      border: 3px solid gray;
-      max-width: 500px;
-      .card-info {
-        padding: 0 10px 10px 10px;
-        background-color: #c7c7c7;
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
-      }
-      .card-title {
-        text-align: left;
-        font-size: 1.5rem;
-        margin: 10px;
-      }
-      .card-text {
-        font-size: 1.2rem;
-        margin: 0;
-      }
-    }
   }
 }

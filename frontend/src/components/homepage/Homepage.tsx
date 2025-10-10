@@ -7,6 +7,7 @@ import LoginForm from "./LoginForm";
 import "../auth/auth-options.scss";
 import "./homepage.scss";
 import Image from "next/image";
+import BannerSlideshow from "../banner-slideshow/page";
 
 interface AuthMode {
   title: string;
@@ -198,116 +199,67 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
 
   return (
     <div className="homepage">
-      {/* Homepage content - always visible */}
-      <div className="banner">
-        <div className="banner-text">
-          <h2 className="banner-title">Game With Style</h2>
-          <p className="banner-caption">
-            Create your own Pc and elevate your Gaming Experience now
-          </p>
-        </div>
-        <Image
-          className="banner-image"
-          src="/assets/images/gaming-pc.png"
-          alt="Pc"
-          width={300}
-          height={200}
-        />
-      </div>
+      <div className="top-row">
+        {/* Homepage content - always visible */}
+        <BannerSlideshow />
 
-      <div className="homepage-info">
-        <div className="card card-1">
-          <Image src="/assets/gif/cpu.gif" alt="Pc" width={300} height={200} />
-          <div className="card-info">
-            <h3 className="card-title">Aesthetic Builds</h3>
-            <p className="card-text">
-              Choose the style thats right for you, from our large list of
-              aesthetic cases.
-            </p>
-          </div>
-        </div>
-        <div className="card card-2">
-          <Image
-            src="/assets/gif/graphic-card.gif"
-            alt="Pc"
-            width={300}
-            height={200}
-          />
-          <div className="card-info">
-            <h3 className="card-title">Optimum Components</h3>
-            <p className="card-text">
-              Hand pick from our selection of components, with full specs of
-              each component on display.
-            </p>
-          </div>
-        </div>
-        <div className="card card-3">
-          <Image src="/assets/gif/buy.gif" alt="Pc" width={300} height={200} />
-          <div className="card-info">
-            <h3 className="card-title">Buy With Confidence</h3>
-            <p className="card-text">
-              Prices are displayed at each step of the build process, so total
-              costs are fully transparent.
-            </p>
-          </div>
-        </div>
-      </div>
+        {/* Conditional auth section */}
+        {mode === "choice" ? (
+          <div className="auth-options">
+            <div className="auth-card">
+              <h2 className="auth-title">Get Started</h2>
+              <p className="auth-subtitle">Choose how you'd like to continue</p>
 
-      {/* Conditional auth section */}
-      {mode === "choice" ? (
-        <div className="auth-options">
-          <div className="auth-card">
-            <h2 className="auth-title">Get Started</h2>
-            <p className="auth-subtitle">Choose how you'd like to continue</p>
+              <div className="auth-buttons">
+                <button
+                  className="auth-btn login-btn"
+                  onClick={() => setMode("login")}
+                >
+                  <span className="btn-icon">👤</span>
+                  <span className="btn-text">
+                    <strong>Login</strong>
+                    <small>Access your saved builds</small>
+                  </span>
+                </button>
 
-            <div className="auth-buttons">
-              <button
-                className="auth-btn login-btn"
-                onClick={() => setMode("login")}
-              >
-                <span className="btn-icon">👤</span>
-                <span className="btn-text">
-                  <strong>Login</strong>
-                  <small>Access your saved builds</small>
-                </span>
-              </button>
+                <button
+                  className="auth-btn signup-btn"
+                  onClick={() => setMode("signup")}
+                >
+                  <span className="btn-icon">✨</span>
+                  <span className="btn-text">
+                    <strong>Sign Up</strong>
+                    <small>Create an account to save builds</small>
+                  </span>
+                </button>
 
-              <button
-                className="auth-btn signup-btn"
-                onClick={() => setMode("signup")}
-              >
-                <span className="btn-icon">✨</span>
-                <span className="btn-text">
-                  <strong>Sign Up</strong>
-                  <small>Create an account to save builds</small>
-                </span>
-              </button>
-
-              <button
-                className="auth-btn guest-btn"
-                onClick={() => setMode("guest")}
-              >
-                <span className="btn-icon">🚀</span>
-                <span className="btn-text">
-                  <strong>Continue as Guest</strong>
-                  <small>Start building right away</small>
-                </span>
-              </button>
+                <button
+                  className="auth-btn guest-btn"
+                  onClick={() => setMode("guest")}
+                >
+                  <span className="btn-icon">🚀</span>
+                  <span className="btn-text">
+                    <strong>Continue as Guest</strong>
+                    <small>Start building right away</small>
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <LoginForm
-          mode={authModes[mode]}
-          formData={formData}
-          onInputChange={handleInputChange}
-          onSubmit={handleSubmit}
-          onBack={goBack}
-          onSwitchMode={handleSwitchMode}
-          loading={loading}
-          error={error}
-        />
-      )}
+        ) : (
+          <LoginForm
+            mode={authModes[mode]}
+            formData={formData}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
+            onBack={goBack}
+            onSwitchMode={handleSwitchMode}
+            loading={loading}
+            error={error}
+          />
+        )}
+      </div>
+      <div className="bottom-row"></div>
     </div>
   );
 }
