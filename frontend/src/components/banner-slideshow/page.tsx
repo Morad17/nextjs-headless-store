@@ -9,7 +9,8 @@ interface Slide {
   id: number;
   title: string;
   caption: string;
-  image: string;
+  pcImage: string;
+  slideImage: string;
   alt: string;
 }
 
@@ -18,14 +19,16 @@ const slides: Slide[] = [
     id: 1,
     title: "Game With Style",
     caption: "Create your own PC and elevate your Gaming Experience now",
-    image: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/gaming-pc.png",
+    slideImage: "/assets/images/slide-bg-1.jpg",
     alt: "Gaming PC",
   },
   {
     id: 2,
     title: "Performance Unleashed",
     caption: "Experience ultimate performance with cutting-edge components",
-    image: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/gaming-pc.png",
+    slideImage: "/assets/images/slide-bg-2.jpg",
     alt: "High Performance PC",
   },
   {
@@ -33,7 +36,8 @@ const slides: Slide[] = [
     title: "Only The Best",
     caption:
       "Hand pick from our selection of components, with full specs of each component on display",
-    image: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/gaming-pc.png",
+    slideImage: "/assets/images/slide-bg-3.jpg",
     alt: "Premium Components",
   },
   {
@@ -41,7 +45,8 @@ const slides: Slide[] = [
     title: "Buy With Confidence",
     caption:
       "Prices are displayed at each step of the way, so the cost is fully transparent",
-    image: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/gaming-pc.png",
+    slideImage: "/assets/images/slide-bg-4.jpg",
     alt: "Transparent Pricing",
   },
 ];
@@ -49,12 +54,14 @@ const slides: Slide[] = [
 export default function BannerSlideshow() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [direction, setDirection] = useState(0); // Add direction tracking
 
   // Auto-advance slides
   useEffect(() => {
     if (!isAutoPlay) return;
 
     const interval = setInterval(() => {
+      setDirection(1); // Always forward for auto-advance
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4000); // Change slide every 4 seconds
 
@@ -62,31 +69,33 @@ export default function BannerSlideshow() {
   }, [isAutoPlay]);
 
   const goToSlide = (index: number) => {
+    setDirection(index > currentSlide ? 1 : -1);
     setCurrentSlide(index);
   };
 
   const goToPrevious = () => {
+    setDirection(-1);
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const goToNext = () => {
+    setDirection(1);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
-
-  // Animation variants
-  const slideVariants = {
+  // Vertical slides (up/down)
+  const verticalSlideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
+      y: direction > 0 ? -300 : 300,
       opacity: 0,
     }),
     center: {
       zIndex: 1,
-      x: 0,
+      y: 0,
       opacity: 1,
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction < 0 ? 300 : -300,
+      y: 300,
       opacity: 0,
     }),
   };
@@ -117,19 +126,28 @@ export default function BannerSlideshow() {
       onMouseLeave={() => setIsAutoPlay(true)}
     >
       <div className="slideshow-container">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentSlide}
             className="banner-slide"
-            variants={slideVariants}
+            custom={direction}
+            variants={verticalSlideVariants}
+            style={{
+              backgroundImage: `url(${slides[currentSlide].slideImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
             initial="enter"
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
+              y: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 },
             }}
           >
+            <div className="slide-overlay"></div>
+
             <motion.div
               className="banner-text"
               variants={textVariants}
@@ -149,7 +167,7 @@ export default function BannerSlideshow() {
             >
               <Image
                 className="banner-image"
-                src={slides[currentSlide].image}
+                src={slides[currentSlide].pcImage}
                 alt={slides[currentSlide].alt}
                 width={300}
                 height={200}
@@ -158,8 +176,6 @@ export default function BannerSlideshow() {
             </motion.div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Slide indicators */}
         <div className="slide-indicators">
           {slides.map((_, index) => (
             <button
@@ -171,7 +187,6 @@ export default function BannerSlideshow() {
           ))}
         </div>
 
-        {/* Progress bar */}
         <motion.div
           className="progress-bar"
           initial={{ scaleX: 0 }}

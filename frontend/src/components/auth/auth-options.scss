@@ -2,19 +2,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 500px;
-  padding: 2rem;
   border-radius: 20px;
-  margin: 2rem 0;
-  width: 40%;
+  width: 25%;
   .auth-card {
+    height: 450px;
     background: white;
     border-radius: 16px;
-    padding: 2.5rem;
+    padding: 25px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     .back-btn {
       position: absolute;

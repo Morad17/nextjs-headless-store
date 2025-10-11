@@ -1,13 +1,11 @@
 // src/components/banner-slideshow/bannerSlideshow.scss
 .banner-slideshow {
   position: relative;
-  width: 60%;
-  height: 400px;
+  width: 65%;
+  height: 500px;
   border-radius: 20px;
   overflow: hidden;
   margin: 2rem 0;
-  border-radius: 20px;
-  background-color: blue;
 
   .slideshow-container {
     position: relative;
@@ -23,16 +21,35 @@
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 2rem 3rem;
     color: white;
 
+    .slide-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    .banner-text,
+    .banner-image-container {
+      position: relative;
+      z-index: 2;
+    }
+
     .banner-text {
       flex: 1;
-      max-width: 50%;
-
+      max-width: 35%;
+      display: flex;
+      justify-content: start;
+      flex-direction: column;
+      height: 70%;
       .banner-title {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
         margin: 0 0 1rem 0;
         background: linear-gradient(45deg, #fff, #f0f8ff);
@@ -42,7 +59,7 @@
       }
 
       .banner-caption {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         line-height: 1.6;
         margin: 0;
         opacity: 0.9;
@@ -54,10 +71,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
+      max-width: 35%;
       .banner-image {
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease;
 
         &:hover {
@@ -67,50 +82,20 @@
     }
   }
 
-  // Navigation arrows
-  .nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-size: 2rem;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    z-index: 10;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    &.nav-arrow-left {
-      left: 1rem;
-    }
-
-    &.nav-arrow-right {
-      right: 1rem;
-    }
-  }
-
-  // Slide indicators
+  // Vertical slide indicators on the right
   .slide-indicators {
     position: absolute;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column; // Stack vertically
+    gap: 1rem; // Increased gap for vertical layout
     z-index: 10;
 
     .indicator {
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       border: 2px solid rgba(255, 255, 255, 0.5);
       background: transparent;
@@ -120,6 +105,7 @@
       &.active {
         background: white;
         border-color: white;
+        transform: scale(1.3); // Slightly larger when active
       }
 
       &:hover {
@@ -141,9 +127,10 @@
   }
 }
 
-// Mobile responsive
+// Mobile responsive updates
 @media (max-width: 768px) {
   .banner-slideshow {
+    width: 90%; // Adjust width for mobile
     height: 300px;
     margin: 1rem 0;
 
@@ -173,17 +160,20 @@
       }
     }
 
-    .nav-arrow {
-      width: 40px;
-      height: 40px;
-      font-size: 1.5rem;
+    // Move indicators to bottom on mobile for better UX
+    .slide-indicators {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      right: auto;
+      top: auto;
+      transform: translateX(-50%);
+      flex-direction: row;
+      gap: 0.5rem;
 
-      &.nav-arrow-left {
-        left: 0.5rem;
-      }
-
-      &.nav-arrow-right {
-        right: 0.5rem;
+      .indicator {
+        width: 10px;
+        height: 10px;
       }
     }
   }
@@ -191,6 +181,7 @@
 
 @media (max-width: 480px) {
   .banner-slideshow {
+    width: 95%;
     height: 250px;
 
     .banner-slide {
