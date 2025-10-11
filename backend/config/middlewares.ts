@@ -9,7 +9,7 @@ export default [
       headers: "*",
       origin: [
         "http://localhost:3000", // Development
-        "https://nextjs-headless-store-r6v316sr2-morad17s-projects.vercel.app", // Your NEW Vercel URL
+        "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app", // NEW Vercel URL
         "https://*.vercel.app", // All Vercel deployments
         "https://nextjs-headless-store.vercel.app", // Production domain
       ],
