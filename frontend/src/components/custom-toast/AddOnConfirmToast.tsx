@@ -1,5 +1,4 @@
 import React from "react";
-import { toast } from "react-toastify";
 import "./AddOnConfirmToast.scss";
 
 interface AddOnConfirmToastProps {
@@ -8,22 +7,24 @@ interface AddOnConfirmToastProps {
   closeToast: () => void;
 }
 
-const AddOnConfirmToast: React.FC<AddOnConfirmToastProps> = ({
+export default function AddOnConfirmToast({
   onCheckAddOns,
   onProceed,
   closeToast,
-}) => {
+}: AddOnConfirmToastProps) {
   return (
     <div className="addon-confirm-toast">
       <div className="toast-header">
-        <h3>⚠️ No Add-ons Selected</h3>
+        <h3>🎯 Complete Your Build!</h3>
       </div>
+
       <div className="toast-content">
         <p>
-          You haven't selected any add-on components. Would you like to check
-          available add-ons or proceed with just the main components?
+          Great! You&apos;ve selected all the main components. Would you like to
+          add any optional components before completing your order?
         </p>
       </div>
+
       <div className="toast-actions">
         <button
           className="btn-check-addons"
@@ -41,11 +42,9 @@ const AddOnConfirmToast: React.FC<AddOnConfirmToastProps> = ({
             closeToast();
           }}
         >
-          Proceed
+          Proceed to Order
         </button>
       </div>
     </div>
   );
-};
-
-export default AddOnConfirmToast;
+}

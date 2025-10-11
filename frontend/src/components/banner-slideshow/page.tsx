@@ -79,16 +79,6 @@ export default function BannerSlideshow({
     setCurrentSlide(index);
   };
 
-  const goToPrevious = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToNext = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
   // Vertical slides (up/down)
   const verticalSlideVariants = {
     enter: (direction: number) => ({
@@ -100,7 +90,7 @@ export default function BannerSlideshow({
       y: 0,
       opacity: 1,
     },
-    exit: (direction: number) => ({
+    exit: () => ({
       zIndex: 0,
       y: 300,
       opacity: 0,

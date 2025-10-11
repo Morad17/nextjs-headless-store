@@ -27,7 +27,7 @@ export default function ProductCard({
     useBuildPcStore();
 
   // Extract data from product object
-  const { name: title, price, pSubCategory, images } = product;
+  const { name: title, price, images } = product;
 
   const getImageUrl = () => {
     if (images && Array.isArray(images) && images.length > 0) {

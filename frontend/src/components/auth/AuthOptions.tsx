@@ -22,7 +22,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, register, setGuest, error: authError } = useAuthStore();
+  const { login, register, setGuest } = useAuthStore(); // Remove unused authError
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,8 +41,6 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     try {
       await login(formData.email, formData.password);
 
-      // Check if login was successful by checking the auth state
-      // Note: You might need a small delay for state to update
       setTimeout(() => {
         if (useAuthStore.getState().isAuthenticated) {
           router.push("/build-pc");
@@ -55,7 +53,8 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
         }
         setLoading(false);
       }, 100);
-    } catch (error) {
+    } catch (loginError) {
+      console.error("Login failed:", loginError);
       setError("Invalid credentials. Please try again.");
       setLoading(false);
     }
@@ -69,7 +68,6 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     try {
       await register(formData.email, formData.password, formData.username);
 
-      // Check if registration was successful
       setTimeout(() => {
         if (useAuthStore.getState().isAuthenticated) {
           router.push("/build-pc");
@@ -82,7 +80,8 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
         }
         setLoading(false);
       }, 100);
-    } catch (error) {
+    } catch (signupError) {
+      console.error("Registration failed:", signupError);
       setError("Registration failed. Email might already be in use.");
       setLoading(false);
     }
@@ -91,8 +90,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
   const handleGuest = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.guestName.trim()) {
-      setGuest(); // Call the setGuest method
-      // You might want to store the guest name separately if needed
+      setGuest(formData.guestName);
       router.push("/build-pc");
       onAuthComplete?.();
     } else {
@@ -120,7 +118,9 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
       <div className="auth-options">
         <div className="auth-card">
           <h2 className="auth-title">Get Started</h2>
-          <p className="auth-subtitle">Choose how you'd like to continue</p>
+          <p className="auth-subtitle">
+            Choose how you&apos;d like to continue
+          </p>
 
           <div className="auth-buttons">
             <button
@@ -214,7 +214,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
                 </div>
 
                 <p className="switch-mode">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <button
                     type="button"
                     onClick={() => setMode("signup")}
@@ -322,7 +322,8 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
 
                 <div className="guest-info">
                   <p>
-                    ⚠️ Note: As a guest, your builds won't be saved permanently.
+                    ⚠️ Note: As a guest, your builds won&apos;t be saved
+                    permanently.
                   </p>
                   <p>
                     Want to save your builds?{" "}

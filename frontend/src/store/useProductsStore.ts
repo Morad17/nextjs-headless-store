@@ -1,62 +1,90 @@
 import { create } from "zustand";
-import { Product } from "@/lib/types";
+import { devtools } from "zustand/middleware";
+import { Product, StrapiListResponse } from "@/lib/types";
 
 interface ProductsState {
   products: Product[];
   loading: boolean;
   error: string | null;
+  currentPage: number;
+  totalPages: number;
+  totalProducts: number;
 
   // Actions
-  setProducts: (products: Product[]) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  fetchProducts: () => Promise<void>;
+  fetchProducts: (
+    categoryId?: number,
+    page?: number,
+    pageSize?: number
+  ) => Promise<void>;
+  setPage: (page: number) => void;
+  clearProducts: () => void;
 }
 
-export const useProductsStore = create<ProductsState>((set, get) => ({
-  // Initial state
-  products: [],
-  loading: true,
-  error: null,
+export const useProductsStore = create<ProductsState>()(
+  devtools(
+    (set) => ({
+      // Remove unused 'get' parameter
+      // Initial state
+      products: [],
+      loading: false,
+      error: null,
+      currentPage: 1,
+      totalPages: 1,
+      totalProducts: 0,
 
-  // Actions
-  setProducts: (products) => set({ products }),
-  setLoading: (loading) => set({ loading }),
-  setError: (error) => set({ error }),
+      // Actions
+      fetchProducts: async (categoryId?: number, page = 1, pageSize = 12) => {
+        set({ loading: true, error: null });
 
-  // Async action
-  fetchProducts: async () => {
-    set({ loading: true, error: null });
+        try {
+          let url = `${
+            process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
+          }/api/products?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
 
-    try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-        }/api/products`,
-        {
-          headers: {
-            Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
-              ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`
-              : "",
-          },
+          if (categoryId) {
+            url += `&filters[category][id][$eq]=${categoryId}`;
+          }
+
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data: StrapiListResponse<Product> = await response.json();
+
+          set({
+            products: data.data,
+            currentPage: data.meta.pagination.page,
+            totalPages: data.meta.pagination.pageCount,
+            totalProducts: data.meta.pagination.total,
+            loading: false,
+          });
+        } catch (error) {
+          set({
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch products",
+            loading: false,
+          });
         }
-      );
+      },
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      setPage: (page: number) => {
+        set({ currentPage: page });
+      },
 
-      const data = await response.json();
-      set({
-        products: data.data,
-        loading: false,
-        error: null,
-      });
-    } catch (err) {
-      set({
-        loading: false,
-        error: err instanceof Error ? err.message : "Failed to fetch products",
-      });
-    }
-  },
-}));
+      clearProducts: () => {
+        set({
+          products: [],
+          currentPage: 1,
+          totalPages: 1,
+          totalProducts: 0,
+          error: null,
+        });
+      },
+    }),
+    { name: "products-store" }
+  )
+);

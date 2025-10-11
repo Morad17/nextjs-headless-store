@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import LoginForm from "./LoginForm";
 import "../auth/auth-options.scss";
 import "./homepage.scss";
-import Image from "next/image";
 import BannerSlideshow from "../banner-slideshow/page";
 
 interface AuthMode {
@@ -46,8 +45,7 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [isTitleHighlighted, setIsTitleHighlighted] = useState(false);
 
-  const { login, register, setGuest, isAuthenticated, isGuest } =
-    useAuthStore();
+  const { login, register, setGuest } = useAuthStore();
   const router = useRouter();
 
   // Auth mode configurations
@@ -143,7 +141,6 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
       switch (mode) {
         case "login":
           await login(formData.email, formData.password);
-          // Check if login was successful by checking the auth state
           setTimeout(() => {
             const authState = useAuthStore.getState();
             if (authState.isAuthenticated) {
@@ -156,11 +153,10 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
             }
             setLoading(false);
           }, 100);
-          return; // Exit early to prevent setLoading(false) at the end
+          return;
 
         case "signup":
           await register(formData.email, formData.password, formData.username);
-          // Check if registration was successful
           setTimeout(() => {
             const authState = useAuthStore.getState();
             if (authState.isAuthenticated) {
@@ -174,12 +170,11 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
             }
             setLoading(false);
           }, 100);
-          return; // Exit early to prevent setLoading(false) at the end
+          return;
 
         case "guest":
           if (formData.guestName.trim()) {
-            setGuest(); // Call the setGuest method
-            // You might want to store the guest name separately if needed
+            setGuest(formData.guestName);
             router.push("/build-pc");
             onAuthComplete?.();
           } else {
@@ -187,7 +182,8 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
           }
           break;
       }
-    } catch (error) {
+    } catch (submitError) {
+      console.error("Submit error:", submitError);
       setError("An unexpected error occurred. Please try again.");
     }
 
@@ -221,13 +217,9 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
   // Handle Build Now button click with title highlight
   const handleBuildNowClick = () => {
     if (mode === "choice") {
-      // Highlight the auth options container
       setIsHighlighted(true);
-
-      // Highlight the title and subtitle
       setIsTitleHighlighted(true);
 
-      // Auto-remove highlights after 3 seconds
       setTimeout(() => {
         setIsHighlighted(false);
         setIsTitleHighlighted(false);
@@ -239,6 +231,7 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
     <div className="homepage">
       <div className="top-row">
         <BannerSlideshow onBuildNowClick={handleBuildNowClick} />
+
         {mode === "choice" ? (
           <div className={`auth-options ${isHighlighted ? "highlighted" : ""}`}>
             <div className="auth-card">
@@ -254,7 +247,7 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
                   isTitleHighlighted ? "highlighted" : ""
                 }`}
               >
-                Choose how you'd like to continue
+                Choose how you&apos;d like to continue
               </p>
 
               <div className="auth-buttons">

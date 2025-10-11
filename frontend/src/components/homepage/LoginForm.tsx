@@ -20,7 +20,12 @@ interface AuthMode {
 
 interface LoginFormProps {
   mode: AuthMode;
-  formData: Record<string, string>;
+  formData: {
+    email: string;
+    password: string;
+    username: string;
+    guestName: string;
+  };
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onBack: () => void;
@@ -40,68 +45,74 @@ export default function LoginForm({
   error,
 }: LoginFormProps) {
   return (
-    <div className="auth-options">
-      <div className="auth-card">
-        <button className="back-btn" onClick={onBack}>
-          ← Back
-        </button>
-        <h2 className="auth-title">{mode.title}</h2>
-        <p className="auth-subtitle">{mode.subtitle}</p>
-
-        <form onSubmit={onSubmit} className="auth-form">
-          {mode.fields.map((field) => (
-            <div key={field.name} className="form-group">
-              <label htmlFor={field.name}>{field.label}</label>
-              <input
-                type={field.type}
-                id={field.name}
-                name={field.name}
-                value={formData[field.name] || ""}
-                onChange={onInputChange}
-                placeholder={field.placeholder}
-                required={field.required}
-                minLength={field.minLength}
-              />
-            </div>
-          ))}
-
-          {error && <div className="error-message">{error}</div>}
-
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? mode.loadingText : mode.submitText}
+    <div className="auth-overlay">
+      <div className="auth-modal">
+        <div className="auth-card">
+          <button className="back-btn" onClick={onBack}>
+            ← Back
           </button>
 
-          {mode.switchModeText && mode.switchModeAction && (
-            <p className="switch-mode">
-              {mode.switchModeText.split(" ").slice(0, -2).join(" ")}{" "}
-              <button
-                type="button"
-                onClick={() => onSwitchMode(mode.switchModeAction!)}
-                className="link-btn"
-              >
-                {mode.switchModeText.split(" ").slice(-2).join(" ")}
-              </button>
-            </p>
-          )}
+          <h2 className="auth-title">{mode.title}</h2>
+          <p className="auth-subtitle">{mode.subtitle}</p>
 
-          {mode.showGuestInfo && (
-            <div className="guest-info">
-              <p>
-                ⚠️ Note: As a guest, your builds won't be saved permanently.
-              </p>
-              <p>
-                Want to save your builds?{" "}
+          <form onSubmit={onSubmit} className="auth-form">
+            {mode.fields.map((field) => (
+              <div key={field.name} className="form-group">
+                <label htmlFor={field.name}>{field.label}</label>
+                <input
+                  type={field.type}
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name as keyof typeof formData]}
+                  onChange={onInputChange}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  minLength={field.minLength}
+                />
+              </div>
+            ))}
+
+            {error && <div className="error-message">{error}</div>}
+
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? mode.loadingText : mode.submitText}
+            </button>
+
+            {mode.switchModeText && mode.switchModeAction && (
+              <p className="switch-mode">
+                {mode.switchModeText.split("?")[0]}?{" "}
                 <button
                   type="button"
-                  onClick={() => onSwitchMode("signup")}
+                  onClick={() => onSwitchMode(mode.switchModeAction!)}
                   className="link-btn"
                 >
-                  Create an account
+                  {mode.switchModeAction === "signup"
+                    ? "Sign up here"
+                    : "Login here"}
                 </button>
               </p>
-            </div>
-          )}
-        </form>
+            )}
+
+            {mode.showGuestInfo && (
+              <div className="guest-info">
+                <p>
+                  ⚠️ Note: As a guest, your builds won&apos;t be saved
+                  permanently.
+                </p>
+                <p>
+                  Want to save your builds?{" "}
+                  <button
+                    type="button"
+                    onClick={() => onSwitchMode("signup")}
+                    className="link-btn"
+                  >
+                    Create an account
+                  </button>
+                </p>
+              </div>
+            )}
+          </form>
+        </div>
       </div>
     </div>
   );

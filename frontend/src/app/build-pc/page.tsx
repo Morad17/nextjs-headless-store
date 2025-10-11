@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
+import Image from "next/image"; // Add Image import
 
 export default function BuildPc() {
   const {
@@ -22,7 +23,6 @@ export default function BuildPc() {
     fetchCategories,
     selectCategory,
     toggleComponentType,
-    getSelectedComponentForCategory,
     getRequiredCategories,
     getOptionalCategories,
   } = useBuildPcStore();
@@ -219,10 +219,12 @@ export default function BuildPc() {
                         onClick={() => selectCategory(cat.id)}
                         style={{ cursor: "pointer" }}
                       >
-                        <img
+                        <Image
                           src={`/assets/icons/${cat.slug}.png`}
                           className="category-icon"
                           alt={cat.name}
+                          width={24}
+                          height={24}
                           onError={(e) => {
                             e.currentTarget.src = "/assets/icons/default.png";
                           }}
