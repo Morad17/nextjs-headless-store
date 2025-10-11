@@ -27,14 +27,7 @@ export default function ProductCard({
     useBuildPcStore();
 
   // Extract data from product object
-  const {
-    name: title,
-    price,
-    slug,
-    specifications,
-    pSubCategory,
-    images,
-  } = product;
+  const { name: title, price, pSubCategory, images } = product;
 
   const getImageUrl = () => {
     if (images && Array.isArray(images) && images.length > 0) {
@@ -52,8 +45,6 @@ export default function ProductCard({
   };
 
   const imageUrl = getImageUrl();
-  const subCategory =
-    pSubCategory?.name || pSubCategory?.name || "Uncategorized";
 
   // Get category info
   const selectedCategory = categories.find(

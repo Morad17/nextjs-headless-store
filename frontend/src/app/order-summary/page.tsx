@@ -2,9 +2,6 @@
 
 import { useOrderStore } from "@/store/useOrderStore";
 import React, { useEffect, useState } from "react";
-import PcModel from "../../components/pc-model/PcModel";
-import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import "./order-summary.scss";
@@ -69,16 +66,6 @@ function OrderSummary() {
     <div className="order-summary-page">
       <div className="order-summary-content">
         <section className="left-section">
-          {/* <div className="model-pc">
-            <Canvas
-              camera={{ position: [1, 1, 1] }}
-              style={{ width: "100%", height: "100%" }}
-            >
-              <Environment preset="warehouse" />
-              <OrbitControls enableZoom={false} />
-              <PcModel />
-            </Canvas>
-          </div> */}
           <div className="order-case">
             {caseComponent ? (
               <OrderProductCard component={caseComponent} />

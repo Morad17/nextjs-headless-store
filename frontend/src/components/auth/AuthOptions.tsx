@@ -22,14 +22,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const {
-    login,
-    register,
-    setGuest,
-    isAuthenticated,
-    isGuest,
-    error: authError,
-  } = useAuthStore();
+  const { login, register, setGuest, error: authError } = useAuthStore();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

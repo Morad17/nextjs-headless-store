@@ -15,21 +15,16 @@ import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
 
 export default function BuildPc() {
   const {
-    categories,
     categoriesLoading,
     categoriesError,
     selectedCategoryId,
-    selectedComponents,
     showMainComponents,
     fetchCategories,
     selectCategory,
     toggleComponentType,
     getSelectedComponentForCategory,
-    getUnselectedRequiredCategories,
     getRequiredCategories,
     getOptionalCategories,
-    getTotalPrice,
-    isBuildComplete,
   } = useBuildPcStore();
 
   const {
@@ -287,11 +282,8 @@ export default function BuildPc() {
             🗑️ Reset Order
           </motion.button>
         </div>
-
-        {/* Custom chevrons with only silver to purple animation */}
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
-            const hasComponent = getSelectedComponentForCategory(cat.id);
             const categoryName = cat?.name;
             const isInOrder = isCategoryInOrder(categoryName);
 
@@ -317,7 +309,6 @@ export default function BuildPc() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {/* Purple fill animation from left to right when category is selected */}
                 <motion.div
                   className="chevron-fill"
                   initial={{ x: "-100%" }}
