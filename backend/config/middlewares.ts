@@ -6,15 +6,15 @@ export default [
     name: "strapi::cors",
     config: {
       enabled: true,
-      headers: ["Content-Type", "Authorization", "Origin", "Accept"],
+      headers: "*",
       origin: [
-        "http://localhost:3000", // Local development
-        "https://nextjs-headless-store-a3pzvcjkh-morad17s-projects.vercel.app", // Your exact Vercel URL
+        "http://localhost:3000", // Development
+        "https://nextjs-headless-store-r6v316sr2-morad17s-projects.vercel.app", // Your NEW Vercel URL
         "https://*.vercel.app", // All Vercel deployments
-        "https://nextjs-headless-store.vercel.app", // If you have a custom domain
+        "https://nextjs-headless-store.vercel.app", // Production domain
       ],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-      keepHeaderOnError: true,
+      credentials: true,
     },
   },
   "strapi::poweredBy",
