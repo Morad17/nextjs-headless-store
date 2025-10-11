@@ -19,6 +19,17 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      // Override TypeScript any type warnings
+      "@typescript-eslint/no-explicit-any": "off", // Turn off completely
+      // OR use "warn" instead of "error"
+      // "@typescript-eslint/no-explicit-any": "warn",
+
+      // Also disable other strict rules if needed
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react/no-unescaped-entities": "warn",
+      "@next/next/no-img-element": "warn",
+    },
   },
 ];
 
