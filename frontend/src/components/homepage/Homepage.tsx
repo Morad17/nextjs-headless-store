@@ -229,6 +229,19 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
 
   return (
     <div className="homepage">
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          background: "red",
+          color: "white",
+          padding: "10px",
+          zIndex: 9999,
+        }}
+      >
+        <p>STRAPI_URL: {process.env.NEXT_PUBLIC_STRAPI_URL}</p>
+      </div>
       <div className="top-row">
         <BannerSlideshow onBuildNowClick={handleBuildNowClick} />
 
