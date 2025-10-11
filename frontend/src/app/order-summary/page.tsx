@@ -31,10 +31,6 @@ function OrderSummary() {
     fetchOrders();
   }, [fetchOrders]);
 
-  useEffect(() => {
-    console.log(currentOrder);
-  }, [currentOrder]);
-
   // Don't render until we're on the client
   if (!isClient) {
     return (

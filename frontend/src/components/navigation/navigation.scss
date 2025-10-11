@@ -1,17 +1,9 @@
-.main-navbar {
-  width: 100%;
-  height: 3vh;
-  padding: 10px 5px;
-  margin: 0;
-  background-color: #878681;
-  color: white;
-}
-
 .navigation {
   display: flex;
+  height: 7vh;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 15px 20px;
   // background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   background-color: rgb(101, 101, 101);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -62,12 +54,6 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.2),
-          transparent
-        );
         transition: left 0.5s;
       }
 
@@ -111,8 +97,8 @@
     }
 
     .guest-info {
-      background: rgba(255, 193, 7, 0.2);
-      border-color: rgba(255, 193, 7, 0.3);
+      background: $standardPurple;
+      border-color: rgb(58, 36, 80);
 
       span {
         color: #fff3cd;
@@ -165,7 +151,7 @@
       }
 
       .signup-link {
-        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        background: $standardPurple;
         color: white;
         text-decoration: none;
         padding: 0.6rem 1.5rem;
@@ -178,7 +164,7 @@
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 15px rgba(58, 123, 213, 0.4);
-          background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+          background: $standardViolet;
         }
 
         &:active {

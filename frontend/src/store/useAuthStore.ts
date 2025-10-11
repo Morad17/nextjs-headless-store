@@ -1,154 +1,198 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 interface User {
   id: string;
-  username: string;
   email: string;
-  confirmed: boolean;
-  blocked: boolean;
+  username: string;
 }
 
 interface AuthState {
-  user: User | null;
-  jwt: string | null;
+  // Auth state
   isAuthenticated: boolean;
   isGuest: boolean;
+  user: User | null;
+  token: string | null;
   guestName: string | null;
-  login: (identifier: string, password: string) => Promise<boolean>;
+
+  // Loading states
+  isLoading: boolean;
+  error: string | null;
+
+  // Actions
+  login: (email: string, password: string) => Promise<void>;
   register: (
-    username: string,
     email: string,
-    password: string
-  ) => Promise<boolean>;
+    password: string,
+    username: string
+  ) => Promise<void>;
   logout: () => void;
-  checkAuth: () => Promise<void>;
-  setGuestUser: (name: string) => void;
+  setGuest: (name?: string) => void;
+  clearError: () => void;
+  checkAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      jwt: null,
-      isAuthenticated: false,
-      isGuest: false,
-      guestName: null,
+  devtools(
+    persist(
+      (set, get) => ({
+        // Initial state
+        isAuthenticated: false,
+        isGuest: false,
+        user: null,
+        token: null,
+        guestName: null,
+        isLoading: false,
+        error: null,
 
-      login: async (identifier: string, password: string) => {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                identifier,
-                password,
-              }),
+        // Actions
+        login: async (email: string, password: string) => {
+          set({ isLoading: true, error: null });
+
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  identifier: email,
+                  password,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error?.message || "Login failed");
             }
-          );
 
-          if (response.ok) {
             const data = await response.json();
+
             set({
-              user: data.user,
-              jwt: data.jwt,
               isAuthenticated: true,
+              isGuest: false,
+              user: data.user,
+              token: data.jwt,
+              guestName: null, // Clear guest name on login
+              isLoading: false,
+              error: null,
             });
-            return true;
+          } catch (error) {
+            set({
+              isLoading: false,
+              error: error instanceof Error ? error.message : "Login failed",
+            });
+            throw error;
           }
-          return false;
-        } catch (error) {
-          console.error("Login error:", error);
-          return false;
-        }
-      },
+        },
 
-      register: async (username: string, email: string, password: string) => {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local/register`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                username,
-                email,
-                password,
-              }),
+        register: async (email: string, password: string, username: string) => {
+          set({ isLoading: true, error: null });
+
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local/register`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username,
+                  email,
+                  password,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                errorData.error?.message || "Registration failed"
+              );
             }
-          );
 
-          if (response.ok) {
             const data = await response.json();
+
             set({
-              user: data.user,
-              jwt: data.jwt,
               isAuthenticated: true,
+              isGuest: false,
+              user: data.user,
+              token: data.jwt,
+              guestName: null, // Clear guest name on registration
+              isLoading: false,
+              error: null,
             });
-            return true;
+          } catch (error) {
+            set({
+              isLoading: false,
+              error:
+                error instanceof Error ? error.message : "Registration failed",
+            });
+            throw error;
           }
-          return false;
-        } catch (error) {
-          console.error("Registration error:", error);
-          return false;
-        }
-      },
+        },
 
-      setGuestUser: (name: string) => {
-        set({
-          user: null,
-          jwt: null,
-          isAuthenticated: false,
-          isGuest: true,
-          guestName: name,
-        });
-      },
+        logout: () => {
+          // Clear all auth state
+          set({
+            isAuthenticated: false,
+            isGuest: false,
+            user: null,
+            token: null,
+            guestName: null,
+            error: null,
+          });
 
-      logout: () => {
-        set({
-          user: null,
-          jwt: null,
-          isAuthenticated: false,
-          isGuest: false,
-          guestName: null,
-        });
-      },
+          // Force redirect to homepage after state is cleared
+          window.location.href = "/";
+        },
 
-      checkAuth: async () => {
-        const { jwt } = get();
-        if (!jwt) return;
+        setGuest: (name?: string) => {
+          set({
+            isGuest: true,
+            isAuthenticated: false,
+            user: null,
+            token: null,
+            guestName: name || "Guest",
+            error: null,
+          });
+        },
 
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/users/me`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwt}`,
-              },
-            }
-          );
+        clearError: () => {
+          set({ error: null });
+        },
 
-          if (response.ok) {
-            const user = await response.json();
-            set({ user, isAuthenticated: true });
-          } else {
-            // Token is invalid
-            set({ user: null, jwt: null, isAuthenticated: false });
+        checkAuth: () => {
+          const { token, isAuthenticated, isGuest } = get();
+
+          if (token && !isAuthenticated) {
+            set({ isAuthenticated: true });
           }
-        } catch (error) {
-          console.error("Auth check error:", error);
-          set({ user: null, jwt: null, isAuthenticated: false });
-        }
-      },
-    }),
-    {
-      name: "auth-storage",
-    }
+
+          if (!token && !isGuest && isAuthenticated) {
+            set({
+              isAuthenticated: false,
+              user: null,
+              token: null,
+            });
+          }
+        },
+      }),
+      {
+        name: "auth-store",
+        partialize: (state) => ({
+          isAuthenticated: state.isAuthenticated,
+          isGuest: state.isGuest,
+          user: state.user,
+          token: state.token,
+          guestName: state.guestName,
+        }),
+      }
+    ),
+    { name: "auth-store" }
   )
 );

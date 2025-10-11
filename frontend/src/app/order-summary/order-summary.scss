@@ -29,6 +29,27 @@
     flex: 1;
     overflow-y: auto;
     align-content: flex-start;
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
   }
 
   //Pc Model
@@ -98,7 +119,7 @@
       }
 
       &.active {
-        background: #007bff;
+        background: $nvidiaGreen;
         color: white;
         box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
       }
@@ -125,7 +146,6 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 8px;
-    overflow-y: scroll;
     .order-summary-title {
       margin: 0 0 20px 0;
       color: #333;

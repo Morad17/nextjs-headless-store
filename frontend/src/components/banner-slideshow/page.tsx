@@ -14,12 +14,16 @@ interface Slide {
   alt: string;
 }
 
+interface BannerSlideshowProps {
+  onBuildNowClick?: () => void; // Add prop for build now click handler
+}
+
 const slides: Slide[] = [
   {
     id: 1,
     title: "Game With Style",
     caption: "Create your own PC and elevate your Gaming Experience now",
-    pcImage: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/pc-image-1.png",
     slideImage: "/assets/images/slide-bg-1.jpg",
     alt: "Gaming PC",
   },
@@ -27,7 +31,7 @@ const slides: Slide[] = [
     id: 2,
     title: "Performance Unleashed",
     caption: "Experience ultimate performance with cutting-edge components",
-    pcImage: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/pc-image-2.png",
     slideImage: "/assets/images/slide-bg-2.jpg",
     alt: "High Performance PC",
   },
@@ -36,7 +40,7 @@ const slides: Slide[] = [
     title: "Only The Best",
     caption:
       "Hand pick from our selection of components, with full specs of each component on display",
-    pcImage: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/pc-image-3.png",
     slideImage: "/assets/images/slide-bg-3.jpg",
     alt: "Premium Components",
   },
@@ -45,13 +49,15 @@ const slides: Slide[] = [
     title: "Buy With Confidence",
     caption:
       "Prices are displayed at each step of the way, so the cost is fully transparent",
-    pcImage: "/assets/images/gaming-pc.png",
+    pcImage: "/assets/images/pc-image-4.png",
     slideImage: "/assets/images/slide-bg-4.jpg",
     alt: "Transparent Pricing",
   },
 ];
 
-export default function BannerSlideshow() {
+export default function BannerSlideshow({
+  onBuildNowClick,
+}: BannerSlideshowProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [direction, setDirection] = useState(0); // Add direction tracking
@@ -82,6 +88,7 @@ export default function BannerSlideshow() {
     setDirection(1);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
+
   // Vertical slides (up/down)
   const verticalSlideVariants = {
     enter: (direction: number) => ({
@@ -157,6 +164,19 @@ export default function BannerSlideshow() {
             >
               <h2 className="banner-title">{slides[currentSlide].title}</h2>
               <p className="banner-caption">{slides[currentSlide].caption}</p>
+
+              {/* Build Now button */}
+              <motion.button
+                className="build-now-btn"
+                onClick={onBuildNowClick}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Build Now
+              </motion.button>
             </motion.div>
 
             <motion.div
@@ -169,8 +189,8 @@ export default function BannerSlideshow() {
                 className="banner-image"
                 src={slides[currentSlide].pcImage}
                 alt={slides[currentSlide].alt}
-                width={300}
-                height={200}
+                width={350}
+                height={250}
                 priority
               />
             </motion.div>
@@ -186,14 +206,6 @@ export default function BannerSlideshow() {
             />
           ))}
         </div>
-
-        <motion.div
-          className="progress-bar"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 4, ease: "linear" }}
-          key={currentSlide}
-        />
       </div>
     </div>
   );

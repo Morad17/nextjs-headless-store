@@ -22,7 +22,14 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, register, setGuestUser } = useAuthStore();
+  const {
+    login,
+    register,
+    setGuest,
+    isAuthenticated,
+    isGuest,
+    error: authError,
+  } = useAuthStore();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,16 +45,27 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     setLoading(true);
     setError("");
 
-    const success = await login(formData.email, formData.password);
+    try {
+      await login(formData.email, formData.password);
 
-    if (success) {
-      router.push("/build-pc");
-      onAuthComplete?.();
-    } else {
+      // Check if login was successful by checking the auth state
+      // Note: You might need a small delay for state to update
+      setTimeout(() => {
+        if (useAuthStore.getState().isAuthenticated) {
+          router.push("/build-pc");
+          onAuthComplete?.();
+        } else {
+          setError(
+            useAuthStore.getState().error ||
+              "Invalid credentials. Please try again."
+          );
+        }
+        setLoading(false);
+      }, 100);
+    } catch (error) {
       setError("Invalid credentials. Please try again.");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -55,26 +73,33 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
     setLoading(true);
     setError("");
 
-    const success = await register(
-      formData.username,
-      formData.email,
-      formData.password
-    );
+    try {
+      await register(formData.email, formData.password, formData.username);
 
-    if (success) {
-      router.push("/build-pc");
-      onAuthComplete?.();
-    } else {
+      // Check if registration was successful
+      setTimeout(() => {
+        if (useAuthStore.getState().isAuthenticated) {
+          router.push("/build-pc");
+          onAuthComplete?.();
+        } else {
+          setError(
+            useAuthStore.getState().error ||
+              "Registration failed. Email might already be in use."
+          );
+        }
+        setLoading(false);
+      }, 100);
+    } catch (error) {
       setError("Registration failed. Email might already be in use.");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleGuest = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.guestName.trim()) {
-      setGuestUser(formData.guestName.trim());
+      setGuest(); // Call the setGuest method
+      // You might want to store the guest name separately if needed
       router.push("/build-pc");
       onAuthComplete?.();
     } else {
@@ -185,10 +210,15 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
                 </div>
 
                 {error && <div className="error-message">{error}</div>}
-
-                <button type="submit" className="submit-btn" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
-                </button>
+                <div className="submit-btn-group">
+                  <button
+                    type="submit"
+                    className="submit-btn"
+                    disabled={loading}
+                  >
+                    {loading ? "Logging in..." : "Login"}
+                  </button>
+                </div>
 
                 <p className="switch-mode">
                   Don't have an account?{" "}

@@ -9,8 +9,9 @@ import Products from "@/components/products-list/page";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify"; // Add this import
-import ProductInfoModal from "@/components/product-info-modal/page";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
 
 export default function BuildPc() {
   const {
@@ -31,8 +32,13 @@ export default function BuildPc() {
     isBuildComplete,
   } = useBuildPcStore();
 
-  const { clearOrder, currentOrder, getOrderTotal, getMainComponents } =
-    useOrderStore();
+  const {
+    clearOrder,
+    currentOrder,
+    getOrderTotal,
+    getMainComponents,
+    getAddOns,
+  } = useOrderStore();
 
   const router = useRouter();
 
@@ -81,14 +87,55 @@ export default function BuildPc() {
     );
   };
 
+  // Check if user has any add-on components (using the existing getAddOns method)
+  const hasAddOnComponents = () => {
+    const addOns = getAddOns();
+    return addOns.length > 0;
+  };
+
+  // Handle switching to add-ons view
+  const handleCheckAddOns = () => {
+    toggleComponentType(false); // Switch to add-ons view
+    toast.info("Browse through available add-on components below!", {
+      position: "top-center",
+      autoClose: 3000,
+    });
+  };
+
+  // Handle proceeding to order summary
+  const handleProceedToOrder = () => {
+    toast.success("Proceeding to order summary...", {
+      position: "top-center",
+      autoClose: 1000,
+    });
+    setTimeout(() => {
+      router.push("/order-summary");
+    }, 1000);
+  };
+
+  // Show custom toast for add-ons confirmation
+  const showAddOnConfirmToast = () => {
+    toast(
+      <AddOnConfirmToast
+        onCheckAddOns={handleCheckAddOns}
+        onProceed={handleProceedToOrder}
+        closeToast={() => toast.dismiss()}
+      />,
+      {
+        position: "top-center",
+        autoClose: false,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: true,
+        draggable: false,
+        className: "addon-confirm-toast-wrapper",
+      }
+    );
+  };
+
   // Handle complete order click - always clickable, shows toast if incomplete
   const handleCompleteOrder = () => {
-    if (areAllMainComponentsSelected()) {
-      toast.success("All components selected! Proceeding to order summary...");
-      setTimeout(() => {
-        router.push("/order-summary");
-      }, 1000);
-    } else {
+    if (!areAllMainComponentsSelected()) {
       const missingCategories = requiredCategories
         .filter((cat) => !isCategoryInOrder(cat.name))
         .map((cat) => cat.name);
@@ -99,6 +146,16 @@ export default function BuildPc() {
           autoClose: 5000,
         }
       );
+      return;
+    }
+
+    // All main components are selected
+    if (!hasAddOnComponents()) {
+      // No add-ons selected, show confirmation toast
+      showAddOnConfirmToast();
+    } else {
+      // Has add-ons, proceed directly
+      handleProceedToOrder();
     }
   };
 
@@ -126,7 +183,6 @@ export default function BuildPc() {
           <div className="category-order">
             <div className="categories-section">
               <div
-                //Toggle for main components / Add On //
                 className={`category-type-selector ${
                   !showMainComponents ? "add-ons-active" : ""
                 }`}
@@ -149,9 +205,7 @@ export default function BuildPc() {
                 </div>
               </div>
 
-              <div
-                className="all-categories" //All Categories //
-              >
+              <div className="all-categories">
                 {categoriesLoading && <p>Loading categories...</p>}
                 {categoriesError && (
                   <p className="error">Error: {categoriesError}</p>
@@ -175,7 +229,6 @@ export default function BuildPc() {
                           className="category-icon"
                           alt={cat.name}
                           onError={(e) => {
-                            // Fallback to default icon if specific icon doesn't exist
                             e.currentTarget.src = "/assets/icons/default.png";
                           }}
                         />
@@ -201,13 +254,23 @@ export default function BuildPc() {
           <Products />
         </section>
       </div>
+
+      {/* Static progress bar container with only state-change animations */}
       <div className="build-progress">
         <div className="total-cost">
           <h3 className="cost-title">Your Total Build Cost:</h3>
-          <p>£{getOrderTotal().toFixed(2)}</p>
+          <motion.p
+            key={getOrderTotal()} // Re-animate when total changes
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            £{getOrderTotal().toFixed(2)}
+          </motion.p>
         </div>
+
         <div className="reset-order-button">
-          <button
+          <motion.button
             className={`reset-btn ${
               currentOrder.length === 0 ? "disabled" : ""
             }`}
@@ -218,37 +281,69 @@ export default function BuildPc() {
                 ? "No items to reset"
                 : "Reset all items in order"
             }
+            whileHover={currentOrder.length > 0 ? { scale: 1.05, y: -2 } : {}}
+            whileTap={currentOrder.length > 0 ? { scale: 0.95 } : {}}
           >
             🗑️ Reset Order
-          </button>
+          </motion.button>
         </div>
+
+        {/* Custom chevrons with only silver to purple animation */}
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
             const hasComponent = getSelectedComponentForCategory(cat.id);
             const categoryName = cat?.name;
             const isInOrder = isCategoryInOrder(categoryName);
 
+            // Determine chevron type class
+            let chevronTypeClass = "";
+            if (requiredCategories.length === 1) {
+              chevronTypeClass = "single-chevron";
+            } else if (key === 0) {
+              chevronTypeClass = "first-chevron";
+            } else if (key === requiredCategories.length - 1) {
+              chevronTypeClass = "last-chevron";
+            } else {
+              chevronTypeClass = "middle-chevron";
+            }
+
             return (
-              <div
-                className={`category-progress-btn ${
-                  hasComponent ? "completed" : ""
-                } ${isInOrder ? "in-order" : ""}`}
-                key={key}
-                // Remove onClick functionality
-                style={{ cursor: "default" }}
+              <motion.div
+                key={cat.id}
+                className={`custom-chevron ${chevronTypeClass}`}
+                whileHover={{
+                  scale: 1.02,
+                  y: -2,
+                }}
+                whileTap={{ scale: 0.98 }}
               >
-                {categoryName}
-              </div>
+                {/* Purple fill animation from left to right when category is selected */}
+                <motion.div
+                  className="chevron-fill"
+                  initial={{ x: "-100%" }}
+                  animate={{
+                    x: isInOrder ? "0%" : "-100%",
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                />
+
+                <span className={isInOrder ? "active-text" : "inactive-text"}>
+                  {categoryName}
+                </span>
+              </motion.div>
             );
           })}
         </div>
+
         <div className="compete-order">
-          <button
+          <motion.button
             className={`complete-order-btn ${
               isOrderComplete ? "complete" : "incomplete"
             }`}
             onClick={handleCompleteOrder}
-            // Remove disabled attribute - always clickable
             title={
               isOrderComplete
                 ? "Complete your order"
@@ -256,9 +351,22 @@ export default function BuildPc() {
                     requiredCategories.length - getMainComponents().length
                   } main components`
             }
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            animate={{
+              background: isOrderComplete ? "#68af09" : "#8e9aaf",
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            Complete Order
-          </button>
+            <motion.span
+              key={isOrderComplete ? "complete" : "incomplete"}
+              initial={{ opacity: 0.8 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              Complete Order
+            </motion.span>
+          </motion.button>
         </div>
       </div>
     </div>

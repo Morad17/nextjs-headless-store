@@ -19,8 +19,8 @@ interface PcModelProps {
 
 export function PcModel({
   scale = 1.1,
-  position = [0, 0, 0],
-  rotation = [0, 0, 0],
+  position = [0.6, 0, 0.6],
+  rotation = [0, -0.8, 0.5],
   ...props
 }: PcModelProps) {
   const group = useRef<Group>(null);

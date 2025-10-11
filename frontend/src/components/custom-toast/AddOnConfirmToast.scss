@@ -1,0 +1,110 @@
+.addon-confirm-toast {
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+
+  .toast-header {
+    margin-bottom: 0.75rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .toast-content {
+    margin-bottom: 1.25rem;
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #666;
+    }
+  }
+
+  .toast-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+
+    button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 100px;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &.btn-check-addons {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+
+        &:hover {
+          background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        }
+      }
+
+      &.btn-proceed {
+        background: #f8f9fa;
+        color: #495057;
+        border: 1px solid #dee2e6;
+
+        &:hover {
+          background: #e9ecef;
+          border-color: #adb5bd;
+        }
+      }
+    }
+  }
+}
+
+// Override default toast styles for this specific toast
+.Toastify__toast-container {
+  .addon-confirm-toast-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+
+    .Toastify__toast-body {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .Toastify__progress-bar {
+      display: none !important;
+    }
+
+    .Toastify__close-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      color: #999;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}

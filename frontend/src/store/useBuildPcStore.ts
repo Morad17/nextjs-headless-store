@@ -105,10 +105,6 @@ export const useBuildPcStore = create<BuildPcState>()(
 
             const data = await response.json();
 
-            // Debug: Log the actual structure
-            console.log("Categories data:", data);
-            console.log("First category:", data.data?.[0]);
-
             set({
               categories: data.data,
               categoriesLoading: false,

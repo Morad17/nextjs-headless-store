@@ -43,8 +43,11 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const [isTitleHighlighted, setIsTitleHighlighted] = useState(false);
 
-  const { login, register, setGuestUser } = useAuthStore();
+  const { login, register, setGuest, isAuthenticated, isGuest } =
+    useAuthStore();
   const router = useRouter();
 
   // Auth mode configurations
@@ -70,7 +73,7 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
       ],
       submitText: "Login",
       loadingText: "Logging in...",
-      switchModeText: "Don't have an account? Sign up here",
+      switchModeText: "Don't have an account? Sign-up here",
       switchModeAction: "signup",
     },
     signup: {
@@ -136,39 +139,53 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
     setLoading(true);
     setError("");
 
-    let success = false;
-
     try {
       switch (mode) {
         case "login":
-          success = await login(formData.email, formData.password);
-          if (!success) {
-            setError("Invalid credentials. Please try again.");
-          }
-          break;
+          await login(formData.email, formData.password);
+          // Check if login was successful by checking the auth state
+          setTimeout(() => {
+            const authState = useAuthStore.getState();
+            if (authState.isAuthenticated) {
+              router.push("/build-pc");
+              onAuthComplete?.();
+            } else {
+              setError(
+                authState.error || "Invalid credentials. Please try again."
+              );
+            }
+            setLoading(false);
+          }, 100);
+          return; // Exit early to prevent setLoading(false) at the end
+
         case "signup":
-          success = await register(
-            formData.username,
-            formData.email,
-            formData.password
-          );
-          if (!success) {
-            setError("Registration failed. Email might already be in use.");
-          }
-          break;
+          await register(formData.email, formData.password, formData.username);
+          // Check if registration was successful
+          setTimeout(() => {
+            const authState = useAuthStore.getState();
+            if (authState.isAuthenticated) {
+              router.push("/build-pc");
+              onAuthComplete?.();
+            } else {
+              setError(
+                authState.error ||
+                  "Registration failed. Email might already be in use."
+              );
+            }
+            setLoading(false);
+          }, 100);
+          return; // Exit early to prevent setLoading(false) at the end
+
         case "guest":
           if (formData.guestName.trim()) {
-            setGuestUser(formData.guestName.trim());
-            success = true;
+            setGuest(); // Call the setGuest method
+            // You might want to store the guest name separately if needed
+            router.push("/build-pc");
+            onAuthComplete?.();
           } else {
             setError("Please enter your name to continue as guest.");
           }
           break;
-      }
-
-      if (success) {
-        router.push("/build-pc");
-        onAuthComplete?.();
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
@@ -190,25 +207,55 @@ export default function Homepage({ onAuthComplete }: AuthOptionsProps) {
   const goBack = () => {
     setMode("choice");
     resetForm();
+    setIsHighlighted(false);
+    setIsTitleHighlighted(false);
   };
 
   const handleSwitchMode = (newMode: string) => {
     setMode(newMode as "login" | "signup" | "guest");
     resetForm();
+    setIsHighlighted(false);
+    setIsTitleHighlighted(false);
+  };
+
+  // Handle Build Now button click with title highlight
+  const handleBuildNowClick = () => {
+    if (mode === "choice") {
+      // Highlight the auth options container
+      setIsHighlighted(true);
+
+      // Highlight the title and subtitle
+      setIsTitleHighlighted(true);
+
+      // Auto-remove highlights after 3 seconds
+      setTimeout(() => {
+        setIsHighlighted(false);
+        setIsTitleHighlighted(false);
+      }, 3000);
+    }
   };
 
   return (
     <div className="homepage">
       <div className="top-row">
-        {/* Homepage content - always visible */}
-        <BannerSlideshow />
-
-        {/* Conditional auth section */}
+        <BannerSlideshow onBuildNowClick={handleBuildNowClick} />
         {mode === "choice" ? (
-          <div className="auth-options">
+          <div className={`auth-options ${isHighlighted ? "highlighted" : ""}`}>
             <div className="auth-card">
-              <h2 className="auth-title">Get Started</h2>
-              <p className="auth-subtitle">Choose how you'd like to continue</p>
+              <h2
+                className={`auth-title ${
+                  isTitleHighlighted ? "highlighted" : ""
+                }`}
+              >
+                Get Started
+              </h2>
+              <p
+                className={`auth-subtitle ${
+                  isTitleHighlighted ? "highlighted" : ""
+                }`}
+              >
+                Choose how you'd like to continue
+              </p>
 
               <div className="auth-buttons">
                 <button

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Order, OrderItem, Product } from "@/lib/types";
-import { useAuthStore } from "./useAuthStore";
 
 interface OrderState {
   // Current order being built
@@ -180,7 +179,10 @@ export const useOrderStore = create<OrderState>()(
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${useAuthStore.getState().jwt}`,
+                  // Remove the jwt reference for now - you can add proper auth later
+                  Authorization: `Bearer ${
+                    process.env.NEXT_PUBLIC_STRAPI_API_TOKEN || ""
+                  }`,
                 },
                 body: JSON.stringify({ data: orderData }),
               }

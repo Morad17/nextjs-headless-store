@@ -19,7 +19,7 @@ export default function ProductCard({
   maxAllowance = 1,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add this state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { addToOrder, currentOrder, replaceOrderItem, removeFromOrder } =
     useOrderStore();
@@ -75,21 +75,21 @@ export default function ProductCard({
   );
 
   const handleIncrement = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     if (quantity < maxAllowance) {
       setQuantity((prev) => prev + 1);
     }
   };
 
   const handleDecrement = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     const value = parseInt(e.target.value) || 1;
     if (value >= 1 && value <= maxAllowance) {
       setQuantity(value);
@@ -98,7 +98,7 @@ export default function ProductCard({
 
   const handleMoreInfoClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsModalOpen(true); // Open modal instead of navigation
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -110,7 +110,6 @@ export default function ProductCard({
     if (isInOrder) {
       removeFromOrder(product.id);
       toast.info(`${title} removed from order`);
-      console.log(`Removed ${title} from order`);
       return;
     }
 
@@ -128,14 +127,10 @@ export default function ProductCard({
       toast.success(
         `Replaced ${existingCategoryItem.product.name} with ${title}`
       );
-      console.log(
-        `Replaced ${existingCategoryItem.product.name} with ${title} in ${categoryName}`
-      );
     } else {
       // Normal add behavior
       addToOrder(product, orderQuantity, categoryName, isMainComponent);
       toast.success(`${title} added to order`);
-      console.log(`Added ${orderQuantity} of ${title} to order`);
     }
   };
 
@@ -164,8 +159,7 @@ export default function ProductCard({
           <div className="product-cost-info-row">
             <p className="product-cost">+ £{price.toFixed(2)}</p>
             <div className="more-info-btn" onClick={handleMoreInfoClick}>
-              <button type="button">Info</button>{" "}
-              {/* Changed from <a> to <button> */}
+              <a type="button">Info</a>
             </div>
           </div>
         </div>
@@ -209,7 +203,7 @@ export default function ProductCard({
         )}
       </div>
 
-      {/* Add the modal */}
+      {/* Modal with updated prop name */}
       <ProductInfoModal
         product={product}
         isOpen={isModalOpen}

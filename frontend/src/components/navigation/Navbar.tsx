@@ -40,10 +40,10 @@ export default function Navigation() {
           </div>
         ) : (
           <div className="auth-buttons">
-            <Link href="/login" className="login-link">
+            <Link href="/" className="login-link">
               Login
             </Link>
-            <Link href="/register" className="signup-link">
+            <Link href="/" className="signup-link">
               Sign Up
             </Link>
           </div>
