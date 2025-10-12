@@ -9,7 +9,7 @@ export default [
       headers: "*",
       origin: [
         "http://localhost:3000",
-        "https://pc-builder-deluxe.vercel.app/",
+        "https:/pc-builder-deluxe-lqmk4bb2c-morad17s-projects.vercel.app",
         "https://*.vercel.app",
         "https://pc-builder-deluxe.vercel.app/",
         /^https:\/\/.*\.vercel\.app$/,
