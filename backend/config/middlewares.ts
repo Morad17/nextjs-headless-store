@@ -9,9 +9,9 @@ export default [
       headers: "*",
       origin: [
         "http://localhost:3000",
-        "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app",
+        "https://pc-builder-deluxe.vercel.app/",
         "https://*.vercel.app",
-        "https://nextjs-headless-store.vercel.app",
+        "https://pc-builder-deluxe.vercel.app/",
         /^https:\/\/.*\.vercel\.app$/,
       ],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
