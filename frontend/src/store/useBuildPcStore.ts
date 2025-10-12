@@ -86,9 +86,17 @@ export const useBuildPcStore = create<BuildPcState>()(
           set({ categoriesLoading: true, categoriesError: null });
 
           try {
-            // Use the proxy instead of direct Strapi URL
             const response = await fetch(
-              "/api/strapi/categories?sort=order:asc"
+              `${
+                process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
+              }/api/categories?sort=order:asc`,
+              {
+                headers: {
+                  Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
+                    ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`
+                    : "",
+                },
+              }
             );
 
             if (!response.ok) {
@@ -96,12 +104,12 @@ export const useBuildPcStore = create<BuildPcState>()(
             }
 
             const data = await response.json();
+
             set({
               categories: data.data,
               categoriesLoading: false,
             });
           } catch (error) {
-            console.error("Fetch categories error:", error);
             set({
               categoriesError:
                 error instanceof Error
@@ -122,14 +130,26 @@ export const useBuildPcStore = create<BuildPcState>()(
             return;
           }
 
-          set({ productsLoading: true, productsError: null });
+          set({
+            productsLoading: true,
+            productsError: null,
+          });
 
           try {
-            // Use the proxy with proper URL encoding
+            // Filter products by category name matching pCategory.name
             const response = await fetch(
-              `/api/strapi/products?populate=*&filters[pCategory][name][$eq]=${encodeURIComponent(
+              `${
+                process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
+              }/api/products?populate=*&filters[pCategory][name][$eq]=${encodeURIComponent(
                 category.name
-              )}`
+              )}`,
+              {
+                headers: {
+                  Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
+                    ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`
+                    : "",
+                },
+              }
             );
 
             if (!response.ok) {
@@ -142,7 +162,6 @@ export const useBuildPcStore = create<BuildPcState>()(
               productsLoading: false,
             });
           } catch (error) {
-            console.error("Fetch products error:", error);
             set({
               productsError:
                 error instanceof Error
