@@ -1,4 +1,15 @@
 export function getStrapiImageUrl(imageData: any): string {
+  // For debugging in production, temporarily write to localStorage
+  if (typeof window !== "undefined") {
+    const debugLog = JSON.parse(localStorage.getItem("imageDebug") || "[]");
+    debugLog.push({
+      timestamp: new Date().toISOString(),
+      imageData: imageData,
+      location: "getStrapiImageUrl",
+    });
+    localStorage.setItem("imageDebug", JSON.stringify(debugLog.slice(-10))); // Keep last 10 entries
+  }
+
   // This will show in Vercel function logs
   console.log(
     "[IMAGE_UTILS] Processing image data:",
