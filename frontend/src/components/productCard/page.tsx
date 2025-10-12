@@ -30,7 +30,6 @@ export default function ProductCard({
   const { name: title, price, images } = product;
 
   const getImageUrl = () => {
-    console.log(product, images);
     if (images && Array.isArray(images) && images.length > 0) {
       const firstImage = images[0];
 
