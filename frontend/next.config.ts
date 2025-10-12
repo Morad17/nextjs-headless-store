@@ -21,17 +21,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "pc-builder-strapi-backend.onrender.com",
-        pathname: "/uploads/**",
-      },
-      // Add these additional patterns for Strapi images
-      {
-        protocol: "https",
-        hostname: "pc-builder-strapi-backend.onrender.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.onrender.com",
         pathname: "/**",
       },
     ],
@@ -67,13 +56,33 @@ const nextConfig: NextConfig = {
 
   reactStrictMode: true,
 
-  // Add CORS headers for API routes and external requests
+  // Add comprehensive CORS headers
   async headers() {
     return [
       {
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value:
+              "Content-Type, Authorization, X-Requested-With, Accept, Origin",
+          },
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          { key: "Access-Control-Max-Age", value: "86400" },
+        ],
+      },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "https://pc-builder-strapi-backend.onrender.com",
+          },
           {
             key: "Access-Control-Allow-Methods",
             value: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
