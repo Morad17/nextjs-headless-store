@@ -8,12 +8,11 @@ export default [
       enabled: true,
       headers: "*",
       origin: [
-        "http://localhost:3000", // Development
-        "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app", // Your current deployment
-        "https://*.vercel.app", // All Vercel deployments
-        "https://nextjs-headless-store.vercel.app", // Production domain if you have one
-        "https://morad17s-projects.vercel.app", // Your Vercel account domain
-        /^https:\/\/nextjs-headless-store.*\.vercel\.app$/, // Regex for all your deployments
+        "http://localhost:3000",
+        "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app",
+        "https://*.vercel.app",
+        "https://nextjs-headless-store.vercel.app",
+        /^https:\/\/.*\.vercel\.app$/,
       ],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       credentials: true,

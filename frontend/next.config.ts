@@ -53,44 +53,41 @@ const nextConfig: NextConfig = {
 
   // Add CORS headers for API routes and external requests
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const allowedOrigins = isDevelopment
+      ? ["http://localhost:3000", "http://localhost:1337"]
+      : [
+          "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app",
+          "https://*.vercel.app",
+          "https://pc-builder-strapi-backend.onrender.com",
+        ];
+
     return [
       {
-        // Apply CORS headers to all routes
         source: "/(.*)",
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: "*", // or specify your Strapi URL: "https://pc-builder-strapi-backend.onrender.com"
+            value: isDevelopment
+              ? "*"
+              : "https://pc-builder-strapi-backend.onrender.com",
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET, POST, PUT, DELETE, OPTIONS",
+            value: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
           },
           {
             key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization, X-Requested-With",
+            value:
+              "Content-Type, Authorization, X-Requested-With, Accept, Origin",
           },
           {
             key: "Access-Control-Allow-Credentials",
             value: "true",
           },
-        ],
-      },
-      {
-        // Specific headers for API calls
-        source: "/api/:path*",
-        headers: [
           {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET, POST, PUT, DELETE, OPTIONS",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization",
+            key: "Access-Control-Max-Age",
+            value: "86400", // 24 hours
           },
         ],
       },
@@ -102,7 +99,9 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/strapi/:path*",
-        destination: `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/:path*`,
+        destination: `${
+          process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
+        }/:path*`,
       },
     ];
   },
