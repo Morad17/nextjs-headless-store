@@ -171,7 +171,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
           </button>
 
           {mode === "login" && (
-            <>
+            <div className="auth-card">
               <h2 className="auth-title">Welcome Back</h2>
               <p className="auth-subtitle">Login to your account</p>
 
@@ -224,11 +224,11 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
                   </button>
                 </p>
               </form>
-            </>
+            </div>
           )}
 
           {mode === "signup" && (
-            <>
+            <div className="auth-card">
               <h2 className="auth-title">Create Account</h2>
               <p className="auth-subtitle">Sign up to save your builds</p>
 
@@ -290,11 +290,11 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
                   </button>
                 </p>
               </form>
-            </>
+            </div>
           )}
 
           {mode === "guest" && (
-            <>
+            <div className="auth-card">
               <h2 className="auth-title">Continue as Guest</h2>
               <p className="auth-subtitle">
                 Just tell us your name to get started
@@ -337,7 +337,7 @@ export default function AuthOptions({ onAuthComplete }: AuthOptionsProps) {
                   </p>
                 </div>
               </form>
-            </>
+            </div>
           )}
         </div>
       </div>
