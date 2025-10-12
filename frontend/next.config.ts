@@ -23,7 +23,23 @@ const nextConfig: NextConfig = {
         hostname: "pc-builder-strapi-backend.onrender.com",
         pathname: "/uploads/**",
       },
+      // Add these additional patterns for Strapi images
+      {
+        protocol: "https",
+        hostname: "pc-builder-strapi-backend.onrender.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.onrender.com",
+        pathname: "/**",
+      },
     ],
+    // Add these for better image handling
+    formats: ["image/webp", "image/avif"],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   sassOptions: {
@@ -53,41 +69,18 @@ const nextConfig: NextConfig = {
 
   // Add CORS headers for API routes and external requests
   async headers() {
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const allowedOrigins = isDevelopment
-      ? ["http://localhost:3000", "http://localhost:1337"]
-      : [
-          "https://nextjs-headless-store-67ttczggu-morad17s-projects.vercel.app",
-          "https://*.vercel.app",
-          "https://pc-builder-strapi-backend.onrender.com",
-        ];
-
     return [
       {
-        source: "/(.*)",
+        source: "/api/:path*",
         headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: isDevelopment
-              ? "*"
-              : "https://pc-builder-strapi-backend.onrender.com",
-          },
+          { key: "Access-Control-Allow-Origin", value: "*" },
           {
             key: "Access-Control-Allow-Methods",
             value: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
           },
           {
             key: "Access-Control-Allow-Headers",
-            value:
-              "Content-Type, Authorization, X-Requested-With, Accept, Origin",
-          },
-          {
-            key: "Access-Control-Allow-Credentials",
-            value: "true",
-          },
-          {
-            key: "Access-Control-Max-Age",
-            value: "86400", // 24 hours
+            value: "Content-Type, Authorization",
           },
         ],
       },
