@@ -146,7 +146,6 @@ export default function ProductCard({
           />
         </div>
         <div className="product-text">
-          <p>{imageUrl}</p>
           <h3 className="product-title">{title}</h3>
           <div className="product-cost-info-row">
             <p className="product-cost">+ £{price.toFixed(2)}</p>
