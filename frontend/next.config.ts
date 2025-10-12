@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "pc-builder-strapi-backend.onrender.com",
+        pathname: "/uploads/**",
+      },
     ],
   },
 
@@ -45,6 +50,62 @@ const nextConfig: NextConfig = {
   output: "standalone",
 
   reactStrictMode: true,
+
+  // Add CORS headers for API routes and external requests
+  async headers() {
+    return [
+      {
+        // Apply CORS headers to all routes
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*", // or specify your Strapi URL: "https://pc-builder-strapi-backend.onrender.com"
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization, X-Requested-With",
+          },
+          {
+            key: "Access-Control-Allow-Credentials",
+            value: "true",
+          },
+        ],
+      },
+      {
+        // Specific headers for API calls
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+    ];
+  },
+
+  // Add rewrites to proxy Strapi requests if needed
+  async rewrites() {
+    return [
+      {
+        source: "/strapi/:path*",
+        destination: `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

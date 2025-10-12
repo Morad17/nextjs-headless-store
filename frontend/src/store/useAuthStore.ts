@@ -66,7 +66,6 @@ export const useAuthStore = create<AuthState>()(
 
             if (!response.ok) {
               const errorData = await response.json();
-              console.error("Login error response:", errorData);
               throw new Error(errorData.error?.message || "Login failed");
             }
 
@@ -77,12 +76,11 @@ export const useAuthStore = create<AuthState>()(
               isGuest: false,
               user: data.user,
               token: data.jwt,
-              guestName: null,
+              guestName: null, // Clear guest name on login
               isLoading: false,
               error: null,
             });
           } catch (error) {
-            console.error("Login error:", error);
             set({
               isLoading: false,
               error: error instanceof Error ? error.message : "Login failed",
