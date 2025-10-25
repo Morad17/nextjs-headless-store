@@ -34,6 +34,18 @@ const nextConfig: NextConfig = {
         hostname: "*.onrender.com",
         pathname: "/**",
       },
+      // ✅ Add Cloudinary support
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      // ✅ Add support for all Cloudinary subdomains (optional)
+      {
+        protocol: "https",
+        hostname: "*.cloudinary.com",
+        pathname: "/**",
+      },
     ],
     // Add these for better image handling
     formats: ["image/webp", "image/avif"],

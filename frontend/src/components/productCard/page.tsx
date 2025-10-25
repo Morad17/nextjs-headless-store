@@ -29,22 +29,23 @@ export default function ProductCard({
   // Extract data from product object
   const { name: title, price, images } = product;
 
-  const getImageUrl = () => {
-    if (images && Array.isArray(images) && images.length > 0) {
-      const firstImage = images[0];
+  // const getImageUrl = () => {
+  //   if (images && Array.isArray(images) && images.length > 0) {
+  //     const firstImage = images[0];
 
-      if (firstImage && firstImage.url) {
-        if (firstImage.url.startsWith("http")) {
-          return firstImage.url;
-        }
-        return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
-      }
-    }
+  //     if (firstImage && firstImage.url) {
+  //       if (firstImage.url.startsWith("http")) {
+  //         return firstImage.url;
+  //       }
+  //       return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
+  //     }
+  //   }
 
-    return placeholder;
-  };
+  //   return placeholder;
+  // };
 
-  const imageUrl = getImageUrl();
+  // const imageUrl = getImageUrl();
+  const imageUrl = product.specifications.imageUrl || placeholder;
 
   // Get category info
   const selectedCategory = categories.find(

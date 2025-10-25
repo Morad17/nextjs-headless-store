@@ -40,22 +40,23 @@ export default function ProductModal({
 
   if (!product) return null;
 
-  const getImageUrl = () => {
-    if (
-      product.images &&
-      Array.isArray(product.images) &&
-      product.images.length > 0
-    ) {
-      const firstImage = product.images[0];
-      if (firstImage && firstImage.url) {
-        if (firstImage.url.startsWith("http")) {
-          return firstImage.url;
-        }
-        return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
-      }
-    }
-    return placeholder;
-  };
+  // const getImageUrl = () => {
+  //   if (
+  //     product.images &&
+  //     Array.isArray(product.images) &&
+  //     product.images.length > 0
+  //   ) {
+  //     const firstImage = product.images[0];
+  //     if (firstImage && firstImage.url) {
+  //       if (firstImage.url.startsWith("http")) {
+  //         return firstImage.url;
+  //       }
+  //       return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
+  //     }
+  //   }
+  //   return placeholder;
+  // };
+  const imageUrl = product.specifications?.imageUrl || placeholder;
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -64,7 +65,7 @@ export default function ProductModal({
     }
   };
 
-  // Format specifications - updated to handle nested objects
+  // Format specifications - updated to handle nested objects and exclude imageUrl
   const formatSpecifications = (specs: any) => {
     if (!specs) return [];
 
@@ -97,36 +98,51 @@ export default function ProductModal({
 
     // If specs is an object, convert to array of key-value pairs
     if (typeof specs === "object" && !Array.isArray(specs)) {
-      return Object.entries(specs).map(([key, value]) => ({
-        label: formatLabel(key),
-        value: formatValue(value),
-      }));
+      return Object.entries(specs)
+        .filter(([key]) => key !== "imageUrl") // ✅ Filter out imageUrl
+        .map(([key, value]) => ({
+          label: formatLabel(key),
+          value: formatValue(value),
+        }));
     }
 
-    // If specs is already an array, return as is
+    // If specs is already an array, return as is (but filter imageUrl if it exists)
     if (Array.isArray(specs)) {
-      return specs.map((spec, index) => {
-        if (typeof spec === "object" && spec.label && spec.value) {
+      return specs
+        .filter((spec, index) => {
+          // If it's an object with a label property, check if label is not "imageUrl"
+          if (typeof spec === "object" && spec.label) {
+            return (
+              spec.label.toLowerCase() !== "imageurl" &&
+              spec.label !== "imageUrl"
+            );
+          }
+          return true; // Keep other items
+        })
+        .map((spec, index) => {
+          if (typeof spec === "object" && spec.label && spec.value) {
+            return {
+              label: spec.label,
+              value: formatValue(spec.value),
+            };
+          }
           return {
-            label: spec.label,
-            value: formatValue(spec.value),
+            label: `Specification ${index + 1}`,
+            value: formatValue(spec),
           };
-        }
-        return {
-          label: `Specification ${index + 1}`,
-          value: formatValue(spec),
-        };
-      });
+        });
     }
 
     // If specs is a string, try to parse it
     if (typeof specs === "string") {
       try {
         const parsed = JSON.parse(specs);
-        return Object.entries(parsed).map(([key, value]) => ({
-          label: formatLabel(key),
-          value: formatValue(value),
-        }));
+        return Object.entries(parsed)
+          .filter(([key]) => key !== "imageUrl") // ✅ Filter out imageUrl from parsed JSON
+          .map(([key, value]) => ({
+            label: formatLabel(key),
+            value: formatValue(value),
+          }));
       } catch {
         return [{ label: "Description", value: specs }];
       }
@@ -278,7 +294,7 @@ export default function ProductModal({
                   variants={imageVariants}
                 >
                   <Image
-                    src={getImageUrl()}
+                    src={imageUrl}
                     alt={product.name}
                     width={250}
                     height={200}
