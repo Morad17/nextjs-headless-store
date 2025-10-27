@@ -4,6 +4,58 @@
     display: flex;
     justify-content: space-between;
     height: 85%;
+    position: relative;
+
+    .background-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      // Background image
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/assets/images/component-bg.jpg");
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(25, 25, 25, 1) 0%,
+          rgba(25, 25, 25, 1) 20%,
+          rgba(25, 25, 25, 0.5) 60%,
+          rgb(25, 25, 25, 1) 80%,
+          rgba(25, 25, 25, 1) 100%
+        );
+
+        z-index: 2;
+      }
+      .dark-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 3;
+        pointer-events: none;
+      }
+    }
+  }
+  .left-section {
   }
   .left-section,
   .right-section {
@@ -25,20 +77,20 @@
   }
   .build-text {
     margin: 1rem 2rem;
+    color: white;
   }
   // Categories
   .category-order {
     padding: 1rem;
-    overflow-y: auto;
 
     .category-type-selector {
       position: relative;
       display: flex;
       background: #e0e0e0;
-      border-radius: 25px;
+      border-radius: 2px;
       padding: 4px;
       margin-bottom: 1rem;
-      width: 90%;
+      width: 50%;
 
       // Moving background indicator
       &::before {
@@ -48,8 +100,8 @@
         left: 4px;
         width: calc(50% - 4px);
         height: calc(100% - 8px);
-        background: linear-gradient(135deg, $amdRed, #9d0409);
-        border-radius: 21px;
+        background: linear-gradient(135deg, $purple, $charcoal);
+        border-radius: 2px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
         box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
@@ -58,7 +110,7 @@
       // Move the background when add-ons is active
       &.add-ons-active::before {
         transform: translateX(100%);
-        background: linear-gradient(135deg, $nvidiaGreen, #1e7e34);
+        background: linear-gradient(135deg, $purple, $charcoal);
         box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
       }
 
@@ -67,14 +119,16 @@
         flex: 1;
         position: relative;
         z-index: 2;
+
         .cts-btn {
           width: 100%;
           display: flex;
+          justify-content: center;
           padding: 12px 20px;
           border: none;
           background: transparent;
           color: #666;
-          font-size: 1.2rem;
+          font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
           transition: color 0.3s ease;
@@ -96,36 +150,155 @@
   .categories-section {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
     flex-direction: column;
+    gap: 1rem;
   }
   .all-categories {
-    display: flex;
-    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 1rem 0;
+
+    .categories-slider {
+      display: flex;
+      gap: 1rem;
+      transition: transform 0.3s ease;
+      padding: 0 1rem;
+
+      // Enable horizontal scrolling
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+
+      &::-webkit-scrollbar {
+        height: 8px;
+        margin-top: 10px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgb(55, 55, 55);
+        border-radius: 3px;
+        margin: 0 1rem;
+      }
+      &::-webkit-scrollbar-button {
+        display: none;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, $standardPurple, $standardViolet);
+        border-radius: 3px;
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: linear-gradient(90deg, $standardViolet, $standardPurple);
+        }
+      }
+
+      &::-webkit-scrollbar-thumb:active {
+        background: $standardPurple;
+      }
+
+      // Scroll snap for better UX
+      scroll-snap-type: x mandatory;
+
+      // Add padding to bottom for scrollbar
+      padding-bottom: 15px;
+
+      // Performance optimizations for drag
+      will-change: scroll-position;
+      transform: translateZ(0); // Force hardware acceleration
+
+      // Smooth dragging state
+      &.dragging {
+        scroll-behavior: auto !important;
+
+        .category-card {
+          pointer-events: none; // Prevent unwanted interactions while dragging
+          transition: none; // Disable transitions during drag for smoothness
+        }
+      }
+    }
   }
-  .category-btn {
+
+  .category-card {
     display: flex;
-    border: 1px solid silver;
+    flex-direction: column;
     align-items: center;
-    height: 40px;
-    padding: 5px 20px;
-    margin: 5px;
-    border-radius: 20px;
-    background: #c0c0c0;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
+    padding: 1rem;
+    margin: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: grab; // Change cursor to indicate drag
     transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 120px;
+    max-width: 120px;
+    height: 140px;
+    text-align: center;
+    user-select: none; // Prevent text selection during drag
+
+    // Scroll snap alignment
+    scroll-snap-align: center;
+
+    &:active {
+      cursor: grabbing; // Change cursor while dragging
+    }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.95);
     }
 
     &.selected {
-      background: $nvidiaGreen;
-      border-color: $nvidiaGreen;
+      background: linear-gradient(135deg, $standardPurple, $standardViolet);
+      color: white;
+      border-color: $standardPurple;
+      box-shadow: 0 8px 25px rgba($standardPurple, 0.3);
+
+      .category-card-name {
+        color: white;
+      }
+    }
+
+    // Dragging state
+    &.dragging {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      cursor: grabbing;
+    }
+
+    .category-card-name {
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      line-height: 1.2;
+      color: #333;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none; // Prevent text selection
+    }
+
+    .category-card-image {
+      border-radius: 8px;
+      object-fit: cover;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+      pointer-events: none; // Prevent image drag
+    }
+
+    &:hover .category-card-image {
+      opacity: 1;
+    }
+
+    &.selected .category-card-image {
+      opacity: 1;
+      filter: brightness(1.1);
     }
   }
 
@@ -188,7 +361,7 @@
   //Bottom Row Total & Progress Bar with Chevrons
   .build-progress {
     height: 15%;
-    background-color: grey;
+    background-color: $charcoal;
     display: flex;
     align-items: center;
     justify-content: space-around;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./build-pc.scss";
 import PcModel from "../../components/pc-model/PcModel";
 import { Canvas } from "@react-three/fiber";
@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
-import Image from "next/image"; // Add Image import
+import Image from "next/image";
 
 export default function BuildPc() {
   const {
@@ -156,9 +156,142 @@ export default function BuildPc() {
 
   const isOrderComplete = areAllMainComponentsSelected();
 
+  // Combined arrow and drag functionality
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Drag functionality state
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [draggedCard, setDraggedCard] = useState<string | null>(null);
+
+  // Check scroll position to enable/disable nav buttons
+  const checkScrollPosition = () => {
+    if (sliderRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  // Arrow scroll functions
+  const scrollLeftArrow = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRightArrow = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+  // Mouse drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!sliderRef.current) return;
+
+    setIsDragging(true);
+    setStartX(e.pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+
+    // Add visual feedback to the slider
+    sliderRef.current.style.cursor = "grabbing";
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    setDraggedCard(null);
+    if (sliderRef.current) {
+      sliderRef.current.style.cursor = "grab";
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setDraggedCard(null);
+    if (sliderRef.current) {
+      sliderRef.current.style.cursor = "grab";
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !sliderRef.current) return;
+
+    e.preventDefault();
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  // Touch drag handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!sliderRef.current) return;
+
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !sliderRef.current) return;
+
+    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setDraggedCard(null);
+  };
+
+  // Card-specific drag handlers
+  const handleCardMouseDown = (e: React.MouseEvent, cardId: string) => {
+    setDraggedCard(cardId);
+    handleMouseDown(e);
+  };
+
+  const handleCardTouchStart = (e: React.TouchEvent, cardId: string) => {
+    setDraggedCard(cardId);
+    handleTouchStart(e);
+  };
+
+  // Prevent default drag behavior on images
+  const handleDragStart = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  // Handle card click (only if not dragging)
+  const handleCardClick = (categoryId: number) => {
+    if (!isDragging) {
+      selectCategory(categoryId);
+    }
+  };
+
+  // Update scroll position on resize
+  useEffect(() => {
+    const handleResize = () => {
+      checkScrollPosition();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Check initial scroll position
+  useEffect(() => {
+    checkScrollPosition();
+  }, [displayedCategories]);
+
   return (
     <div className="build-pc-page">
       <div className="build-pc-content">
+        <div className="background-wrapper">
+          <div className="dark-overlay"></div>
+        </div>
         <section className="left-section">
           <div className="build-display">
             <h2 className="build-text">Build Your Gaming Pc</h2>
@@ -187,7 +320,7 @@ export default function BuildPc() {
                     className={`cts-btn ${showMainComponents ? "active" : ""}`}
                     onClick={() => toggleComponentType(true)}
                   >
-                    Main Components ({getRequiredCategories().length})
+                    Main Components
                   </a>
                 </div>
                 <div className="add-on-components">
@@ -195,7 +328,7 @@ export default function BuildPc() {
                     className={`cts-btn ${!showMainComponents ? "active" : ""}`}
                     onClick={() => toggleComponentType(false)}
                   >
-                    Add ons ({getOptionalCategories().length})
+                    Add ons
                   </a>
                 </div>
               </div>
@@ -208,31 +341,84 @@ export default function BuildPc() {
 
                 {!categoriesLoading &&
                   !categoriesError &&
-                  displayedCategories.map((cat, key) => {
-                    const isSelected = selectedCategoryId === cat.id;
-                    return (
+                  displayedCategories.length > 0 && (
+                    <>
+                      {/* Categories Slider with drag functionality */}
                       <div
-                        className={`category-btn ${
-                          isSelected ? "selected" : ""
-                        } `}
-                        key={key}
-                        onClick={() => selectCategory(cat.id)}
-                        style={{ cursor: "pointer" }}
+                        ref={sliderRef}
+                        className="categories-slider"
+                        onScroll={checkScrollPosition}
+                        onMouseDown={handleMouseDown}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseUp={handleMouseUp}
+                        onMouseMove={handleMouseMove}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        style={{ cursor: isDragging ? "grabbing" : "grab" }}
                       >
-                        <Image
-                          src={`/assets/icons/${cat.slug}.png`}
-                          className="category-icon"
-                          alt={cat.name}
-                          width={24}
-                          height={24}
-                          onError={(e) => {
-                            e.currentTarget.src = "/assets/icons/default.png";
-                          }}
-                        />
-                        {cat.name}
+                        {displayedCategories.map((cat, key) => {
+                          const isSelected = selectedCategoryId === cat.id;
+                          const isBeingDragged =
+                            draggedCard === cat.id.toString();
+
+                          return (
+                            <motion.div
+                              key={cat.id}
+                              className={`category-card ${
+                                isSelected ? "selected" : ""
+                              } ${isBeingDragged ? "dragging" : ""}`}
+                              onClick={() => handleCardClick(cat.id)}
+                              onMouseDown={(e) => {
+                                e.stopPropagation(); // Prevent event bubbling
+                                handleCardMouseDown(e, cat.id.toString());
+                              }}
+                              onTouchStart={(e) => {
+                                e.stopPropagation(); // Prevent event bubbling
+                                handleCardTouchStart(e, cat.id.toString());
+                              }}
+                              whileHover={
+                                !isDragging
+                                  ? {
+                                      y: -4,
+                                      scale: 1.02,
+                                      transition: { duration: 0.2 },
+                                    }
+                                  : {}
+                              }
+                              whileTap={!isDragging ? { scale: 0.98 } : {}}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{
+                                opacity: 1,
+                                y: 0,
+                                scale: isBeingDragged ? 1.05 : 1,
+                              }}
+                              transition={{
+                                duration: 0.3,
+                                delay: key * 0.05,
+                                ease: "easeOut",
+                              }}
+                              drag={false}
+                            >
+                              <p className="category-card-name">{cat.name}</p>
+                              <Image
+                                src={`/assets/icons/${cat.slug}.png`}
+                                className="category-card-image"
+                                alt={cat.name}
+                                width={80}
+                                height={80}
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/assets/icons/default.png";
+                                }}
+                                draggable={false}
+                              />
+                            </motion.div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
+                    </>
+                  )}
 
                 {!categoriesLoading &&
                   !categoriesError &&
