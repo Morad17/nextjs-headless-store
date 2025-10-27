@@ -370,11 +370,11 @@ export default function BuildPc() {
                               } ${isBeingDragged ? "dragging" : ""}`}
                               onClick={() => handleCardClick(cat.id)}
                               onMouseDown={(e) => {
-                                e.stopPropagation(); // Prevent event bubbling
+                                e.stopPropagation();
                                 handleCardMouseDown(e, cat.id.toString());
                               }}
                               onTouchStart={(e) => {
-                                e.stopPropagation(); // Prevent event bubbling
+                                e.stopPropagation();
                                 handleCardTouchStart(e, cat.id.toString());
                               }}
                               whileHover={
@@ -400,19 +400,24 @@ export default function BuildPc() {
                               }}
                               drag={false}
                             >
-                              <p className="category-card-name">{cat.name}</p>
-                              <Image
-                                src={`/assets/icons/${cat.slug}.png`}
-                                className="category-card-image"
-                                alt={cat.name}
-                                width={80}
-                                height={80}
-                                onError={(e) => {
-                                  e.currentTarget.src =
-                                    "/assets/icons/default.png";
-                                }}
-                                draggable={false}
-                              />
+                              <div className="background-wrapper"></div>
+                              <div className="category-card-image-div">
+                                <Image
+                                  src={`/assets/images/categories/${cat.slug}.png`}
+                                  className="category-card-image"
+                                  alt={cat.name}
+                                  width={160}
+                                  height={160}
+                                  onError={(e) => {
+                                    e.currentTarget.src =
+                                      "/assets/icons/default.png";
+                                  }}
+                                  draggable={false}
+                                />
+                              </div>
+                              <div className="category-card-name-div">
+                                <p className="category-card-name">{cat.name}</p>
+                              </div>
                             </motion.div>
                           );
                         })}
