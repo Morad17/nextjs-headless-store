@@ -38,6 +38,9 @@ interface BuildPcState {
 
   showMainComponents: boolean; // true = main components, false = add-ons
 
+  // Cached products by category
+  productsByCategory: Record<number, Product[]>;
+
   // Actions
   fetchCategories: () => Promise<void>;
   fetchProductsByCategory: (categoryId: number) => Promise<void>; // Add this line
@@ -49,6 +52,7 @@ interface BuildPcState {
   ) => void;
   removeComponentFromCategory: (categoryId: number) => void;
   toggleComponentType: (showMain: boolean) => void; // Add this action
+  preloadAllProducts: () => Promise<void>; // Preload all products
 
   // Computed getters
   getRequiredCategories: () => Category[];
@@ -80,6 +84,8 @@ export const useBuildPcStore = create<BuildPcState>()(
         showRequiredOnly: false,
 
         showMainComponents: true, // Start with main components
+
+        productsByCategory: {}, // Initialize cached products
 
         // Actions
         fetchCategories: async () => {
@@ -122,18 +128,13 @@ export const useBuildPcStore = create<BuildPcState>()(
 
         // Add this new function
         fetchProductsByCategory: async (categoryId: number) => {
-          const { categories } = get();
+          const { categories, productsByCategory } = get();
           const category = categories.find((cat) => cat.id === categoryId);
 
           if (!category) {
             set({ productsError: "Category not found" });
             return;
           }
-
-          set({
-            productsLoading: true,
-            productsError: null,
-          });
 
           try {
             // Filter products by category name matching pCategory.name
@@ -157,9 +158,15 @@ export const useBuildPcStore = create<BuildPcState>()(
             }
 
             const data = await response.json();
+
+            // ✅ Cache the products AND update current products
             set({
               currentCategoryProducts: data.data,
               productsLoading: false,
+              productsByCategory: {
+                ...productsByCategory,
+                [categoryId]: data.data,
+              },
             });
           } catch (error) {
             set({
@@ -172,10 +179,96 @@ export const useBuildPcStore = create<BuildPcState>()(
           }
         },
 
+        // Preload all products on app start
+        preloadAllProducts: async () => {
+          try {
+            const categories = get().categories;
+            const productPromises = categories.map(async (category) => {
+              try {
+                const response = await fetch(
+                  `${
+                    process.env.NEXT_PUBLIC_STRAPI_URL ||
+                    "http://localhost:1337"
+                  }/api/products?populate=*&filters[pCategory][name][$eq]=${encodeURIComponent(
+                    category.name
+                  )}`,
+                  {
+                    headers: {
+                      Authorization: process.env.NEXT_PUBLIC_STRAPI_API_TOKEN
+                        ? `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`
+                        : "",
+                    },
+                  }
+                );
+
+                if (!response.ok) {
+                  throw new Error(
+                    `HTTP error for ${category.name}: ${response.status}`
+                  );
+                }
+
+                const data = await response.json();
+                return { categoryId: category.id, products: data.data };
+              } catch (error) {
+                console.warn(
+                  `Failed to preload products for ${category.name}:`,
+                  error
+                );
+                return { categoryId: category.id, products: [] };
+              }
+            });
+
+            const results = await Promise.all(productPromises);
+            const productsByCategory: Record<number, Product[]> = {};
+
+            results.forEach(({ categoryId, products }) => {
+              productsByCategory[categoryId] = products;
+            });
+
+            console.log(
+              "Preloaded products for categories:",
+              Object.keys(productsByCategory)
+            );
+            set({ productsByCategory });
+          } catch (error) {
+            console.error("Failed to preload products:", error);
+          }
+        },
+
         selectCategory: (categoryId: number) => {
-          set({ selectedCategoryId: categoryId });
-          // Optionally auto-fetch products when category is selected
-          get().fetchProductsByCategory(categoryId);
+          const { productsByCategory, categories } = get();
+
+          // Find the category to get its name for the API call
+          const category = categories.find((cat) => cat.id === categoryId);
+
+          if (!category) {
+            console.warn("Category not found:", categoryId);
+            return;
+          }
+
+          // ✅ Check if we have cached products for this category
+          const cachedProducts = productsByCategory[categoryId];
+
+          if (cachedProducts && cachedProducts.length > 0) {
+            // ✅ Use cached data immediately - no loading state
+            set({
+              selectedCategoryId: categoryId,
+              currentCategoryProducts: cachedProducts,
+              productsLoading: false,
+              productsError: null,
+            });
+          } else {
+            // ✅ Only show loading if we don't have cached data
+            set({
+              selectedCategoryId: categoryId,
+              currentCategoryProducts: [],
+              productsLoading: true,
+              productsError: null,
+            });
+
+            // Fetch in background and cache
+            get().fetchProductsByCategory(categoryId);
+          }
         },
 
         selectProductForCategory: (

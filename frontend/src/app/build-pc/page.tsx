@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
 import Image from "next/image";
+import CategorySlider from "@/components/category-slider/page";
 
 export default function BuildPc() {
   const {
@@ -25,6 +26,7 @@ export default function BuildPc() {
     toggleComponentType,
     getRequiredCategories,
     getOptionalCategories,
+    preloadAllProducts, // ✅ Add this
   } = useBuildPcStore();
 
   const {
@@ -37,9 +39,27 @@ export default function BuildPc() {
 
   const router = useRouter();
 
+  // ✅ Track initial loading state
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    const initializeData = async () => {
+      try {
+        // First fetch categories
+        await fetchCategories();
+
+        // Then preload all products
+        await preloadAllProducts();
+
+        setIsInitialLoad(false);
+      } catch (error) {
+        console.error("Failed to initialize data:", error);
+        setIsInitialLoad(false);
+      }
+    };
+
+    initializeData();
+  }, [fetchCategories, preloadAllProducts]);
 
   const requiredCategories = getRequiredCategories();
 
@@ -156,136 +176,6 @@ export default function BuildPc() {
 
   const isOrderComplete = areAllMainComponentsSelected();
 
-  // Combined arrow and drag functionality
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  // Drag functionality state
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [draggedCard, setDraggedCard] = useState<string | null>(null);
-
-  // Check scroll position to enable/disable nav buttons
-  const checkScrollPosition = () => {
-    if (sliderRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  // Arrow scroll functions
-  const scrollLeftArrow = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -200, behavior: "smooth" });
-    }
-  };
-
-  const scrollRightArrow = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: 200, behavior: "smooth" });
-    }
-  };
-
-  // Mouse drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-
-    setIsDragging(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-
-    // Add visual feedback to the slider
-    sliderRef.current.style.cursor = "grabbing";
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-    setDraggedCard(null);
-    if (sliderRef.current) {
-      sliderRef.current.style.cursor = "grab";
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setDraggedCard(null);
-    if (sliderRef.current) {
-      sliderRef.current.style.cursor = "grab";
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Touch drag handlers for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!sliderRef.current) return;
-
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-
-    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    setDraggedCard(null);
-  };
-
-  // Card-specific drag handlers
-  const handleCardMouseDown = (e: React.MouseEvent, cardId: string) => {
-    setDraggedCard(cardId);
-    handleMouseDown(e);
-  };
-
-  const handleCardTouchStart = (e: React.TouchEvent, cardId: string) => {
-    setDraggedCard(cardId);
-    handleTouchStart(e);
-  };
-
-  // Prevent default drag behavior on images
-  const handleDragStart = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  // Handle card click (only if not dragging)
-  const handleCardClick = (categoryId: number) => {
-    if (!isDragging) {
-      selectCategory(categoryId);
-    }
-  };
-
-  // Update scroll position on resize
-  useEffect(() => {
-    const handleResize = () => {
-      checkScrollPosition();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Check initial scroll position
-  useEffect(() => {
-    checkScrollPosition();
-  }, [displayedCategories]);
-
   return (
     <div className="build-pc-page">
       <div className="build-pc-content">
@@ -310,122 +200,54 @@ export default function BuildPc() {
         <section className="right-section">
           <div className="category-order">
             <div className="categories-section">
-              <div
-                className={`category-type-selector ${
-                  !showMainComponents ? "add-ons-active" : ""
-                }`}
-              >
-                <div className="main-components">
-                  <a
-                    className={`cts-btn ${showMainComponents ? "active" : ""}`}
-                    onClick={() => toggleComponentType(true)}
-                  >
-                    Main Components
-                  </a>
-                </div>
-                <div className="add-on-components">
-                  <a
-                    className={`cts-btn ${!showMainComponents ? "active" : ""}`}
-                    onClick={() => toggleComponentType(false)}
-                  >
-                    Add ons
-                  </a>
+              <div className="category-type-toggle">
+                <div
+                  className={`category-type-selector ${
+                    !showMainComponents ? "add-ons-active" : ""
+                  }`}
+                >
+                  <div className="main-components">
+                    <a
+                      className={`cts-btn ${
+                        showMainComponents ? "active" : ""
+                      }`}
+                      onClick={() => toggleComponentType(true)}
+                    >
+                      Main Components
+                    </a>
+                  </div>
+                  <div className="add-on-components">
+                    <a
+                      className={`cts-btn ${
+                        !showMainComponents ? "active" : ""
+                      }`}
+                      onClick={() => toggleComponentType(false)}
+                    >
+                      Add ons
+                    </a>
+                  </div>
                 </div>
               </div>
 
               <div className="all-categories">
-                {categoriesLoading && <p>Loading categories...</p>}
+                {isInitialLoad && (
+                  <div className="loading-state">
+                    <p>Loading categories and products...</p>
+                  </div>
+                )}
+
                 {categoriesError && (
                   <p className="error">Error: {categoriesError}</p>
                 )}
+                {!isInitialLoad && displayedCategories.length > 0 && (
+                  <CategorySlider
+                    categories={displayedCategories}
+                    selectedCategoryId={selectedCategoryId}
+                    onCategorySelect={selectCategory}
+                  />
+                )}
 
-                {!categoriesLoading &&
-                  !categoriesError &&
-                  displayedCategories.length > 0 && (
-                    <>
-                      {/* Categories Slider with drag functionality */}
-                      <div
-                        ref={sliderRef}
-                        className="categories-slider"
-                        onScroll={checkScrollPosition}
-                        onMouseDown={handleMouseDown}
-                        onMouseLeave={handleMouseLeave}
-                        onMouseUp={handleMouseUp}
-                        onMouseMove={handleMouseMove}
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                        style={{ cursor: isDragging ? "grabbing" : "grab" }}
-                      >
-                        {displayedCategories.map((cat, key) => {
-                          const isSelected = selectedCategoryId === cat.id;
-                          const isBeingDragged =
-                            draggedCard === cat.id.toString();
-
-                          return (
-                            <motion.div
-                              key={cat.id}
-                              className={`category-card ${
-                                isSelected ? "selected" : ""
-                              } ${isBeingDragged ? "dragging" : ""}`}
-                              onClick={() => handleCardClick(cat.id)}
-                              onMouseDown={(e) => {
-                                e.stopPropagation();
-                                handleCardMouseDown(e, cat.id.toString());
-                              }}
-                              onTouchStart={(e) => {
-                                e.stopPropagation();
-                                handleCardTouchStart(e, cat.id.toString());
-                              }}
-                              whileHover={
-                                !isDragging
-                                  ? {
-                                      y: -4,
-                                      scale: 1.02,
-                                      transition: { duration: 0.2 },
-                                    }
-                                  : {}
-                              }
-                              whileTap={!isDragging ? { scale: 0.98 } : {}}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{
-                                opacity: 1,
-                                y: 0,
-                                scale: isBeingDragged ? 1.05 : 1,
-                              }}
-                              transition={{
-                                duration: 0.3,
-                                delay: key * 0.05,
-                                ease: "easeOut",
-                              }}
-                              drag={false}
-                            >
-                              <div className="background-wrapper"></div>
-                              <div className="category-card-image-div">
-                                <Image
-                                  src={`/assets/images/categories/${cat.slug}.png`}
-                                  className="category-card-image"
-                                  alt={cat.name}
-                                  width={160}
-                                  height={160}
-                                  onError={(e) => {
-                                    e.currentTarget.src =
-                                      "/assets/icons/default.png";
-                                  }}
-                                  draggable={false}
-                                />
-                              </div>
-                              <div className="category-card-name-div">
-                                <p className="category-card-name">{cat.name}</p>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-
-                {!categoriesLoading &&
+                {!isInitialLoad &&
                   !categoriesError &&
                   displayedCategories.length === 0 && (
                     <p className="no-categories">
@@ -448,7 +270,7 @@ export default function BuildPc() {
         <div className="total-cost">
           <h3 className="cost-title">Your Total Build Cost:</h3>
           <motion.p
-            key={getOrderTotal()} // Re-animate when total changes
+            key={getOrderTotal()}
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}

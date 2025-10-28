@@ -1,0 +1,160 @@
+//Categories Slider
+.categories-slider {
+  display: flex;
+  gap: 5px;
+  transition: transform 0.3s ease;
+  padding: 1rem 0;
+
+  // Enable horizontal scrolling
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    margin-top: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgb(55, 55, 55);
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, $standardPurple, $standardViolet);
+    border-radius: 3px;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(90deg, $standardViolet, $standardPurple);
+    }
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: $standardPurple;
+  }
+  scroll-snap-type: x mandatory;
+
+  // Performance optimizations for drag
+  will-change: scroll-position;
+  transform: translateZ(0);
+  // Smooth dragging state
+  &.dragging {
+    scroll-behavior: auto !important;
+
+    .category-card {
+      pointer-events: none;
+      transition: none;
+    }
+  }
+}
+//Category Card
+.category-card {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  margin: 0;
+  border-radius: 2px;
+  background-color: #333;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: grab;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  text-align: center;
+  user-select: none;
+  scroll-snap-align: center;
+  .category-card-background-wrapper {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.3);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0.35;
+  }
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:hover {
+    .category-card-image-div .category-card-image {
+      transform: scale(1.31);
+      transition: all 1s ease-in;
+    }
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, $standardPurple, $standardViolet);
+    color: white;
+    border-color: $standardPurple;
+    box-shadow: 0 8px 25px rgba($standardPurple, 0.3);
+
+    .category-card-name {
+      color: white;
+    }
+  }
+
+  // Dragging state
+  &.dragging {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    cursor: grabbing;
+  }
+
+  .category-card-name-div {
+    margin: 5px;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    text-align: start;
+    pointer-events: none;
+    height: 10%;
+    width: 100%;
+    padding-left: 10px;
+    z-index: 2;
+  }
+  .category-card-name {
+    color: #fafafa;
+  }
+  .category-card-image-div {
+    height: 90%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;
+    min-height: 150px;
+  }
+  .category-card-image {
+    border-radius: 8px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    position: absolute;
+    top: -40px;
+    right: -40px;
+
+    transform: scale(1.3);
+    transform-origin: top right;
+    opacity: 0.9;
+
+    // ✅ Add subtle filter for better integration
+    filter: brightness(0.95) contrast(1.1);
+  }
+
+  //   &:hover .category-card-image {
+  //     opacity: 1;
+  //   }
+
+  &.selected .category-card-image {
+    opacity: 1;
+    filter: brightness(1.1);
+  }
+}
