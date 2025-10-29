@@ -9,7 +9,11 @@ export default ({ env }) => {
       connection: {
         client: "postgres",
         connection: {
-          connectionString: databaseUrl,
+          host: env("PGHOST", "localhost"),
+          port: env.int("PGPORT", 5432),
+          database: env("PGDATABASE", "strapi"),
+          user: env("PGUSER", "strapi"),
+          password: env("PGPASSWORD", "strapi"),
           ssl:
             env("NODE_ENV") === "production"
               ? false
