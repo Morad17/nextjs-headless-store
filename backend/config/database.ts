@@ -1,19 +1,14 @@
 import path from "path";
 
 export default ({ env }) => {
-  if (env("NODE_ENV") === "production") {
-    // Parse the DATABASE_URL
-    const databaseUrl = env("DATABASE_URL");
-
+  const databaseUrl = env("DATABASE_URL");
+  if (databaseUrl) {
+    console.log("🔗 Using DATABASE_URL for connection");
     return {
       connection: {
         client: "postgres",
         connection: {
-          host: env("PGHOST", "localhost"),
-          port: env.int("PGPORT", 5432),
-          database: env("PGDATABASE", "strapi"),
-          user: env("PGUSER", "strapi"),
-          password: env("PGPASSWORD", "strapi"),
+          connectionString: databaseUrl,
           ssl:
             env("NODE_ENV") === "production"
               ? false
@@ -26,14 +21,40 @@ export default ({ env }) => {
     };
   }
 
-  // Development (SQLite)
+  // Fallback to individual environment variables
+
+  if (env("NODE_ENV") === "development") {
+    // Development (SQLite)
+    return {
+      connection: {
+        client: "sqlite",
+        connection: {
+          filename: env("DATABASE_FILENAME", ".tmp/data.db"),
+        },
+        useNullAsDefault: true,
+      },
+    };
+  }
+  // Parse the DATABASE_URL
+
+  console.log("🔗 Using individual database variables");
   return {
     connection: {
-      client: "sqlite",
+      client: "postgres",
       connection: {
-        filename: env("DATABASE_FILENAME", ".tmp/data.db"),
+        host: env("PGHOST"),
+        port: env.int("PGPORT", 5432),
+        database: env("PGDATABASE"),
+        user: env("PGUSER"),
+        password: env("PGPASSWORD"),
+        ssl:
+          env("NODE_ENV") === "production"
+            ? false
+            : {
+                rejectUnauthorized: false,
+              },
       },
-      useNullAsDefault: true,
+      debug: false,
     },
   };
 };
