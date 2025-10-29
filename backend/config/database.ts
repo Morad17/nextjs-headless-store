@@ -1,16 +1,35 @@
 import path from "path";
 
-export default ({ env }) => ({
-  connection: {
-    client: "postgres",
+export default ({ env }) => {
+  if (env("NODE_ENV") === "production") {
+    // Parse the DATABASE_URL
+    const databaseUrl = env("DATABASE_URL");
+
+    return {
+      connection: {
+        client: "postgres",
+        connection: {
+          connectionString: databaseUrl,
+          ssl:
+            env("NODE_ENV") === "production"
+              ? false
+              : {
+                  rejectUnauthorized: false,
+                },
+        },
+        debug: false,
+      },
+    };
+  }
+
+  // Development (SQLite)
+  return {
     connection: {
-      host: env("PGHOST"),
-      port: env.int("PGPORT", 5432),
-      database: env("PGDATABASE"),
-      user: env("PGUSER"),
-      password: env("PGPASSWORD"),
-      ssl: env.bool("DATABASE_SSL", false),
+      client: "sqlite",
+      connection: {
+        filename: env("DATABASE_FILENAME", ".tmp/data.db"),
+      },
+      useNullAsDefault: true,
     },
-    debug: false,
-  },
-});
+  };
+};
