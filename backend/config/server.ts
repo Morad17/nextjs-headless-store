@@ -7,7 +7,7 @@ export default ({ env }) => ({
   webhooks: {
     populateRelations: env.bool("WEBHOOKS_POPULATE_RELATIONS", false),
   },
-  url: env("RENDER_EXTERNAL_URL") || env("PUBLIC_URL"),
+  url: env("RAILWAY_EXTERNAL_URL") || env("PUBLIC_URL"),
   // Add admin configuration
   admin: {
     url: env("ADMIN_URL", "/admin"),
