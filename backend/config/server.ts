@@ -7,13 +7,10 @@ export default ({ env }) => ({
   webhooks: {
     populateRelations: env.bool("WEBHOOKS_POPULATE_RELATIONS", false),
   },
-  // ✅ Fix the URL configuration
-  url:
-    env("RAILWAY_STATIC_URL") ||
-    env("RAILWAY_PUBLIC_DOMAIN") ||
-    env("PUBLIC_URL"),
   admin: {
-    url: "/admin",
+    url: env("ADMIN_URL", "/admin"),
+    host: env("ADMIN_HOST", "localhost"),
+    port: env.int("ADMIN_PORT", 1337),
     serveAdminPanel: env.bool("SERVE_ADMIN_PANEL", true),
   },
 });
