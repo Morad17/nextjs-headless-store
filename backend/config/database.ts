@@ -2,24 +2,13 @@ import path from "path";
 
 export default ({ env }) => {
   const databaseUrl = env("DATABASE_URL");
-  if (databaseUrl) {
-    console.log("🔗 Using DATABASE_URL for connection");
-    return {
-      connection: {
-        client: "postgres",
-        connection: {
-          connectionString: databaseUrl,
-          ssl: false,
-        },
-        debug: false,
-      },
-    };
-  }
+  const nodeEnv = env("NODE_ENV");
 
-  // Fallback to individual environment variables
+  // If we have DATABASE_URL, always use PostgreSQL (Railway)
 
-  if (env("NODE_ENV") === "development") {
-    // Development (SQLite)
+  // Only use SQLite if no DATABASE_URL is provided AND in development
+  if (nodeEnv === "development") {
+    console.log("🔗 Using SQLite for local development");
     return {
       connection: {
         client: "sqlite",
@@ -30,9 +19,27 @@ export default ({ env }) => {
       },
     };
   }
-  // Parse the DATABASE_URL
+  if (databaseUrl) {
+    console.log("🔗 Using DATABASE_URL for PostgreSQL connection");
+    console.log("🌍 Environment:", nodeEnv);
 
-  console.log("🔗 Using individual database variables");
+    return {
+      connection: {
+        client: "postgres",
+        connection: {
+          connectionString: databaseUrl,
+          ssl:
+            nodeEnv === "production"
+              ? false // Railway internal doesn't need SSL
+              : { rejectUnauthorized: false }, // External Railway needs SSL config
+        },
+        debug: false,
+      },
+    };
+  }
+
+  // Fallback to individual PostgreSQL variables
+  console.log("🔗 Using individual PostgreSQL variables");
   return {
     connection: {
       client: "postgres",
@@ -42,12 +49,7 @@ export default ({ env }) => {
         database: env("PGDATABASE"),
         user: env("PGUSER"),
         password: env("PGPASSWORD"),
-        ssl:
-          env("NODE_ENV") === "production"
-            ? false
-            : {
-                rejectUnauthorized: false,
-              },
+        ssl: nodeEnv === "production" ? false : { rejectUnauthorized: false },
       },
       debug: false,
     },
