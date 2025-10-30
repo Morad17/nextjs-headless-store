@@ -37,16 +37,6 @@
       "type": "boolean",
       "default": false
     },
-    "images": {
-      "type": "media",
-      "multiple": true,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
     "pCategory": {
       "type": "relation",
       "relation": "oneToOne",
@@ -59,6 +49,9 @@
     },
     "specifications": {
       "type": "json"
+    },
+    "imageUrl": {
+      "type": "string"
     }
   }
 }

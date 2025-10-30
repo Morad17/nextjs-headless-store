@@ -9,12 +9,7 @@ export default ({ env }) => {
         client: "postgres",
         connection: {
           connectionString: databaseUrl,
-          ssl:
-            env("NODE_ENV") === "production"
-              ? false
-              : {
-                  rejectUnauthorized: false,
-                },
+          ssl: false,
         },
         debug: false,
       },

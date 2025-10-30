@@ -5,11 +5,10 @@ export default [
   {
     name: "strapi::cors",
     config: {
-      enabled: true,
       headers: "*",
       origin: [
         "http://localhost:3000",
-        "nextjs-headless-store-production.up.railway.app",
+        "https://nextjs-headless-store-production.up.railway.app",
         "https://*.vercel.app",
         "https://nextjs-headless-store.vercel.app",
         /^https:\/\/.*\.vercel\.app$/,
