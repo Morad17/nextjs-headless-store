@@ -8,39 +8,39 @@ export default ({ env }) => {
   console.log("NODE_ENV:", nodeEnv);
   console.log("DATABASE_URL exists:", !!databaseUrl);
 
-  // ✅ FIRST: Check for DATABASE_URL (Railway production/development)
-  if (databaseUrl) {
-    console.log("🔗 Using DATABASE_URL for PostgreSQL connection");
-    console.log("🌍 Environment:", nodeEnv);
+  // // ✅ FIRST: Check for DATABASE_URL (Railway production/development)
+  // if (databaseUrl) {
+  //   console.log("🔗 Using DATABASE_URL for PostgreSQL connection");
+  //   console.log("🌍 Environment:", nodeEnv);
 
-    return {
-      connection: {
-        client: "postgres",
-        connection: {
-          connectionString: databaseUrl,
-          ssl:
-            nodeEnv === "production"
-              ? false // Railway internal doesn't need SSL
-              : { rejectUnauthorized: false }, // External Railway needs SSL config
-        },
-        debug: false,
-      },
-    };
-  }
+  //   return {
+  //     connection: {
+  //       client: "postgres",
+  //       connection: {
+  //         connectionString: databaseUrl,
+  //         ssl:
+  //           nodeEnv === "production"
+  //             ? false // Railway internal doesn't need SSL
+  //             : { rejectUnauthorized: false }, // External Railway needs SSL config
+  //       },
+  //       debug: false,
+  //     },
+  //   };
+  // }
 
-  // ✅ SECOND: Use SQLite only for local development without DATABASE_URL
-  if (nodeEnv === "development") {
-    console.log("🔗 Using SQLite for local development");
-    return {
-      connection: {
-        client: "sqlite",
-        connection: {
-          filename: env("DATABASE_FILENAME", ".tmp/data.db"),
-        },
-        useNullAsDefault: true,
-      },
-    };
-  }
+  // // ✅ SECOND: Use SQLite only for local development without DATABASE_URL
+  // if (nodeEnv === "development") {
+  //   console.log("🔗 Using SQLite for local development");
+  //   return {
+  //     connection: {
+  //       client: "sqlite",
+  //       connection: {
+  //         filename: env("DATABASE_FILENAME", ".tmp/data.db"),
+  //       },
+  //       useNullAsDefault: true,
+  //     },
+  //   };
+  // }
 
   // ✅ THIRD: Fallback to individual PostgreSQL variables
   console.log("🔗 Using individual PostgreSQL variables");
