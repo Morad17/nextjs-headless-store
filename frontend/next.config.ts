@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  // Fix the workspace root detection issue
   outputFileTracingRoot: path.join(__dirname),
 
   images: {
@@ -20,18 +19,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "pc-builder-strapi-backend.onrender.com",
+        hostname: "nextjs-headless-store-production.up.railway.app",
         pathname: "/uploads/**",
       },
-      // Add these additional patterns for Strapi images
       {
         protocol: "https",
-        hostname: "pc-builder-strapi-backend.onrender.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.onrender.com",
+        hostname: "*.railway.app",
         pathname: "/**",
       },
       // ✅ Add Cloudinary support
@@ -40,14 +33,12 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
-      // ✅ Add support for all Cloudinary subdomains (optional)
       {
         protocol: "https",
         hostname: "*.cloudinary.com",
         pathname: "/**",
       },
     ],
-    // Add these for better image handling
     formats: ["image/webp", "image/avif"],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
@@ -58,7 +49,6 @@ const nextConfig: NextConfig = {
     additionalData: `@import "src/scss/variables.scss";`,
   },
 
-  // Valid experimental features for Next.js 15
   experimental: {
     optimizePackageImports: [
       "framer-motion",
@@ -67,10 +57,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Disable source maps in production for faster builds
   productionBrowserSourceMaps: false,
 
-  // Optimize for deployment - using valid compiler options
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
@@ -79,7 +67,6 @@ const nextConfig: NextConfig = {
 
   reactStrictMode: true,
 
-  // Add CORS headers for API routes and external requests
   async headers() {
     return [
       {
@@ -99,14 +86,18 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Add rewrites to proxy Strapi requests if needed
   async rewrites() {
+    const strapiUrl =
+      process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+    const validStrapiUrl = strapiUrl.startsWith("http")
+      ? strapiUrl
+      : `https://${strapiUrl}`;
+
     return [
       {
         source: "/strapi/:path*",
-        destination: `${
-          process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-        }/:path*`,
+        destination: `${validStrapiUrl}/:path*`,
       },
     ];
   },

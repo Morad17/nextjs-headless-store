@@ -2,6 +2,21 @@
 require("dotenv").config();
 const axios = require("axios");
 
+// ✅ Local development configuration
+const STRAPI_URL = "http://localhost:1337";
+const STRAPI_API_TOKEN =
+  "d0998661e68d4f3ee1ae03f4a12af962d940e91101071904045d0e661a0f39c4d8fc167a823afddd7a6c9f33afbe1c12189a31768cd9d9c39333f386a3eccbb952fe3d8c3f88d4c3494f75f8cdc7d2b7c39dc3476c1a8de894e68b7f0e4273f7eaed0d4a07ea403e35c4a8360bf382f0c9c1d32d871986f3d764e2bcda85baac";
+
+// ✅ Add better error handling for debugging
+const api = axios.create({
+  baseURL: `${STRAPI_URL}/api`,
+  headers: {
+    Authorization: `Bearer ${STRAPI_API_TOKEN}`,
+    "Content-Type": "application/json",
+  },
+  timeout: 10000,
+});
+
 const sampleProducts = [
   // Cases
   {
@@ -12,6 +27,8 @@ const sampleProducts = [
     price: 89.99,
     stock: 25,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397297/nzxt-tower_xn5yvf.png",
     categorySlug: "cases",
     subCategorySlug: "mid-tower",
     specifications: {
@@ -38,6 +55,8 @@ const sampleProducts = [
     price: 169.99,
     stock: 15,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397297/fractal-tower_xkhrrx.png",
     categorySlug: "cases",
     subCategorySlug: "full-tower",
     specifications: {
@@ -59,6 +78,8 @@ const sampleProducts = [
     price: 44.99,
     stock: 30,
     featured: false,
+    imgaeUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/mini-itx-board_rozrun.png",
     categorySlug: "cases",
     subCategorySlug: "mini-itx",
     specifications: {
@@ -80,6 +101,8 @@ const sampleProducts = [
     price: 549.99,
     stock: 40,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/ryzen9_mill47.png",
     categorySlug: "cpus",
     subCategorySlug: "amd-cpu",
     specifications: {
@@ -108,6 +131,8 @@ const sampleProducts = [
     price: 419.99,
     stock: 35,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397297/i7_lq9ok9.png",
     categorySlug: "cpus",
     subCategorySlug: "intel-cpu",
     specifications: {
@@ -133,6 +158,8 @@ const sampleProducts = [
     price: 299.99,
     stock: 60,
     featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/ryzen5_o0wekv.png",
     categorySlug: "cpus",
     subCategorySlug: "amd-cpu",
     specifications: {
@@ -158,6 +185,8 @@ const sampleProducts = [
     price: 799.99,
     stock: 20,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397300/4070_sshcec.png",
     categorySlug: "graphics-cards",
     subCategorySlug: "nvidia-gpu",
     specifications: {
@@ -184,6 +213,8 @@ const sampleProducts = [
     price: 699.99,
     stock: 25,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397300/7800XT_vptqm6.png",
     categorySlug: "graphics-cards",
     subCategorySlug: "amd-gpu",
     specifications: {
@@ -211,6 +242,8 @@ const sampleProducts = [
     price: 329.99,
     stock: 30,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397300/asus-rog0-mb_newqsv.png",
     categorySlug: "motherboards",
     subCategorySlug: "amd-socket-motherboard",
     specifications: {
@@ -242,6 +275,8 @@ const sampleProducts = [
     price: 449.99,
     stock: 20,
     featured: true,
+    imgaeUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/msi-board_hgm3og.png",
     categorySlug: "motherboards",
     subCategorySlug: "intel-socket-motherboard",
     specifications: {
@@ -265,6 +300,8 @@ const sampleProducts = [
     price: 189.99,
     stock: 50,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/ram-sticks-2_wsaflx.png",
     categorySlug: "memory",
     subCategorySlug: "ddr5",
     specifications: {
@@ -288,6 +325,8 @@ const sampleProducts = [
     price: 129.99,
     stock: 40,
     featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/ram-sticks-2_wsaflx.png",
     categorySlug: "memory",
     subCategorySlug: "ddr5",
     specifications: {
@@ -312,6 +351,8 @@ const sampleProducts = [
     price: 199.99,
     stock: 45,
     featured: true,
+    imgaeUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/samsung-ssd_ixflnz.png",
     categorySlug: "ssd-storage",
     subCategorySlug: "nvme-m2",
     specifications: {
@@ -338,6 +379,8 @@ const sampleProducts = [
     price: 109.99,
     stock: 60,
     featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397299/wd-memory_l4eked.png",
     categorySlug: "ssd-storage",
     subCategorySlug: "nvme-m2",
     specifications: {
@@ -361,6 +404,8 @@ const sampleProducts = [
     price: 139.99,
     stock: 35,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397301/corsair-psu_qkutap.png",
     categorySlug: "power-supplies",
     subCategorySlug: "modular-psu",
     specifications: {
@@ -389,6 +434,8 @@ const sampleProducts = [
     price: 119.99,
     stock: 25,
     featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397300/evga-psu_clwpel.png",
     categorySlug: "power-supplies",
     subCategorySlug: "modular-psu",
     specifications: {
@@ -411,6 +458,8 @@ const sampleProducts = [
     price: 99.99,
     stock: 40,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397298/noctua-fan_yn4jxo.png",
     categorySlug: "cpu-cooling",
     subCategorySlug: "air-coolers",
     specifications: {
@@ -432,6 +481,8 @@ const sampleProducts = [
     price: 159.99,
     stock: 30,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397300/corsair-aio_sb5efg.png",
     categorySlug: "cpu-cooling",
     subCategorySlug: "aio-liquid",
     specifications: {
@@ -455,6 +506,8 @@ const sampleProducts = [
     price: 149.99,
     stock: 50,
     featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397298/logiKeyboard_ukomtc.png",
     categorySlug: "peripherals",
     subCategorySlug: "keyboards",
     specifications: {
@@ -469,6 +522,63 @@ const sampleProducts = [
     },
   },
   {
+    name: "Linux",
+    slug: "linux-os",
+    description:
+      "Open-source operating system offering flexibility, security, and customization. Perfect for developers, enthusiasts, and users who want complete control over their system with extensive software repositories.",
+    price: 49.99,
+    stock: 45,
+    featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397297/linux_bbff2p.png",
+    categorySlug: "operating-systems",
+    subCategorySlug: "linux",
+    specifications: {
+      type: "Operating System",
+      brand: "Various Distributions",
+      model: "Linux Kernel",
+      minRam: "2GB",
+      desktop: ["GNOME", "KDE", "XFCE", "Others"],
+      license: "Open Source",
+      storage: "20GB+",
+      fileSystem: ["ext4", "Btrfs", "ZFS", "XFS"],
+      kernelType: "Monolithic",
+      architecture: ["x64", "x86"],
+      packageManager: "Multiple (APT, YUM, Pacman)",
+      recommendedRam: "4GB+",
+    },
+  },
+  {
+    name: "Windows 11",
+    slug: "windows-os",
+    description:
+      "Microsoft's latest operating system with modern interface, enhanced security, and productivity features. Perfect for gaming and professional use with DirectX 12 Ultimate support and improved performance.",
+    price: 119.99,
+    stock: 45,
+    featured: true,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761398344/win11_qjwrye.png",
+    categorySlug: "operating-systems",
+    subCategorySlug: "linux",
+    specifications: {
+      tpm: "TPM 2.0 Required",
+      type: "Operating System",
+      brand: "Microsoft",
+      model: "Windows 11",
+      minRam: "4GB",
+      directX: "DirectX 12 Ultimate",
+      edition: "Home/Pro",
+      license: "Digital License",
+      storage: "64GB+",
+      warranty: "Support Lifecycle",
+      processor: "8th Gen Intel or AMD Ryzen 2000+",
+      fileSystem: "NTFS",
+      secureboot: "Required",
+      architecture: "x64",
+      recommendedRam: "8GB+",
+    },
+  },
+  {
     name: "SteelSeries Rival 600 Gaming Mouse",
     slug: "steelseries-rival-600-gaming-mouse",
     description:
@@ -476,6 +586,8 @@ const sampleProducts = [
     price: 79.99,
     stock: 45,
     featured: false,
+    imageUrl:
+      "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397298/mouse-steel_mfv2v4.png",
     categorySlug: "peripherals",
     subCategorySlug: "mice",
     specifications: {
@@ -490,158 +602,371 @@ const sampleProducts = [
     },
   },
 ];
+// const sampleProducts = [
+//   {
+//     name: "NZXT H5 Flow Mid Tower Case",
+//     slug: "nzxt-h5-flow-mid-tower-case",
+//     description:
+//       "The NZXT H5 Flow is a premium mid-tower case featuring excellent airflow design, tempered glass side panel, and tool-free installation. Perfect for gaming and enthusiast builds with support for ATX, Micro ATX, and Mini ITX motherboards.",
+//     price: 89.99,
+//     stock: 25,
+//     featured: true,
+//     imageUrl:
+//       "https://res.cloudinary.com/dssghzcbp/image/upload/v1761397297/nzxt-tower_xn5yvf.png",
+//     categorySlug: "cases",
+//     subCategorySlug: "mid-tower",
+//     specifications: {
+//       formFactor: "Mid Tower",
+//       motherboardSupport: ["ATX", "Micro ATX", "Mini ITX"],
+//       dimensions: "435 x 230 x 480 mm",
+//       weight: "7.2 kg",
+//       materials: ["Steel", "Tempered Glass"],
+//       frontPorts: ["2x USB 3.2", "1x USB-C", "Audio Jack"],
+//       expansionSlots: 7,
+//       driveCapacity: {
+//         "2.5inch": 4,
+//         "3.5inch": 2,
+//       },
+//       brand: "NZXT",
+//       model: "H5 Flow",
+//     },
+//   },
+//   // Add more products here...
+// ];
 
 async function getCategoryId(categorySlug) {
   try {
-    const response = await axios.get(
-      `http://localhost:1337/api/categories?filters[slug][$eq]=${categorySlug}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-        },
-      }
+    console.log(`🔍 Looking for category with slug: "${categorySlug}"`);
+    const response = await api.get(
+      `/categories?filters[slug][$eq]=${categorySlug}`
     );
 
+    console.log(`📊 Categories API response:`, {
+      total: response.data.data.length,
+      categories: response.data.data.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+      })),
+    });
+
     if (response.data.data.length > 0) {
-      return response.data.data[0].id;
+      const category = response.data.data[0];
+      console.log(`✅ Found category: ${category.name} (ID: ${category.id})`);
+      return category.id;
     }
-    console.warn(`Category not found: ${categorySlug}`);
+
+    console.warn(`⚠️  Category not found: ${categorySlug}`);
+
+    // Let's check what categories actually exist
+    const allCategoriesResponse = await api.get("/categories");
+    console.log(
+      "📋 Available categories:",
+      allCategoriesResponse.data.data.map((cat) => `${cat.name} (${cat.slug})`)
+    );
+
     return null;
   } catch (error) {
-    console.error(`Error finding category ${categorySlug}:`, error.message);
-    return null;
+    console.error(`❌ Error finding category ${categorySlug}:`);
+    throw error;
   }
 }
 
-async function getSubCategoryId(subCategorySlug) {
+async function getSubCategoryId(subCategorySlug, categoryId) {
   try {
-    const response = await axios.get(
-      `http://localhost:1337/api/sub-categories?filters[slug][$eq]=${subCategorySlug}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-        },
-      }
+    console.log(
+      `🔍 Looking for sub-category "${subCategorySlug}" in category ID ${categoryId}`
     );
 
+    // ✅ For one-way relations, we need to filter properly
+    const response = await api.get(
+      `/sub-categories?filters[slug][$eq]=${subCategorySlug}&filters[category][id][$eq]=${categoryId}&populate=category`
+    );
+
+    console.log(`📊 Sub-categories API response:`, {
+      total: response.data.data.length,
+      subCategories: response.data.data.map((sub) => ({
+        id: sub.id,
+        name: sub.name,
+        slug: sub.slug,
+        categoryId: sub.category?.id,
+      })),
+    });
+
     if (response.data.data.length > 0) {
-      return response.data.data[0].id;
+      const subCategory = response.data.data[0];
+      console.log(
+        `✅ Found sub-category: ${subCategory.name} (ID: ${subCategory.id})`
+      );
+      return subCategory.id;
     }
-    console.warn(`Sub-category not found: ${subCategorySlug}`);
+
+    console.warn(
+      `⚠️  Sub-category not found: ${subCategorySlug} for category ID ${categoryId}`
+    );
+
+    // Let's check what sub-categories exist for this category
+    const allSubCategoriesResponse = await api.get(
+      `/sub-categories?filters[category][id][$eq]=${categoryId}&populate=category`
+    );
+    console.log(
+      `📋 Available sub-categories for category ${categoryId}:`,
+      allSubCategoriesResponse.data.data.map(
+        (sub) => `${sub.name} (${sub.slug})`
+      )
+    );
+
     return null;
   } catch (error) {
-    console.error(
-      `Error finding sub-category ${subCategorySlug}:`,
-      error.message
-    );
-    return null;
+    console.error(`❌ Error finding sub-category ${subCategorySlug}:`);
+    throw error;
   }
 }
 
-async function createProduct(productData) {
+async function findExistingProduct(slug) {
   try {
+    console.log(`🔍 Looking for existing product with slug: "${slug}"`);
+    const response = await api.get(
+      `/products?filters[slug][$eq]=${slug}&populate[pCategory]=*&populate[pSubCategory]=*`
+    );
+
+    const product =
+      response.data.data.length > 0 ? response.data.data[0] : null;
+
+    if (product) {
+      console.log(
+        `📦 Found existing product: ${product.name} (ID: ${product.id})`
+      );
+      console.log(
+        `   Current category: ${product.pCategory?.name || "None"} (ID: ${product.pCategory?.id || "None"})`
+      );
+      console.log(
+        `   Current sub-category: ${product.pSubCategory?.name || "None"} (ID: ${product.pSubCategory?.id || "None"})`
+      );
+      console.log(`   Has image: ${product.imageUrl ? "Yes" : "No"}`);
+    } else {
+      console.log(`❌ Product not found: ${slug}`);
+    }
+
+    return product;
+  } catch (error) {
+    console.error(`❌ Error finding product ${slug}:`);
+    throw error;
+  }
+}
+
+async function createOrUpdateProduct(productData) {
+  try {
+    console.log(`\n🔄 Processing: ${productData.name}`);
+    console.log("─".repeat(50));
+
     // Get category and subcategory IDs
     const categoryId = await getCategoryId(productData.categorySlug);
-    const subCategoryId = productData.subCategorySlug
-      ? await getSubCategoryId(productData.subCategorySlug)
-      : null;
-
     if (!categoryId) {
       throw new Error(`Category not found: ${productData.categorySlug}`);
     }
 
-    const response = await axios.post(
-      "http://localhost:1337/api/products",
-      {
-        data: {
-          name: productData.name,
-          slug: productData.slug,
-          description: productData.description, // Now a string
-          price: productData.price,
-          stock: productData.stock,
-          featured: productData.featured || false,
-          pCategory: categoryId,
-          pSubCategory: subCategoryId,
-          specifications: productData.specifications, // JSON object
-          // Note: images will need to be uploaded separately or handled differently
-          // For now, we're just storing the URL in specifications
-          imageUrl: productData.imageUrl,
-        },
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-        },
-      }
+    const subCategoryId = productData.subCategorySlug
+      ? await getSubCategoryId(productData.subCategorySlug, categoryId)
+      : null;
+
+    if (productData.subCategorySlug && !subCategoryId) {
+      throw new Error(`SubCategory not found: ${productData.subCategorySlug}`);
+    }
+
+    // Check if product already exists
+    const existingProduct = await findExistingProduct(productData.slug);
+
+    // ✅ Fix imageUrl field (handle typos)
+    const imageUrl = productData.imageUrl || productData.imgaeUrl || null;
+
+    // ✅ Build update data for one-way relations
+    const updateData = {
+      name: productData.name,
+      slug: productData.slug,
+      description: productData.description,
+      price: productData.price,
+      stock: productData.stock,
+      featured: productData.featured || false,
+      imageUrl: imageUrl,
+      specifications: productData.specifications,
+      // ✅ For one-way relations, just pass the ID directly
+      pCategory: categoryId,
+      pSubCategory: subCategoryId,
+    };
+
+    console.log(`📝 Update data:`, {
+      name: updateData.name,
+      slug: updateData.slug,
+      price: updateData.price,
+      imageUrl: imageUrl ? "SET" : "MISSING",
+      pCategory: categoryId,
+      pSubCategory: subCategoryId,
+    });
+
+    if (existingProduct) {
+      // ✅ UPDATE existing product
+      console.log(`🔄 Updating existing product (ID: ${existingProduct.id})`);
+
+      const response = await api.put(`/products/${existingProduct.id}`, {
+        data: updateData,
+      });
+
+      console.log(`✅ UPDATED: ${productData.name}`);
+      console.log(`   └─ Image: ${imageUrl ? "✅ Added" : "❌ Missing"}`);
+      console.log(
+        `   └─ Category: ${productData.categorySlug} (ID: ${categoryId}) ✅`
+      );
+      console.log(
+        `   └─ SubCategory: ${productData.subCategorySlug} (ID: ${subCategoryId}) ✅`
+      );
+
+      return { action: "updated", data: response.data };
+    } else {
+      // ✅ CREATE new product
+      console.log(`🆕 Creating new product`);
+
+      const response = await api.post("/products", {
+        data: updateData,
+      });
+
+      console.log(`✅ CREATED: ${productData.name}`);
+      console.log(`   └─ Image: ${imageUrl ? "✅ Added" : "❌ Missing"}`);
+      console.log(
+        `   └─ Category: ${productData.categorySlug} (ID: ${categoryId}) ✅`
+      );
+      console.log(
+        `   └─ SubCategory: ${productData.subCategorySlug} (ID: ${subCategoryId}) ✅`
+      );
+
+      return { action: "created", data: response.data };
+    }
+  } catch (error) {
+    console.error(`💥 Failed to process product ${productData.name}:`);
+    console.error(
+      `   Error: ${error.response?.data?.error?.message || error.message}`
     );
 
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      `Failed to create product ${productData.name}: ${
-        error.response?.data?.error?.message || error.message
-      }`
+    if (error.response?.data?.error?.details) {
+      console.error(
+        `   Details:`,
+        JSON.stringify(error.response.data.error.details, null, 2)
+      );
+    }
+
+    throw error;
+  }
+}
+
+async function debugStrapiStructure() {
+  console.log("\n🔍 DEBUGGING STRAPI STRUCTURE");
+  console.log("═".repeat(60));
+
+  try {
+    // Check categories
+    const categoriesResponse = await api.get("/categories");
+    console.log(`📁 Categories (${categoriesResponse.data.data.length}):`);
+    categoriesResponse.data.data.forEach((cat) => {
+      console.log(`   - ${cat.name} (slug: ${cat.slug}, ID: ${cat.id})`);
+    });
+
+    // Check sub-categories
+    const subCategoriesResponse = await api.get(
+      "/sub-categories?populate=category"
     );
+    console.log(
+      `\n📂 Sub-Categories (${subCategoriesResponse.data.data.length}):`
+    );
+    subCategoriesResponse.data.data.forEach((sub) => {
+      console.log(
+        `   - ${sub.name} (slug: ${sub.slug}, ID: ${sub.id}) → Category: ${sub.category?.name || "None"}`
+      );
+    });
+
+    // Check existing products
+    const productsResponse = await api.get(
+      "/products?populate[pCategory]=*&populate[pSubCategory]=*"
+    );
+    console.log(
+      `\n📦 Existing Products (${productsResponse.data.data.length}):`
+    );
+    productsResponse.data.data.slice(0, 5).forEach((product) => {
+      console.log(`   - ${product.name}`);
+      console.log(`     Category: ${product.pCategory?.name || "None"}`);
+      console.log(`     SubCategory: ${product.pSubCategory?.name || "None"}`);
+      console.log(`     Image: ${product.imageUrl ? "Yes" : "No"}`);
+    });
+
+    if (productsResponse.data.data.length > 5) {
+      console.log(
+        `   ... and ${productsResponse.data.data.length - 5} more products`
+      );
+    }
+  } catch (error) {
+    console.error("❌ Error debugging structure:", error.message);
   }
 }
 
 async function seedProducts() {
-  console.log("🛍️  Starting to seed products via API...");
-  console.log("Make sure Strapi is running on http://localhost:1337\n");
+  console.log("🛍️  FORCE UPDATING PRODUCTS WITH IMAGES & CATEGORIES");
+  console.log(`📡 Target: ${STRAPI_URL}`);
+  console.log(`🔑 API Token: ${STRAPI_API_TOKEN ? "SET" : "NOT SET"}`);
+  console.log("═".repeat(80));
 
-  let successCount = 0;
-  let skipCount = 0;
+  // ✅ Debug Strapi structure first
+  await debugStrapiStructure();
+
+  let createdCount = 0;
+  let updatedCount = 0;
   let errorCount = 0;
+
+  console.log("\n🔄 PROCESSING PRODUCTS...");
+  console.log("═".repeat(60));
 
   try {
     for (const product of sampleProducts) {
-      console.log(`📦 Creating product: ${product.name}`);
-
       try {
-        await createProduct(product);
-        console.log(`✅ Created: ${product.name}`);
-        successCount++;
-      } catch (error) {
-        if (
-          error.message.includes("duplicate") ||
-          error.message.includes("unique") ||
-          error.message.includes("already exists") ||
-          error.message.includes("slug must be unique")
-        ) {
-          console.log(`⏭️  Skipped: ${product.name} (already exists)`);
-          skipCount++;
-        } else {
-          console.error(`❌ Failed: ${product.name} - ${error.message}`);
-          errorCount++;
+        const result = await createOrUpdateProduct(product);
+
+        switch (result.action) {
+          case "created":
+            createdCount++;
+            break;
+          case "updated":
+            updatedCount++;
+            break;
         }
+      } catch (error) {
+        console.error(`❌ ERROR: ${product.name} - ${error.message}`);
+        errorCount++;
       }
 
-      // Small delay to avoid overwhelming the API
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      // Rate limiting
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    console.log("\n🎉 Product seeding completed!");
-    console.log(`✅ Created: ${successCount} products`);
-    console.log(`⏭️  Skipped: ${skipCount} products`);
-    console.log(`❌ Failed: ${errorCount} products`);
+    console.log("\n🎉 SEEDING COMPLETED!");
+    console.log("═".repeat(80));
+    console.log(`📊 FINAL SUMMARY:`);
+    console.log(`   🆕 Created: ${createdCount} products`);
+    console.log(`   🔄 Updated: ${updatedCount} products`);
+    console.log(`   ❌ Errors: ${errorCount} products`);
 
-    console.log("\n📝 Next steps:");
-    console.log("1. Check Strapi admin panel to verify products");
-    console.log("2. Upload actual product images via Media Library");
-    console.log("3. Test your frontend API calls");
-    console.log("4. Link uploaded images to products");
+    if (updatedCount > 0 || createdCount > 0) {
+      console.log(`\n🎉 SUCCESS! Products processed successfully!`);
+    }
+
+    if (errorCount > 0) {
+      console.log(
+        `\n⚠️  ${errorCount} errors occurred. Check the output above for details.`
+      );
+    }
   } catch (error) {
-    console.error("\n❌ Error seeding products:", error.message);
-    console.log("\n🔧 Troubleshooting:");
-    console.log("1. Make sure Strapi is running: npm run develop");
-    console.log("2. Check API permissions in Strapi admin");
-    console.log("3. Verify categories and sub-categories exist");
-    console.log("4. Make sure your API token is valid");
+    console.error("\n❌ Product seeding failed:", error.message);
   }
 }
 
-// Check if we're running this script directly
+// Run the seeding
 if (require.main === module) {
   seedProducts();
 }

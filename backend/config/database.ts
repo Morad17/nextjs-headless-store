@@ -4,7 +4,7 @@ export default ({ env }) => {
   const databaseUrl = env("DATABASE_URL");
   const nodeEnv = env("NODE_ENV");
 
-  // ✅ SECOND: Use SQLite only for local development without DATABASE_URL
+  // Use local dev if in development
   if (nodeEnv === "development") {
     console.log("🔗 Using SQLite for local development");
     return {

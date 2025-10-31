@@ -45,7 +45,7 @@ export default function ProductCard({
   // };
 
   // const imageUrl = getImageUrl();
-  const imageUrl = product.specifications.imageUrl || placeholder;
+  const imageUrl = product.imageUrl || placeholder;
 
   // Get category info
   const selectedCategory = categories.find(
@@ -138,20 +138,14 @@ export default function ProductCard({
         style={{ cursor: "pointer" }}
       >
         <div className="product-image">
-          <Image
-            src={imageUrl}
-            alt={title}
-            width={200}
-            height={150}
-            style={{ objectFit: "cover", width: "100%", height: "100%" }}
-          />
+          <Image src={imageUrl} alt={title} width={200} height={150} />
         </div>
         <div className="product-text">
           <h3 className="product-title">{title}</h3>
           <div className="product-cost-info-row">
             <p className="product-cost">+ £{price.toFixed(2)}</p>
             <div className="more-info-btn" onClick={handleMoreInfoClick}>
-              <a type="button">Info</a>
+              <img src="/assets/icons/info.png" alt="" />
             </div>
           </div>
         </div>
