@@ -225,10 +225,6 @@ export const useBuildPcStore = create<BuildPcState>()(
               productsByCategory[categoryId] = products;
             });
 
-            console.log(
-              "Preloaded products for categories:",
-              Object.keys(productsByCategory)
-            );
             set({ productsByCategory });
           } catch (error) {
             console.error("Failed to preload products:", error);
