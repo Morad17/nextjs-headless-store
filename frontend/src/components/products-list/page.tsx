@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useBuildPcStore } from "@/store/useBuildPcStore";
 import ProductCard from "@/components/productCard/page";
 import "./products-list.scss";
+import Loading from "../loading-spinner/page";
 
 export default function Products() {
   const {
@@ -52,8 +53,7 @@ export default function Products() {
   if (showDelayedLoading && productsLoading) {
     return (
       <div className="products-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading products...</p>
+        <Loading loadingText="Loading Products..." size={60} />
       </div>
     );
   }

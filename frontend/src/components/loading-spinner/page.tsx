@@ -1,6 +1,6 @@
 // frontend/src/components/loading-spinner/page.tsx
 import { HashLoader } from "react-spinners";
-import "./loading-spinner.scss";
+import "./loading.scss";
 
 interface LoadingProps {
   loading?: boolean;

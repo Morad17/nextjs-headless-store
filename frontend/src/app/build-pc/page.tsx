@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./build-pc.scss";
 import PcModel from "../../components/pc-model/PcModel";
 import { Canvas } from "@react-three/fiber";
@@ -12,8 +12,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
-import Image from "next/image";
 import CategorySlider from "@/components/category-slider/page";
+import Loading from "@/components/loading-spinner/page";
+import Image from "next/image";
+import circleArrow from "../../../public/assets/icons/rotating-clockwise-circular-arrow-svgrepo-com.svg"; // ✅ Your SVG import
 
 export default function BuildPc() {
   const {
@@ -26,7 +28,7 @@ export default function BuildPc() {
     toggleComponentType,
     getRequiredCategories,
     getOptionalCategories,
-    preloadAllProducts, // ✅ Add this
+    preloadAllProducts,
   } = useBuildPcStore();
 
   const {
@@ -39,16 +41,16 @@ export default function BuildPc() {
 
   const router = useRouter();
 
-  // ✅ Track initial loading state
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [hasAutoSelectedFirstCategory, setHasAutoSelectedFirstCategory] =
+    useState(false);
 
   useEffect(() => {
     const initializeData = async () => {
       try {
-        // First fetch categories
-        await fetchCategories();
+        setIsInitialLoad(true);
 
-        // Then preload all products
+        await fetchCategories();
         await preloadAllProducts();
 
         setIsInitialLoad(false);
@@ -61,14 +63,40 @@ export default function BuildPc() {
     initializeData();
   }, [fetchCategories, preloadAllProducts]);
 
+  useEffect(() => {
+    if (!isInitialLoad && !hasAutoSelectedFirstCategory && !categoriesError) {
+      const displayedCategories = showMainComponents
+        ? getRequiredCategories()
+        : getOptionalCategories();
+
+      if (displayedCategories.length > 0 && !selectedCategoryId) {
+        const firstCategory = displayedCategories[0];
+        console.log(`🎯 Auto-selecting first category: ${firstCategory.name}`);
+        selectCategory(firstCategory.id);
+        setHasAutoSelectedFirstCategory(true);
+      }
+    }
+  }, [
+    isInitialLoad,
+    hasAutoSelectedFirstCategory,
+    categoriesError,
+    showMainComponents,
+    selectedCategoryId,
+    selectCategory,
+    getRequiredCategories,
+    getOptionalCategories,
+  ]);
+
+  useEffect(() => {
+    setHasAutoSelectedFirstCategory(false);
+  }, [showMainComponents]);
+
   const requiredCategories = getRequiredCategories();
 
-  // Get categories to display based on toggle
   const displayedCategories = showMainComponents
     ? getRequiredCategories()
     : getOptionalCategories();
 
-  // Reset Order
   const handleResetOrder = () => {
     if (currentOrder.length === 0) {
       toast.info("Order is already empty!");
@@ -85,39 +113,33 @@ export default function BuildPc() {
     }
   };
 
-  // check if a category has a main component selected in the order
   const isCategoryInOrder = (categoryName: string) => {
     const mainComponents = getMainComponents();
     return mainComponents.some((item) => item.category === categoryName);
   };
 
-  // check if all main components are selected
   const areAllMainComponentsSelected = () => {
     const mainComponents = getMainComponents();
     const requiredCategoryNames = requiredCategories.map((cat) => cat.name);
 
-    // Check if every required category has at least one main component in the order
     return requiredCategoryNames.every((categoryName) =>
       mainComponents.some((item) => item.category === categoryName)
     );
   };
 
-  // Check if user has any add-on components (using the existing getAddOns method)
   const hasAddOnComponents = () => {
     const addOns = getAddOns();
     return addOns.length > 0;
   };
 
-  // Handle switching to add-ons view
   const handleCheckAddOns = () => {
-    toggleComponentType(false); // Switch to add-ons view
+    toggleComponentType(false);
     toast.info("Browse through available add-on components below!", {
       position: "top-center",
       autoClose: 3000,
     });
   };
 
-  // Handle proceeding to order summary
   const handleProceedToOrder = () => {
     toast.success("Proceeding to order summary...", {
       position: "top-center",
@@ -128,7 +150,6 @@ export default function BuildPc() {
     }, 1000);
   };
 
-  // Show custom toast for add-ons confirmation
   const showAddOnConfirmToast = () => {
     toast(
       <AddOnConfirmToast
@@ -148,7 +169,6 @@ export default function BuildPc() {
     );
   };
 
-  // Handle complete order click - always clickable, shows toast if incomplete
   const handleCompleteOrder = () => {
     if (!areAllMainComponentsSelected()) {
       const missingCategories = requiredCategories
@@ -164,17 +184,45 @@ export default function BuildPc() {
       return;
     }
 
-    // All main components are selected
     if (!hasAddOnComponents()) {
-      // No add-ons selected, show confirmation toast
       showAddOnConfirmToast();
     } else {
-      // Has add-ons, proceed directly
       handleProceedToOrder();
     }
   };
 
   const isOrderComplete = areAllMainComponentsSelected();
+
+  if (isInitialLoad) {
+    return (
+      <div className="build-pc-page">
+        <div className="build-pc-loading">
+          <Loading
+            loading={true}
+            loadingText="Loading Build PC components..."
+            size={60}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (categoriesError) {
+    return (
+      <div className="build-pc-page">
+        <div className="build-pc-error">
+          <h2>Failed to Load Components</h2>
+          <p>Error: {categoriesError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="build-pc-page">
@@ -230,16 +278,7 @@ export default function BuildPc() {
               </div>
 
               <div className="all-categories">
-                {isInitialLoad && (
-                  <div className="loading-state">
-                    <p>Loading categories and products...</p>
-                  </div>
-                )}
-
-                {categoriesError && (
-                  <p className="error">Error: {categoriesError}</p>
-                )}
-                {!isInitialLoad && displayedCategories.length > 0 && (
+                {displayedCategories.length > 0 && (
                   <CategorySlider
                     categories={displayedCategories}
                     selectedCategoryId={selectedCategoryId}
@@ -247,17 +286,17 @@ export default function BuildPc() {
                   />
                 )}
 
-                {!isInitialLoad &&
-                  !categoriesError &&
-                  displayedCategories.length === 0 && (
-                    <p className="no-categories">
+                {displayedCategories.length === 0 && (
+                  <div className="no-categories">
+                    <p>
                       No{" "}
                       {showMainComponents
                         ? "main components"
                         : "add-on components"}{" "}
                       available.
                     </p>
-                  )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -265,10 +304,9 @@ export default function BuildPc() {
         </section>
       </div>
 
-      {/* Static progress bar container with only state-change animations */}
       <div className="build-progress">
         <div className="total-cost">
-          <h3 className="cost-title">Your Total Build Cost:</h3>
+          <h3 className="cost-title">Total Build Cost:</h3>
           <motion.p
             key={getOrderTotal()}
             initial={{ scale: 0.9 }}
@@ -280,7 +318,7 @@ export default function BuildPc() {
         </div>
 
         <div className="reset-order-button">
-          <motion.button
+          <button
             className={`reset-btn ${
               currentOrder.length === 0 ? "disabled" : ""
             }`}
@@ -291,18 +329,25 @@ export default function BuildPc() {
                 ? "No items to reset"
                 : "Reset all items in order"
             }
-            whileHover={currentOrder.length > 0 ? { scale: 1.05, y: -2 } : {}}
-            whileTap={currentOrder.length > 0 ? { scale: 0.95 } : {}}
           >
-            🗑️ Reset Order
-          </motion.button>
+            {/* ✅ Use your SVG with animation */}
+            <div className="reset-icon">
+              <Image
+                src={circleArrow}
+                alt="Reset"
+                width={17}
+                height={17}
+                className="circle-arrow-icon"
+              />
+            </div>
+            RESET ORDER
+          </button>
         </div>
         <div className="build-progress-bar">
           {requiredCategories.map((cat, key) => {
             const categoryName = cat?.name;
             const isInOrder = isCategoryInOrder(categoryName);
 
-            // Determine chevron type class
             let chevronTypeClass = "";
             if (requiredCategories.length === 1) {
               chevronTypeClass = "single-chevron";
@@ -315,14 +360,9 @@ export default function BuildPc() {
             }
 
             return (
-              <motion.div
+              <div
                 key={cat.id}
                 className={`custom-chevron ${chevronTypeClass}`}
-                whileHover={{
-                  scale: 1.02,
-                  y: -2,
-                }}
-                whileTap={{ scale: 0.98 }}
               >
                 <motion.div
                   className="chevron-fill"
@@ -339,7 +379,7 @@ export default function BuildPc() {
                 <span className={isInOrder ? "active-text" : "inactive-text"}>
                   {categoryName}
                 </span>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -357,10 +397,8 @@ export default function BuildPc() {
                     requiredCategories.length - getMainComponents().length
                   } main components`
             }
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
             animate={{
-              background: isOrderComplete ? "#68af09" : "#8e9aaf",
+              background: isOrderComplete ? "#68af09" : "#c0c0c0",
             }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >

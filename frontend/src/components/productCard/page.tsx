@@ -145,7 +145,11 @@ export default function ProductCard({
           <div className="product-cost-info-row">
             <p className="product-cost">+ £{price.toFixed(2)}</p>
             <div className="more-info-btn" onClick={handleMoreInfoClick}>
-              <img src="/assets/icons/info.png" alt="" />
+              <img
+                src="/assets/icons/info.png"
+                alt=""
+                style={{ width: "22px" }}
+              />
             </div>
           </div>
         </div>
