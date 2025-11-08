@@ -26,25 +26,7 @@ export default function ProductCard({
   const { showMainComponents, categories, selectedCategoryId } =
     useBuildPcStore();
 
-  // Extract data from product object
   const { name: title, price, images } = product;
-
-  // const getImageUrl = () => {
-  //   if (images && Array.isArray(images) && images.length > 0) {
-  //     const firstImage = images[0];
-
-  //     if (firstImage && firstImage.url) {
-  //       if (firstImage.url.startsWith("http")) {
-  //         return firstImage.url;
-  //       }
-  //       return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
-  //     }
-  //   }
-
-  //   return placeholder;
-  // };
-
-  // const imageUrl = getImageUrl();
   const imageUrl = product.imageUrl || placeholder;
 
   // Get category info
@@ -120,7 +102,6 @@ export default function ProductCard({
         `Replaced ${existingCategoryItem.product.name} with ${title}`
       );
     } else {
-      // Normal add behavior
       addToOrder(product, orderQuantity, categoryName, isMainComponent);
       toast.success(`${title} added to order`);
     }

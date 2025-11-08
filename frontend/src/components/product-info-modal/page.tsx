@@ -39,24 +39,7 @@ export default function ProductModal({
   }, [isOpen, onClose]);
 
   if (!product) return null;
-
-  // const getImageUrl = () => {
-  //   if (
-  //     product.images &&
-  //     Array.isArray(product.images) &&
-  //     product.images.length > 0
-  //   ) {
-  //     const firstImage = product.images[0];
-  //     if (firstImage && firstImage.url) {
-  //       if (firstImage.url.startsWith("http")) {
-  //         return firstImage.url;
-  //       }
-  //       return `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`;
-  //     }
-  //   }
-  //   return placeholder;
-  // };
-  const imageUrl = product.specifications?.imageUrl || placeholder;
+  const imageUrl = product.imageUrl || placeholder;
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -64,8 +47,6 @@ export default function ProductModal({
       onClose();
     }
   };
-
-  // Format specifications - updated to handle nested objects and exclude imageUrl
   const formatSpecifications = (specs: any) => {
     if (!specs) return [];
 
@@ -81,7 +62,6 @@ export default function ProductModal({
           .join(", ");
       }
 
-      // If it's an array, join with commas
       if (Array.isArray(value)) {
         return value.join(", ");
       }
@@ -93,44 +73,31 @@ export default function ProductModal({
       return key
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, (str) => str.toUpperCase())
-        .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize each word
+        .replace(/\b\w/g, (l) => l.toUpperCase());
     };
 
     // If specs is an object, convert to array of key-value pairs
     if (typeof specs === "object" && !Array.isArray(specs)) {
-      return Object.entries(specs)
-        .filter(([key]) => key !== "imageUrl") // ✅ Filter out imageUrl
-        .map(([key, value]) => ({
-          label: formatLabel(key),
-          value: formatValue(value),
-        }));
+      return Object.entries(specs).map(([key, value]) => ({
+        label: formatLabel(key),
+        value: formatValue(value),
+      }));
     }
 
-    // If specs is already an array, return as is (but filter imageUrl if it exists)
+    // Filterning different specs variable types
     if (Array.isArray(specs)) {
-      return specs
-        .filter((spec, index) => {
-          // If it's an object with a label property, check if label is not "imageUrl"
-          if (typeof spec === "object" && spec.label) {
-            return (
-              spec.label.toLowerCase() !== "imageurl" &&
-              spec.label !== "imageUrl"
-            );
-          }
-          return true; // Keep other items
-        })
-        .map((spec, index) => {
-          if (typeof spec === "object" && spec.label && spec.value) {
-            return {
-              label: spec.label,
-              value: formatValue(spec.value),
-            };
-          }
+      return specs.map((spec, index) => {
+        if (typeof spec === "object" && spec.label && spec.value) {
           return {
-            label: `Specification ${index + 1}`,
-            value: formatValue(spec),
+            label: spec.label,
+            value: formatValue(spec.value),
           };
-        });
+        }
+        return {
+          label: `Specification ${index + 1}`,
+          value: formatValue(spec),
+        };
+      });
     }
 
     // If specs is a string, try to parse it
@@ -394,21 +361,6 @@ export default function ProductModal({
                     <p>No specifications available for this product.</p>
                   </motion.div>
                 )}
-              </motion.div>
-
-              <motion.div className="modal-actions" variants={contentVariants}>
-                <motion.button
-                  className="close-modal-btn"
-                  onClick={onClose}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 6px 20px rgba(102, 126, 234, 0.3)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Close Details
-                </motion.button>
               </motion.div>
             </motion.div>
           </motion.div>

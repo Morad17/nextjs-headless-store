@@ -10,9 +10,11 @@
   overflow-y: hidden;
   scroll-behavior: smooth;
 
+  // hide scrollbars cross-browser
+  -ms-overflow-style: none; // IE/Edge
+  scrollbar-width: none; // Firefox
   &::-webkit-scrollbar {
-    height: 8px;
-    margin-top: 10px;
+    display: none; // Chrome/Safari
   }
 
   &::-webkit-scrollbar-track {
@@ -156,5 +158,53 @@
   &.selected .category-card-image {
     opacity: 1;
     filter: brightness(1.1);
+  }
+}
+
+// Wrapper to position arrows
+.categories-slider-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 0 44px; // space for arrows so first/last cards aren’t covered
+}
+
+// Arrow buttons
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.65);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  &.left {
+    left: 6px;
+  }
+
+  &.right {
+    right: 6px;
+  }
+
+  &.disabled,
+  &:disabled {
+    cursor: default;
+    opacity: 0.35;
+    pointer-events: none;
   }
 }
