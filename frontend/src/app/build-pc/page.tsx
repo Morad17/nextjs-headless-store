@@ -15,7 +15,7 @@ import AddOnConfirmToast from "@/components/custom-toast/AddOnConfirmToast";
 import CategorySlider from "@/components/category-slider/page";
 import Loading from "@/components/loading-spinner/page";
 import Image from "next/image";
-import circleArrow from "../../../public/assets/icons/rotating-clockwise-circular-arrow-svgrepo-com.svg"; // ✅ Your SVG import
+import BuildCarousel from "@/components/build-carousel/page";
 
 export default function BuildPc() {
   const {
@@ -231,19 +231,25 @@ export default function BuildPc() {
           <div className="dark-overlay"></div>
         </div>
         <section className="left-section">
-          <div className="build-display">
+          <div className="title-row">
             <h2 className="build-text">Build Your Gaming Pc</h2>
+          </div>
+          <div className="build-display">
             <div className="model-pc">
               <Canvas
                 camera={{ position: [1, 1, 1] }}
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: "400px", height: "400px" }}
               >
                 <Environment preset="warehouse" />
-                <OrbitControls enableZoom={false} />
+                {/* <OrbitControls enableZoom={false} /> */}
                 <PcModel />
               </Canvas>
             </div>
+            <div className="build-carousel-div">
+              <BuildCarousel />
+            </div>
           </div>
+          <div className="ai-helper"></div>
         </section>
         <section className="right-section">
           <div className="category-order">
@@ -333,7 +339,7 @@ export default function BuildPc() {
             {/* ✅ Use your SVG with animation */}
             <div className="reset-icon">
               <Image
-                src={circleArrow}
+                src="/assets/icons/rotating-clockwise-circular-arrow-svgrepo-com.svg"
                 alt="Reset"
                 width={17}
                 height={17}

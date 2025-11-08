@@ -112,8 +112,19 @@
       }
     }
   }
+  //Left Section
   .left-section {
+    .build-display {
+      display: flex;
+      justify-content: space-around;
+    }
   }
+  .build-carousel-div,
+  .model-pc {
+    width: 49%;
+    height: 400px;
+  }
+
   .left-section,
   .right-section {
     width: 49vw;
@@ -123,12 +134,12 @@
     padding: 0 10px;
   }
   .model-pc {
-    min-height: 500px;
+    min-height: 400px;
     display: flex;
     justify-content: center;
     div {
-      width: 500px !important;
-      height: 500px !important;
+      width: 400px !important;
+      height: 400px !important;
       cursor: pointer;
     }
   }

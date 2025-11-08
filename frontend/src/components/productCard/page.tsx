@@ -7,8 +7,6 @@ import { toast } from "react-toastify";
 import ProductInfoModal from "@/components/product-info-modal/page";
 import "./productCard.scss";
 
-import placeholder from "../../../public/assets/images/placeholder-image.png";
-
 interface ProductCardProps {
   product: Product;
   maxAllowance?: number;
@@ -27,7 +25,7 @@ export default function ProductCard({
     useBuildPcStore();
 
   const { name: title, price, images } = product;
-  const imageUrl = product.imageUrl || placeholder;
+  const imageUrl = product.imageUrl || "/assets/images/placeholder-image.png";
 
   // Get category info
   const selectedCategory = categories.find(
